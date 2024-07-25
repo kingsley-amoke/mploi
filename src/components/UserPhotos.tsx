@@ -15,31 +15,25 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import { getBlobFroUri } from "../utils/data";
 import { PhotosCard } from "./PhotosCard";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useUserStore } from "../state/store";
+import useTheme from "../hooks/useTheme";
 
-const imgDir = FileSystem.documentDirectory + "images/";
-
-const ensureDirExists = async () => {
-  const dirInfo = await FileSystem.getInfoAsync(imgDir);
-
-  if (!dirInfo.exists) {
-    await FileSystem.makeDirectoryAsync(imgDir, { intermediates: true });
-  }
-};
 export default function UserPhotos({ user }: { user: DocumentData | null }) {
   const { user: loggedUser } = useUserStore();
+
+  const { colorScheme } = useTheme();
+
+  const iconColor = colorScheme === "dark" ? "white" : "black";
 
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const loadImages = async () => {
-    await ensureDirExists();
+    const files: string[] = user?.photos;
 
-    const files = await FileSystem.readDirectoryAsync(imgDir);
-
-    if (files.length > 0) {
-      setImages(files.map((f) => imgDir + f));
+    if (files?.length > 0) {
+      setImages(files);
     }
   };
 
@@ -61,22 +55,13 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
     }
 
     if (!result.canceled) {
-      saveImage(result.assets[0].uri);
+      uploadImage(result.assets[0].uri);
     }
   };
 
-  const saveImage = async (uri: string) => {
-    await ensureDirExists();
+  const uploadImage = async (uri: string) => {
+    const filename = new Date().getTime() + ".jpg";
 
-    const fileName = new Date().getTime() + ".jpg";
-    const dest = imgDir + fileName;
-
-    await FileSystem.copyAsync({ from: uri, to: dest });
-    setImages([...images, dest]);
-    uploadImage(uri, fileName);
-  };
-
-  const uploadImage = async (uri: string, filename: string | undefined) => {
     setLoading(true);
 
     const imageBlob = await getBlobFroUri(uri);
@@ -87,14 +72,14 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
     uploadBytes(storageRef, imageBlob)
       .then((snapshot) => {
         getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
-          const userRef = doc(firestoreDB, "users", user?._id);
+          setImages([...images, url]);
 
-          //updates user images array
-          //   updateDoc(userRef, {
-          //     image: url,
-          //   }).then(() => {
-          //     setLoading(false);
-          //   });
+          const userRef = doc(firestoreDB, "users", loggedUser?._id);
+
+          // updates user images array
+          updateDoc(userRef, {
+            photos: [...images, url],
+          });
         });
       })
       .catch((error) => {
@@ -132,10 +117,16 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
               backgroundColor: "grey",
               width: 100,
               height: 100,
+              padding: 0,
               justifyContent: "center",
             }}
           >
-            <MaterialIcons name="add-a-photo" size={30} />
+            <Ionicons
+              name="add"
+              size={25}
+              color={iconColor}
+              style={{ margin: 0 }}
+            />
           </Button>
         )}
       </View>
