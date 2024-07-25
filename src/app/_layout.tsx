@@ -35,8 +35,9 @@ import {
   getDoc,
   getDocs,
 } from "firebase/firestore";
-import { firestoreDB } from "../utils/firebaseConfig";
-import { getUser, getUsers } from "../utils/data";
+import { firestoreDB, realtimeDB } from "../utils/firebaseConfig";
+import { getServices, getUser, getUsers } from "../utils/data";
+import { onValue, ref } from "firebase/database";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
 const customLightTheme = { ...MD3LightTheme, colors: Colors.light };
@@ -78,30 +79,30 @@ export default function RootLayout() {
     }
   };
 
-  const fetchAllJobs = async () => {
+  const fetchAllUsers = async () => {
    getUsers().then((users) => {
      storeUsers(users);
    })
   };
 
-  // const fetchServices = async () => {
-  //   const categories = await getServices();
-  //   storeCategory(categories);
-  // };
+  const fetchServices = async () => {
+    const categories = await getServices();
+    storeCategory(categories);
+  };
 
-  // const fetchAllChats = ( ) => {
-  //   const chatRef = ref(realtimeDB, 'chats/');
-  //   onValue(chatRef, (snapshot) => {
-  //     const data = snapshot.val();
+  const fetchAllChats = ( ) => {
+    const chatRef = ref(realtimeDB, 'chats/');
+    onValue(chatRef, (snapshot) => {
+      const data = snapshot.val();
 
-  //     if(!data) return
-  //     const myData = Object.keys(data).map(key => {
-  //       return data[key];
-  //   })
+      if(!data) return
+      const myData = Object.keys(data).map(key => {
+        return data[key];
+    })
 
-  //   storeChats(myData)
-  //   });
-  // }
+    storeChats(myData)
+    });
+  }
 
   // const fetchNotifications = async () => {
   //   const notifications = await fetchAllNotifications();
@@ -120,11 +121,10 @@ export default function RootLayout() {
 
   useLayoutEffect(() => {
     checkLocalUser();
-    fetchAllJobs();
-    // fetchServices();
-    // fetchAllChats()
+    fetchServices();
+    fetchAllChats()
     // fetchNotifications()
-    // fetchAllUsers()
+    fetchAllUsers()
     // fetchAllRecruitments()
   }, []);
 

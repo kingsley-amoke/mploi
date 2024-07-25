@@ -1,48 +1,12 @@
 import React, {useState} from "react";
 import { View } from "react-native";
-import { List, Text } from "react-native-paper";
+import { ActivityIndicator, List, Text } from "react-native-paper";
+import { useCategoryStore } from "../state/store";
 
-const categories = [
-  {
-    id: 1,
-    title: "Printing/Publishing",
-    subcategories: [
-      { 
-        title: "Graphics designer"
-       }, 
-       { 
-        title: "Typist" 
-      },
-      {
-        title: "Printer"
-      }
-    ],
-  },
-  {
-    id: 2,
-    title: "Fashion Designer",
-    subcategories: [
-      { title: "Male" }, 
-      { title: "Female" }],
-  },
-  {
-    id: 3,
-    title: "Photographer/VideoGrapher",
-    subcategories: [
-      { title: "Passport/photographs" }, 
-      { title: "Birthday coverage" },
-      {title: "Wedding coverage"},
-      {title: "burial coverage"},
-      {title: "Naming ceremony" },
-    ],
-  },
-];
 
 const Categories = () => {
 
-  const [category, setCategory] = useState('')
-
-  console.log(category)
+ const {categories} = useCategoryStore()
 
 return(
   <List.AccordionGroup>
@@ -54,16 +18,18 @@ return(
         marginHorizontal: 10,
       }}
     >
-      {/* <Text style={{ fontSize: 16, paddingLeft: 10 }}>All Categories</Text> */}
-      {categories.map((category, index) => (
+      
+      {/* {categories.length > 0 ? (categories.map((category, index) => (
         <View key={index}>
-          <List.Accordion title={category.title} id={category.id}>
-            {category.subcategories.map((subcategory, subIndex) => (
-              <List.Item key={subIndex} title={subcategory.title} onPress={()=>setCategory(subcategory.title)} style={{marginLeft:20}}/>
+          <List.Accordion title={category.name} id={category.name}>
+            {category?.subcategories?.map((subcategory, subIndex) => (
+              <List.Item key={subIndex} title={subcategory.name} style={{marginLeft:20}}/>
             ))}
           </List.Accordion>
         </View>
-      ))}
+      ))) : (
+        <ActivityIndicator animating={true} size={30}/>
+      )} */}
     </View>
   </List.AccordionGroup>
 )

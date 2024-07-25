@@ -112,9 +112,10 @@ const Room = () => {
                   textTransform: "capitalize",
                 }}
               >
-                {room && room.name.length > 36
+                {/* {room && room.name.length > 36
                   ? `${room.chatName.slice(0, 36)}..`
-                  : room?.name}
+                  : room?.name} */}
+                  tht
                   
               </Text>
               <Text
@@ -124,7 +125,7 @@ const Room = () => {
                   fontWeight: "bold",
                 }}
               >
-                {room?.employerName}
+                {room?.serviceProvider.firstName}
               </Text>
             </View>
           </View>
@@ -133,7 +134,7 @@ const Room = () => {
       </View>
       <View
         style={{
-          backgroundColor: "#fff",
+          
           paddingHorizontal: 5,
           paddingVertical: 8,
           borderRadius: 30,
@@ -149,7 +150,7 @@ const Room = () => {
         >
           <>
              <ScrollView showsVerticalScrollIndicator={false}  style={{paddingBottom:100}}>
-                  {messages?.length > 0 && messages?.map((msg: DocumentData, index: number) =>
+                  {messages && messages?.map((msg: DocumentData, index: number) =>
                   
                     msg.senderId === user?._id ? (
                       <View
@@ -173,7 +174,7 @@ const Room = () => {
                             style={{
                               fontWeight: "bold",
                               fontSize: 20,
-                              color: "#fff",
+                             
                             }}
                           >
                             {msg.text}
@@ -186,7 +187,7 @@ const Room = () => {
                               style={{
                                 fontWeight: "bold",
                                 fontSize: 10,
-                                color: "#fff",
+                                
                               }}
                             >
                               {new Date(msg?.timeStamp).toLocaleTimeString("en-US", {
@@ -230,7 +231,7 @@ const Room = () => {
                               borderBottomLeftRadius: 1,
                               borderTopRightRadius: 20,
                               borderBottomRightRadius: 20,
-                              backgroundColor: "#ddd",
+                              
                               position: "relative",
                             }}
                           >
@@ -292,6 +293,7 @@ const Room = () => {
                 </TouchableOpacity>
 
                 <TextInput
+                mode="outlined"
                   style={{ flex: 1, fontWeight: "bold", paddingLeft: 10 }}
                   placeholder="Type here..."
                   placeholderTextColor={"#999"}

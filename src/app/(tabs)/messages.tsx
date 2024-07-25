@@ -7,10 +7,8 @@ import {
 import {Text} from 'react-native-paper';
 import React from "react";
 import { Link, useRouter } from "expo-router";
-import { Separator } from "@/src/components/Profile";
-import { useChatStore, useUserStore } from "@/src/state/store";
+import { useChatStore} from "@/src/state/store";
 import { Ionicons } from "@expo/vector-icons";
-import { chatTypes } from "@/src/utils/types";
 import { DocumentData } from "firebase/firestore";
 
 const index = () => {
@@ -54,7 +52,7 @@ const index = () => {
                     {chats?.map((room) => (
                       <View key={room._id}>
                         <MessageCard room={room} />
-                        <Separator />
+                       
                       </View>
                     ))}
                   </>
@@ -86,12 +84,12 @@ const MessageCard = ({ room }: {room: DocumentData}) => {
       >
         <View style={{ alignItems: "flex-start", justifyContent: "center" }}>
           <Text style={{ fontWeight: "bold", textTransform: "capitalize" }}>
-            {room.name}
+            {room.serviceProvider.firstName}
           </Text>
-
-          <Text>{room.employerName}</Text>
+          {/* <Text>test</Text> */}
+          <Text>{room.serviceProvider.firstName}</Text>
         </View>
-        <Text style={{ fontWeight: "bold" }}>{room.employer?.location}</Text>
+        <Text style={{ fontWeight: "bold" }}>{room.serviceProvider.location.lga}</Text>
       </TouchableOpacity>
     </Link>
   );

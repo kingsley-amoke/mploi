@@ -18,11 +18,10 @@ import { useRouter } from "expo-router";
 import Button from "./Button";
 import { fetchAllBanks, validateAccountNumber } from "@/src/utils/paystack";
 import { ContactType, DBUser, serviceTypes } from "@/src/utils/types";
-import { useUserStore } from "@/src/state/store";
+import { useCategoryStore, useUserStore } from "@/src/state/store";
 import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 import {
-  categories,
   getBlobFroUri,
   getLGAsByState,
   getStates,
@@ -46,6 +45,7 @@ const EditProfile = () => {
       : Colors.light.onSurfaceDisabled;
 
   const { user, storeUser } = useUserStore();
+  const {categories} = useCategoryStore();
 
   const [selectedItems, setSelectedItems] = useState([""]);
   const [items, setItems] = useState<serviceTypes[]>();
@@ -290,7 +290,7 @@ const EditProfile = () => {
   //   );
   // }
 
-  const sortedItems = categories?.sort((a, b) => a.name.localeCompare(b.name));
+  // const sortedItems = categories?.sort((a, b) => a.name.localeCompare(b.name));
 
   const allStates = getStates();
 
@@ -615,7 +615,7 @@ const EditProfile = () => {
               }}
             >
               <SectionedMultiSelect
-                items={sortedItems}
+                items={categories}
                 IconRenderer={Icon}
                 uniqueKey="name"
                 onSelectedItemsChange={setSelectedItems}

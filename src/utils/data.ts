@@ -21,44 +21,6 @@ export const getBlobFroUri = async (uri:string) => {
     return blob
   };
 
-  //demo categories
-
-  export  const categories = [
-    {
-      id: 1,
-      name: "Printing/Publishing",
-      subcategories: [
-        { 
-          name: "Graphics designer"
-         }, 
-         { 
-          name: "Typist" 
-        },
-        {
-          name: "Printer"
-        }
-      ],
-    },
-    {
-      id: 2,
-      name: "Fashion Designer",
-      subcategories: [
-        { name: "Male" }, 
-        { name: "Female" }],
-    },
-    {
-      id: 3,
-      name: "Photographer/VideoGrapher",
-      subcategories: [
-        { name: "Passport/photographs" }, 
-        { name: "Birthday coverage" },
-        {name: "Wedding coverage"},
-        {name: "burial coverage"},
-        {name: "Naming ceremony" },
-      ],
-    },
-  ];
-
   //social links
 
   export const socialLinks = {
@@ -147,4 +109,16 @@ export const getBlobFroUri = async (uri:string) => {
       const user = users.find((user) => user._id === id);
 
       return user;
+    }
+
+    export const getServices = async()=>{
+      const serviceRef = collection(firestoreDB, "services");
+
+      const services: DocumentData[] = [];
+  
+      const querySnapshot = await getDocs(serviceRef);
+      querySnapshot.forEach((doc) => {
+        services.push(doc.data());
+      });
+      return services
     }

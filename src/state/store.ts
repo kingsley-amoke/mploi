@@ -35,9 +35,9 @@ export interface CareerStore {
   }
 
 export interface categoryStore {
-  categories: serviceTypes[];
-  storeCategory: (category: serviceTypes[]) => void;
-  addCategory: (category: serviceTypes) => void;
+  categories: DocumentData[];
+  storeCategory: (category: DocumentData[]) => void;
+  addCategory: (category: DocumentData) => void;
 }
 
 export interface chatStore {

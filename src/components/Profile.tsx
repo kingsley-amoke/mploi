@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { DocumentData } from "firebase/firestore";
 import UserPhotos from "./UserPhotos";
 import AboutUser from "./AboutUser";
+import BookService from "./BookService";
 
 const Profile = ({ user }: { user: DocumentData | null }) => {
   const { colorScheme } = useTheme();
@@ -26,10 +27,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
       ? Colors.dark.onSurfaceDisabled
       : Colors.light.onSurfaceDisabled;
 
-  const bgColor =
-    colorScheme === "dark"
-      ? Colors.dark.primaryContainer
-      : Colors.light.primaryContainer;
+  
 
   const [value, setValue] = useState("about");
 
@@ -103,18 +101,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           <Text>4/5</Text>
         </View>
       </View>
-      <Button
-        style={{
-          borderColor: borderColor,
-          borderWidth: 1,
-          paddingVertical: 10,
-          marginVertical: 10,
-          marginBottom: 40,
-          backgroundColor: bgColor,
-        }}
-      >
-        <Text variant="labelLarge">Book Service</Text>
-      </Button>
+      <BookService user={user}/>
       <ScrollView>
         <SegmentedButtons
           value={value}
