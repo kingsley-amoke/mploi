@@ -5,8 +5,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Text, Button } from "react-native-paper";
-import * as FileSystem from "expo-file-system";
+import { Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 

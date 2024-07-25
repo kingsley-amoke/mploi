@@ -79,7 +79,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           }}
         />
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          {user?.skills > 0 && <Text>{user?.skills[1]}</Text>}
+          <Text>{user?.skills[1]}</Text>
         </View>
       </View>
       <View
