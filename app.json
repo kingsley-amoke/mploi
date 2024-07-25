@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smoqdev.mploi"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,6 +32,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "92a5aff0-b22e-43ad-a5c7-2822a81e3e4b"
+      }
     }
   }
 }
