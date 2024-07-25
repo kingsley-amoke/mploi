@@ -4,10 +4,10 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import {Text} from 'react-native-paper';
+import {Avatar, Text} from 'react-native-paper';
 import React from "react";
 import { Link, useRouter } from "expo-router";
-import { useChatStore} from "@/src/state/store";
+import { useChatStore, useUserStore} from "@/src/state/store";
 import { Ionicons } from "@expo/vector-icons";
 import { DocumentData } from "firebase/firestore";
 
@@ -15,10 +15,11 @@ const index = () => {
   
   const router = useRouter();
 
-  const {chats} = useChatStore()
+  const {chats} = useChatStore();
+
 
   return (
-    <View style={{ flex: 1, marginTop: 60 }}>
+    <View style={{ flex: 1}}>
       <SafeAreaView>
         <ScrollView style={{ paddingHorizontal: 20, paddingVertical: 20 }}>
           <View>
@@ -67,6 +68,20 @@ const index = () => {
 };
 
 const MessageCard = ({ room }: {room: DocumentData}) => {
+  
+  const {user} = useUserStore();
+
+  const chatName =  user?._id === room.client._id ? room.serviceProvider.firstName +
+  " " +
+  room.serviceProvider.lastName : room.client.firstName +
+  " " +
+  room.client.lastName;
+
+  const chatImage = user?._id === room.client._id ? room.serviceProvider.image : room.client.image;
+
+  const lastMessageId = Object.keys(room?.messages).pop()!;
+
+  const lastMessage = room?.messages[lastMessageId];
 
 
   return (
@@ -82,14 +97,26 @@ const MessageCard = ({ room }: {room: DocumentData}) => {
           marginBottom: 20,
         }}
       >
+        <View style={{flexDirection:'row', gap:20}}>
+          <Avatar.Image source={{uri: chatImage}} size={60}/>
         <View style={{ alignItems: "flex-start", justifyContent: "center" }}>
-          <Text style={{ fontWeight: "bold", textTransform: "capitalize" }}>
-            {room.serviceProvider.firstName}
+          <Text style={{ fontWeight: "bold", textTransform: "capitalize", fontSize:20 }}>
+            {chatName}
           </Text>
-          {/* <Text>test</Text> */}
-          <Text>{room.serviceProvider.firstName}</Text>
+          <Text >{lastMessage?.text}</Text>
         </View>
-        <Text style={{ fontWeight: "bold" }}>{room.serviceProvider.location.lga}</Text>
+        </View>
+        <View>
+          <Text>
+
+        {new Date(lastMessage?.timeStamp).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        })}
+        </Text>
+        </View>
+       
       </TouchableOpacity>
     </Link>
   );

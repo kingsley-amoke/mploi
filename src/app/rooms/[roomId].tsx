@@ -6,135 +6,128 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { TextInput, Text } from "react-native-paper";
+import { TextInput, Text, Avatar } from "react-native-paper";
 import React, { useLayoutEffect, useRef, useState } from "react";
-import {
-  Entypo,
-  FontAwesome,
-} from "@expo/vector-icons";
-import {
-  DocumentData,
-} from "firebase/firestore";
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { DocumentData } from "firebase/firestore";
 import { realtimeDB } from "@/src/utils/firebaseConfig";
-import { useLocalSearchParams} from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 
 import { useChatStore, useUserStore } from "@/src/state/store";
 import { onValue, ref, set, serverTimestamp } from "firebase/database";
-
+import useTheme from "@/src/hooks/useTheme";
+import { Colors } from "@/src/constants/Colors";
 
 const Room = () => {
   const { roomId } = useLocalSearchParams();
 
-  const {user} = useUserStore();
-  const {chats} = useChatStore();
+  const navigation = useNavigation();
 
-  const room = chats.filter((chat) => chat._id === roomId)[0]
+  const { colorScheme } = useTheme();
+
+  const iconColor = colorScheme === "dark" ? "white" : "black";
+
+  const placeholderColor =
+  colorScheme === "dark"
+    ? Colors.dark.onSurfaceDisabled
+    : Colors.light.onSurfaceDisabled;
+
+    const bgColor =
+    colorScheme === "dark"
+      ? Colors.dark.backdrop
+      : Colors.light.backdrop;
+
+  const { user } = useUserStore();
+  const { chats } = useChatStore();
+
+  const room = chats.filter((chat) => chat._id === roomId)[0];
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<DocumentData[]>([]);
 
-
   const sendMessage = async () => {
-      const id = `${Date.now()}`;
-      const timeStamp = serverTimestamp();
+    const id = `${Date.now()}`;
+    const timeStamp = serverTimestamp();
 
-      const data = {
-        _id: id,
-        roomId: roomId,
-        text: message,
-        senderId: user?._id,
-        timeStamp: timeStamp
-        
-      }
-      set(ref(realtimeDB, "chats/" + roomId + "/messages/" + id), data).then(() => setMessage(''))
-  
+    const data = {
+      _id: id,
+      roomId: roomId,
+      text: message,
+      senderId: user?._id,
+      timeStamp: timeStamp,
+    };
+    set(ref(realtimeDB, "chats/" + roomId + "/messages/" + id), data).then(() =>
+      setMessage("")
+    );
   };
 
-  const fetchRoomMessages = ( ) => {
-    const chatRef = ref(realtimeDB, 'chats/' + roomId + '/messages');
+  const fetchRoomMessages = () => {
+    const chatRef = ref(realtimeDB, "chats/" + roomId + "/messages");
     onValue(chatRef, (snapshot) => {
       const data = snapshot.val();
 
-      if(!data) return
-      const myData = Object.keys(data).map(key => {
+      if (!data) return;
+      const myData = Object.keys(data).map((key) => {
         return data[key];
-    })
-    
-    setMessages(myData)
-    
+      });
+
+      setMessages(myData);
     });
-  }
+  };
+
+  const chatName = user?._id === room.client._id ? room.serviceProvider.firstName +
+  " " +
+  room.serviceProvider.lastName : room.client.firstName +
+  " " +
+  room.client.lastName;
+
+  const chatImage = user?._id === room.client._id ? room.serviceProvider.image : room.client.image;
 
 
+  const ChatHeader = () => {
+    return (
+      <View
+        style={{
+          backgroundColor: bgColor,
+          flexDirection: "row",
+          height: 100,
+          alignItems: "flex-end",
+          gap: 40,
+          paddingBottom: 15,
+          paddingLeft: 10,
+        }}
+      >
+        <Ionicons
+          name="chevron-back"
+          size={30}
+          color={iconColor}
+          onPress={() => navigation.goBack()}
+        />
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+          <Avatar.Image
+            source={{ uri: chatImage }}
+            size={35}
+          />
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+            {chatName}
+          </Text>
+        </View>
+      </View>
+    );
+  };
 
   useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => <ChatHeader />,
+    });
 
-    fetchRoomMessages()
-  
-    
+    fetchRoomMessages();
   }, [roomId]);
 
   return (
-
     <View style={{ flex: 1 }}>
       <View
         style={{
-         
-          paddingHorizontal: 10,
-          paddingVertical: 10,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: 10,
-            paddingVertical: 15,
-          }}
-        >
-         
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            
-            <View>
-              <Text
-                style={{
-                  color: "#ddd",
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  textTransform: "capitalize",
-                }}
-              >
-                {/* {room && room.name.length > 36
-                  ? `${room.chatName.slice(0, 36)}..`
-                  : room?.name} */}
-                  tht
-                  
-              </Text>
-              <Text
-                style={{
-                  color: "#ddd",
-                  textTransform: "capitalize",
-                  fontWeight: "bold",
-                }}
-              >
-                {room?.serviceProvider.firstName}
-              </Text>
-            </View>
-          </View>
-
-        </View>
-      </View>
-      <View
-        style={{
-          
           paddingHorizontal: 5,
           paddingVertical: 8,
           borderRadius: 30,
@@ -144,127 +137,130 @@ const Room = () => {
         }}
       >
         <KeyboardAvoidingView
-          style={{ flex: 1, marginBottom:20 }}
+          style={{ flex: 1, marginBottom: 20 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          
         >
           <>
-             <ScrollView showsVerticalScrollIndicator={false}  style={{paddingBottom:100}}>
-                  {messages && messages?.map((msg: DocumentData, index: number) =>
-                  
-                    msg.senderId === user?._id ? (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={{ paddingBottom: 100 }}
+            >
+              {messages &&
+                messages?.map((msg: DocumentData, index: number) =>
+                  msg.senderId === user?._id ? (
+                    <View
+                      style={{
+                        margin: 1,
+                        alignSelf: "flex-end",
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                        borderTopRightRadius: 20,
+                        borderBottomRightRadius: 1,
+                        borderTopLeftRadius: 20,
+                        borderBottomLeftRadius: 20,
+
+                        position: "relative",
+                        marginBottom: 20,
+                      }}
+                      key={index}
+                    >
+                      <View>
+                        <Text
+                          style={{
+                            fontWeight: "bold",
+                            fontSize: 20,
+                          }}
+                        >
+                          {msg.text}
+                        </Text>
+                      </View>
                       <View
                         style={{
-                          margin: 1,
                           alignSelf: "flex-end",
-                          paddingHorizontal: 10,
-                          paddingVertical: 5,
-                          borderTopRightRadius: 20,
-                          borderBottomRightRadius: 1,
-                          borderTopLeftRadius: 20,
-                          borderBottomLeftRadius: 20,
-                         
-                          position: "relative",
-                          marginBottom:20
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 5,
                         }}
-                        key={index}
                       >
-                        <View>
+                        {msg?.timeStamp && (
                           <Text
                             style={{
                               fontWeight: "bold",
-                              fontSize: 20,
-                             
+                              fontSize: 10,
                             }}
                           >
-                            {msg.text}
-                            
+                            {new Date(msg?.timeStamp).toLocaleTimeString(
+                              "en-US",
+                              {
+                                hour: "numeric",
+                                minute: "numeric",
+                                hour12: true,
+                              }
+                            )}
                           </Text>
-                        </View>
-                        <View style={{ alignSelf: "flex-end" }}>
-                          {msg?.timeStamp&& (
-                            <Text
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: 10,
-                                
-                              }}
-                            >
-                              {new Date(msg?.timeStamp).toLocaleTimeString("en-US", {
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                    hour12: true,
-                                  })}
-
-                              
-                            </Text>
-                          )}
-                         
-                        </View>
+                        )}
+                        <Text>
+                          <Ionicons name="checkmark-done-outline" size={15} />
+                        </Text>
                       </View>
-                    ) : (
+                    </View>
+                  ) : (
+                    <View
+                      key={index}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
+                        alignSelf: "flex-start",
+                      }}
+                    >
                       <View
-                        key={index}
                         style={{
                           flexDirection: "row",
+                          justifyContent: "center",
                           alignItems: "center",
-                          justifyContent: "flex-start",
-                          alignSelf: "flex-start",
+                          gap: 10,
+                          marginBottom: 20,
                         }}
                       >
                         <View
                           style={{
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            gap: 10,
-                            marginBottom: 20,
+                            margin: 1,
+                            paddingHorizontal: 20,
+                            paddingVertical: 5,
+                            borderTopLeftRadius: 20,
+                            borderBottomLeftRadius: 1,
+                            borderTopRightRadius: 20,
+                            borderBottomRightRadius: 20,
+
+                            position: "relative",
                           }}
                         >
-                          
-                           <View
-                            style={{
-                              margin: 1,
-                              paddingHorizontal: 20,
-                              paddingVertical: 5,
-                              borderTopLeftRadius: 20,
-                              borderBottomLeftRadius: 1,
-                              borderTopRightRadius: 20,
-                              borderBottomRightRadius: 20,
-                              
-                              position: "relative",
-                            }}
-                          >
-                            <View>
-                              <Text
-                                style={{ fontWeight: "bold", fontSize: 20 }}
-                              >
-                                {msg.text}
-                                
-                              </Text>
-                            </View>
-                            <View style={{ alignSelf: "flex-end" }}>
-                              {msg?.timeStamp && (
-                                <Text
-                                  style={{ fontWeight: "300", fontSize: 10 }}
-                                >
-                                  {new Date(msg?.timeStamp).toLocaleTimeString("en-US", {
+                          <View>
+                            <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                              {msg.text}
+                            </Text>
+                          </View>
+                          <View style={{ alignSelf: "flex-end" }}>
+                            {msg?.timeStamp && (
+                              <Text style={{ fontWeight: "300", fontSize: 10 }}>
+                                {new Date(msg?.timeStamp).toLocaleTimeString(
+                                  "en-US",
+                                  {
                                     hour: "numeric",
                                     minute: "numeric",
                                     hour12: true,
-                                  })}
-                                  
-                                </Text>
-                              )}
-                             
-                            </View>
+                                  }
+                                )}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
-                    )
-                  )}
-              
-            </ScrollView> 
+                    </View>
+                  )
+                )}
+            </ScrollView>
 
             <View
               style={{
@@ -274,34 +270,21 @@ const Room = () => {
                 paddingHorizontal: 10,
                 marginHorizontal: 20,
                 marginBottom: 20,
-                marginTop:20
+                marginTop: 20,
               }}
             >
-              <View
-                style={{
-                  backgroundColor: "#ddd",
-                  borderRadius: 20,
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <TouchableOpacity >
-                  <Entypo name="emoji-happy" size={24} color="#555" />
-                </TouchableOpacity>
+              
+               
 
                 <TextInput
-                mode="outlined"
-                  style={{ flex: 1, fontWeight: "bold", paddingLeft: 10 }}
+                  mode="outlined"
+                  style={{ flex: 1, fontWeight: "bold", paddingLeft: 10, borderRadius:50 }}
                   placeholder="Type here..."
-                  placeholderTextColor={"#999"}
+                  placeholderTextColor={placeholderColor}
                   value={message}
                   onChangeText={(text) => setMessage(text)}
-                  
                 />
-              </View>
+             
               <TouchableOpacity
                 style={{ paddingHorizontal: 10 }}
                 onPress={sendMessage}
@@ -313,8 +296,7 @@ const Room = () => {
         </KeyboardAvoidingView>
       </View>
     </View>
-  ) 
-
+  );
 };
 
 export default Room;
