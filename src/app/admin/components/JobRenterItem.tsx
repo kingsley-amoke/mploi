@@ -6,7 +6,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Divider, Text } from "react-native-paper";
 
-export const JobRenderItem = ({ item }: { item: DocumentData }) => {
+export const JobRenderItem = ({ item, iconColor }: { item: DocumentData, iconColor: string }) => {
   const date = parseInt(item._id);
 
   const jobDate = new Date(date).getTime();
@@ -19,13 +19,13 @@ export const JobRenderItem = ({ item }: { item: DocumentData }) => {
     <View style={{ marginVertical: 20, paddingHorizontal: 30 }}>
       <Link
         href={{
-          pathname: `/jobs/${item._id}`,
-          params: { id: item._id },
+          pathname: `admin/jobs/${item._id}`,
+          
         }}
         asChild
       >
         <TouchableOpacity>
-          <View style={{ flexDirection: "row-reverse" }}>
+          <View style={{ flexDirection: "row-reverse", justifyContent:'space-between', alignItems:'center' }}>
             <Text style={styles.jobTime}>
               Posted: {daysAgo < 1 ? "Today" : daysAgo + " days ago"}
             </Text>
@@ -59,7 +59,7 @@ export const JobRenderItem = ({ item }: { item: DocumentData }) => {
             <Text style={{ fontSize: 20 }}>{item.company}</Text>
           </View>
           <View style={styles.jobLocation}>
-            <Ionicons name="location-outline" size={20} color="white" />
+            <Ionicons name="location-outline" size={20} color={iconColor} />
             <Text>{item.location}</Text>
           </View>
         </TouchableOpacity>

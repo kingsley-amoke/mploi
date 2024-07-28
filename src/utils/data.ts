@@ -36,7 +36,7 @@ export const getBlobFroUri = async (uri:string) => {
       link: "https://whatsapp.com/channel/0029VadDAer5a23uDggtCK3d",
       color: "green",
     },
-    twitter: { link: "https://x.com/MPLOi_Global?t=4Ct7lflX8xb-LtK-lN0emg&s=09", color: "#07143F" },
+    twitter: { link: "https://x.com/MPLOi_Global?t=4Ct7lflX8xb-LtK-lN0emg&s=09", color: "#000" },
     youtube: { link: "https://youtube.com/@mploi_global?si=59YXxkVlqC75-LM3", color: "red" },
   };
   

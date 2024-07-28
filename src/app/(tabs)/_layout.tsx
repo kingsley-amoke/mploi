@@ -1,43 +1,78 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { Tabs } from 'expo-router';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import CustomHeader from '@/src/components/CustomHeader';
-
+import { StyleSheet, Text, View } from "react-native";
+import { Tabs } from "expo-router";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import CustomHeader from "@/src/components/CustomHeader";
+import { useUserStore } from "@/src/state/store";
 
 const TabLayout = () => {
+
+    const {user} = useUserStore();
   return (
-    <Tabs>
-        <Tabs.Screen name='index' options={{
-            title: 'Home',
-            tabBarIcon: ({color}) => <Feather name="home" size={24} color={color} />,
-            header: () => <CustomHeader title='Home'/>
+    <Tabs
+      screenOptions={{
+        headerTitleAlign: "center",
+        tabBarStyle: { height: 70 },
+        tabBarLabelStyle: { marginBottom: 10, fontSize: 14 },
+        tabBarIconStyle: { fontSize: 40 },
+        
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Home",
 
-        }}/>
-        <Tabs.Screen name='messages' options={{
-            title: 'Messages',
-            tabBarIcon: ({color}) => <Feather name="message-square" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="home" size={size} color={color} />
+          ),
 
-        }}/>
-        <Tabs.Screen name='career' options={{
-            title: "Career",
-            tabBarIcon: ({color}) => <MaterialCommunityIcons name="briefcase-clock-outline" size={24} color={color} />
-
-        }}/>
-        <Tabs.Screen name='shop' options={{
-            title: 'Shop',
-            tabBarIcon: ({color}) => <Feather name="shopping-bag" size={24} color={color} />
-
-        }}/>
-        <Tabs.Screen name='settings' options={{
-            title: 'Settings',
-            tabBarIcon: ({color}) => <Feather name="settings" size={24} color={color} />,
-            header: () => <CustomHeader title='Settings'/>
-
-        }}/>
+          header: () => <CustomHeader title={`Hello ${user ? user?.firstName : 'MPLOir'}!`} />,
+        }}
+      />
+      <Tabs.Screen
+        name="messages"
+        options={{
+          title: "Messages",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="message" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="career"
+        options={{
+          title: "Career",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="briefcase-clock-outline"
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="shop"
+        options={{
+          title: "Shop",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="shopping" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="settings" size={size} color={color} />
+          ),
+        }}
+      />
     </Tabs>
-  )
-}
+  );
+};
 
 export default TabLayout;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

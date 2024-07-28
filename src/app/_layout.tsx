@@ -150,9 +150,9 @@ export default function RootLayout() {
             }}
           />
            <Stack.Screen
-            name="admin/jobs/add"
+            name="admin/jobs"
             options={{
-              title: 'Add Job',
+              headerShown: false
             }}
           />
 

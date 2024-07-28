@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Appbar } from 'react-native-paper';
 import useTheme from '../hooks/useTheme';
 import { useRouter } from 'expo-router';
+import { Colors } from '../constants/Colors';
 
 const CustomHeader = ({title}: {title: string}) => {
 
@@ -20,7 +21,7 @@ const CustomHeader = ({title}: {title: string}) => {
 
   return (
     <Appbar.Header>
-      {/* <Appbar.BackAction onPress={_goBack} /> */}
+      
       <Appbar.Content title={title} />
       <Appbar.Action icon="magnify" onPress={_handleSearch} />
       <Feather name='user' color={color} size={24} onPress={() => router.push('/profile')}/>

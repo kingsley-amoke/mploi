@@ -28,14 +28,15 @@ const Room = () => {
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
   const placeholderColor =
-  colorScheme === "dark"
-    ? Colors.dark.onSurfaceDisabled
-    : Colors.light.onSurfaceDisabled;
-
-    const bgColor =
     colorScheme === "dark"
-      ? Colors.dark.backdrop
-      : Colors.light.backdrop;
+      ? Colors.dark.onSurfaceDisabled
+      : Colors.light.onSurfaceDisabled;
+
+  const bgColor =
+    colorScheme === "dark" ? Colors.dark.backdrop : Colors.light.backdrop;
+
+  const userChatBg = Colors.light.primary;
+  const clientChatBg = Colors.light.secondary;
 
   const { user } = useUserStore();
   const { chats } = useChatStore();
@@ -75,14 +76,15 @@ const Room = () => {
     });
   };
 
-  const chatName = user?._id === room.client._id ? room.serviceProvider.firstName +
-  " " +
-  room.serviceProvider.lastName : room.client.firstName +
-  " " +
-  room.client.lastName;
+  const chatName =
+    user?._id === room.client._id
+      ? room.serviceProvider.firstName + " " + room.serviceProvider.lastName
+      : room.client.firstName + " " + room.client.lastName;
 
-  const chatImage = user?._id === room.client._id ? room.serviceProvider.image : room.client.image;
-
+  const chatImage =
+    user?._id === room.client._id
+      ? room.serviceProvider.image
+      : room.client.image;
 
   const ChatHeader = () => {
     return (
@@ -104,13 +106,8 @@ const Room = () => {
           onPress={() => navigation.goBack()}
         />
         <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-          <Avatar.Image
-            source={{ uri: chatImage }}
-            size={35}
-          />
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            {chatName}
-          </Text>
+          <Avatar.Image source={{ uri: chatImage }} size={35} />
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{chatName}</Text>
         </View>
       </View>
     );
@@ -149,59 +146,80 @@ const Room = () => {
                 messages?.map((msg: DocumentData, index: number) =>
                   msg.senderId === user?._id ? (
                     <View
-                      style={{
-                        margin: 1,
-                        alignSelf: "flex-end",
-                        paddingHorizontal: 10,
-                        paddingVertical: 5,
-                        borderTopRightRadius: 20,
-                        borderBottomRightRadius: 1,
-                        borderTopLeftRadius: 20,
-                        borderBottomLeftRadius: 20,
-
-                        position: "relative",
-                        marginBottom: 20,
-                      }}
                       key={index}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "flex-end",
+                        alignSelf: "flex-end",
+                      }}
                     >
-                      <View>
-                        <Text
-                          style={{
-                            fontWeight: "bold",
-                            fontSize: 20,
-                          }}
-                        >
-                          {msg.text}
-                        </Text>
-                      </View>
                       <View
                         style={{
-                          alignSelf: "flex-end",
                           flexDirection: "row",
+                          justifyContent: "center",
                           alignItems: "center",
-                          gap: 5,
+                          gap: 10,
+                          marginBottom: 20,
+                          backgroundColor: userChatBg,
+                          borderRadius: 20,
+                          borderBottomRightRadius: 1,
                         }}
+                        key={index}
                       >
-                        {msg?.timeStamp && (
-                          <Text
+                        <View
+                          style={{
+                            margin: 1,
+                            alignSelf: "flex-end",
+                            paddingHorizontal: 10,
+                            paddingVertical: 5,
+
+                            position: "relative",
+                          }}
+                        >
+                          <View>
+                            <Text
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: 20,
+                              }}
+                            >
+                              {msg.text}
+                            </Text>
+                          </View>
+                          <View
                             style={{
-                              fontWeight: "bold",
-                              fontSize: 10,
+                              alignSelf: "flex-end",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              gap: 5,
                             }}
                           >
-                            {new Date(msg?.timeStamp).toLocaleTimeString(
-                              "en-US",
-                              {
-                                hour: "numeric",
-                                minute: "numeric",
-                                hour12: true,
-                              }
+                            {msg?.timeStamp && (
+                              <Text
+                                style={{
+                                  fontWeight: "bold",
+                                  fontSize: 10,
+                                }}
+                              >
+                                {new Date(msg?.timeStamp).toLocaleTimeString(
+                                  "en-US",
+                                  {
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                    hour12: true,
+                                  }
+                                )}
+                              </Text>
                             )}
-                          </Text>
-                        )}
-                        <Text>
-                          <Ionicons name="checkmark-done-outline" size={15} />
-                        </Text>
+                            <Text>
+                              <Ionicons
+                                name="checkmark-done-outline"
+                                size={15}
+                              />
+                            </Text>
+                          </View>
+                        </View>
                       </View>
                     </View>
                   ) : (
@@ -221,6 +239,9 @@ const Room = () => {
                           alignItems: "center",
                           gap: 10,
                           marginBottom: 20,
+                          backgroundColor: clientChatBg,
+                          borderRadius: 20,
+                          borderBottomLeftRadius: 1,
                         }}
                       >
                         <View
@@ -228,10 +249,6 @@ const Room = () => {
                             margin: 1,
                             paddingHorizontal: 20,
                             paddingVertical: 5,
-                            borderTopLeftRadius: 20,
-                            borderBottomLeftRadius: 1,
-                            borderTopRightRadius: 20,
-                            borderBottomRightRadius: 20,
 
                             position: "relative",
                           }}
@@ -273,18 +290,20 @@ const Room = () => {
                 marginTop: 20,
               }}
             >
-              
-               
+              <TextInput
+                mode="outlined"
+                style={{
+                  flex: 1,
+                  fontWeight: "bold",
+                  paddingLeft: 10,
+                  borderRadius: 50,
+                }}
+                placeholder="Type here..."
+                placeholderTextColor={placeholderColor}
+                value={message}
+                onChangeText={(text) => setMessage(text)}
+              />
 
-                <TextInput
-                  mode="outlined"
-                  style={{ flex: 1, fontWeight: "bold", paddingLeft: 10, borderRadius:50 }}
-                  placeholder="Type here..."
-                  placeholderTextColor={placeholderColor}
-                  value={message}
-                  onChangeText={(text) => setMessage(text)}
-                />
-             
               <TouchableOpacity
                 style={{ paddingHorizontal: 10 }}
                 onPress={sendMessage}
