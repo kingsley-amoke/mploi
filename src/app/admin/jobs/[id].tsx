@@ -9,6 +9,9 @@ import {
   import { SafeAreaView } from "react-native-safe-area-context";
   import { Ionicons } from "@expo/vector-icons";
 
+  import * as MailComposer from 'expo-mail-composer';
+
+
   import {
     useJobsStore,
     useUserStore,
@@ -36,6 +39,28 @@ import { socialLinks } from "@/src/utils/data";
     const today = new Date(Date.now()).getTime();
   
     const daysAgo = Math.floor((today - jobDate) / (1000 * 60 * 60 * 24));
+
+
+    //TODO: implement apply for job
+
+    const handleApply = () => {
+      MailComposer.isAvailableAsync().then((value) => {
+        if(value){
+
+
+          const options:MailComposer.MailComposerOptions = {
+            recipients: ['klordbravo@gmail.com'],
+            body: 'Text mail',
+            subject: 'Test mail',
+            attachments: []
+          }
+
+          MailComposer.composeAsync(options).then((res) => {
+            console.log(res);
+          })
+        }
+      })
+    }
 
 
     useEffect(() => {
@@ -80,7 +105,7 @@ import { socialLinks } from "@/src/utils/data";
         <Text>Note: {job.others}</Text>
       </View>
       <View style={{ marginVertical: 10 }}>
-        <Button mode="contained"  onPress={() => console.log('job applied')}>Apply</Button>
+        <Button mode="contained"  onPress={handleApply}>Apply</Button>
       </View>
       <View style={{ marginVertical: 10 }}>
         <Text style={{ fontSize: 16, fontWeight: "bold", marginVertical: 10 }}>
