@@ -4,10 +4,12 @@ import  Login  from "@/src/components/Login";
 import { useRouter } from "expo-router";
 import * as Google from "expo-auth-session/providers/google";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
-import { auth } from "@/src/utils/firebaseConfig";
+import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
 import { fetchUser, syncUser } from "@/src/utils/userActions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUserStore } from "@/src/state/store";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { DBUser } from "@/src/utils/types";
 
 const androidClientId = process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID as string;
 const iosClientId = process.env.EXPO_PUBLIC_IOS_CLIENT_ID as string;
@@ -30,28 +32,61 @@ const LoginPage = () => {
       signInWithCredential(auth, credentials).then(async (userCredentials) => {
         const user = userCredentials.user;
 
-        await AsyncStorage.setItem("@user", JSON.stringify(user)).then(
-          async () => {
-            const syncedUser = await fetchUser(user.email!);
-            if (syncedUser.email) {
-              
-              storeUser(syncedUser);
-              router.replace("/");
-            } else {
-              const userData = {
-                firstName: user.displayName?.split(" ")[0]!,
-                lastName: user.displayName?.split(" ")[1]!,
-                image: user.photoURL!,
-                email: user.email!,
-                phone: user.phoneNumber!,
-                password: "",
-                referee: "",
-              };
+        const userRef = doc(firestoreDB, "users", user.uid);
 
-              await syncUser(userData);
+        getDoc(userRef).then((doc) => {
+          if(doc.data()){
+
+            storeUser(doc.data()!);
+            AsyncStorage.setItem("@user", JSON.stringify(doc.data()));
+            router.replace("/");
+          }else{
+
+            const newUser: DBUser = {
+              _id: user.uid,
+              email: user.email!,
+              firstName: "",
+              lastName: "",
+              image: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+              address:"",
+              nin: "",
+              status: {isVIP: false, isVerified: false},
+              referee: "",
+              phone: "",
+              phoneVerified: false,
+              createdAt: Date.now(),
+              bio: "",
+              location: {country: "",
+                state: "",
+                lga: "",},
+              walletBalance: "",
+              referralBalance: "",
+              referral: [""],
+              bankDetails: {accountName: "", accountNumber: "", bank:""},
+              isAdmin: false,
+              
             }
+
+            // const userRef = doc(firestoreDB, "users", newUser._id)
+
+            setDoc(userRef, newUser).then(async() => {
+
+             
+              const docSnap = await getDoc(userRef);
+
+              storeUser(docSnap.data()!)
+              AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()))
+              router.push('profile/edit');
+            })
           }
-        );
+        });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(error)
+
+     
       });
     }
   }, [response]);

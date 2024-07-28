@@ -150,6 +150,18 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
+           <Stack.Screen
+            name="admin/index"
+            options={{
+              title: 'Admin Dashboard',
+            }}
+          />
+           <Stack.Screen
+            name="admin/jobs/add"
+            options={{
+              title: 'Add Job',
+            }}
+          />
 
           <Stack.Screen
             name="profile/edit"

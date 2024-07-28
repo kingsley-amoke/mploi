@@ -33,7 +33,6 @@ export interface guarantorTypes {
 }
 
 export interface jobTypes {
-  _v: number,
   _id: string;
   title: string;
   description: string;

@@ -9,7 +9,7 @@ import { realtimeDB } from '../utils/firebaseConfig'
 import { ref, set } from 'firebase/database'
 import { useRouter } from 'expo-router'
 
-const BookService = ({user}: {user: DocumentData}) => {
+const BookService = ({user}: {user: DocumentData | null}) => {
 
     const router = useRouter();
 
@@ -67,17 +67,35 @@ const BookService = ({user}: {user: DocumentData}) => {
             // router.push(`/rooms/${existingRoom[0]._id}`);
             setApplying(false);
           } else {
-            createRoom(loggedUser, user);
+            createRoom(loggedUser, user!);
             setApplying(false);
           }
     
           setApplying(false);
         
       }
+  return  loggedUser?._id === user?._id && !loggedUser?.isAdmin ? (
 
-  return (
-    <Button
+        <Button
         style={{
+        borderColor: borderColor,
+        borderWidth: 1,
+      paddingVertical: 10,
+      marginVertical: 10,
+      marginBottom: 40,
+      backgroundColor: bgColor,
+      
+    }}
+    onPress={() => router.push('/admin')}
+    >
+      
+    <Text variant="labelLarge">Admin Dashboard</Text>
+  
+</Button>
+) :(
+
+  <Button
+  style={{
           borderColor: borderColor,
           borderWidth: 1,
           paddingVertical: 10,
@@ -87,16 +105,16 @@ const BookService = ({user}: {user: DocumentData}) => {
 
         }}
         onPress={handleBookService}
-      >{applying ? (
-
-        <Text variant="labelLarge">Book Service</Text>
-      ) : (
-        <Text variant="labelLarge">Please Wait</Text>
+        >{!applying ? (
+          
+          <Text variant="labelLarge">Book Service</Text>
+        ) : (
+          <Text variant="labelLarge">Please Wait</Text>
       )
 
-      }
-      </Button>
+    }
+    </Button>
   )
-}
+    }
 
 export default BookService
