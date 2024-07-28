@@ -75,7 +75,7 @@ const add = () => {
 
     const handlePostJob = async() => {
 
-        const id = Date.now().toLocaleString()
+        const id = Date.now().toString();
 
         const _doc = {
             _id: id,
