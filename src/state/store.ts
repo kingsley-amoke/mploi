@@ -21,9 +21,9 @@ export interface UsersStore {
 }
 
 export interface JobStore {
-  jobs: jobTypes[];
-  storeJobs: (jobs: jobTypes[]) => void;
-  addJob: (job: jobTypes) => void;
+  jobs: DocumentData[];
+  storeJobs: (jobs: DocumentData[]) => void;
+  addJob: (job: DocumentData) => void;
 }
 
 export interface CareerStore {

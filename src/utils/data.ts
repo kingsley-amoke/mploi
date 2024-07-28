@@ -122,3 +122,15 @@ export const getBlobFroUri = async (uri:string) => {
       });
       return services
     }
+
+    export const getJobs = async()=>{
+      const serviceRef = collection(firestoreDB, "jobs");
+
+      const jobs: DocumentData[] = [];
+  
+      const querySnapshot = await getDocs(serviceRef);
+      querySnapshot.forEach((doc) => {
+        jobs.push(doc.data());
+      });
+      return jobs
+    }

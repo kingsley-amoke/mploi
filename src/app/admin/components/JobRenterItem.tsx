@@ -1,9 +1,8 @@
 
-import { jobTypes } from "@/src/utils/types";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import { DocumentData } from "firebase/firestore";
 import {
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -11,9 +10,9 @@ import {
 
 import {Text} from 'react-native-paper'
 
-export const JobRenderItem = (item: jobTypes,) => {
+export const JobRenderItem = (item: DocumentData,) => {
 
-  const date = item.date!
+  const date = item._id
   
   const jobDate = new Date(date).getTime()
   
@@ -44,7 +43,7 @@ export const JobRenderItem = (item: jobTypes,) => {
           }}
         >
           <Text style={styles.jobSalary}>
-            Est. Pay: ₦{item.minPay} - ₦{item.maxPay}
+            {item.salary}
           </Text>
           <Text
             style={{
@@ -54,63 +53,17 @@ export const JobRenderItem = (item: jobTypes,) => {
              
             }}
           >
-            {item?.isOpen ? "Open" : "Close"}
+            {!item?.taken ? "Open" : "Close"}
           </Text>
-        </View>
-
-        <View
-          
-          style={styles.jobKeywords}
-        >
-          {[].map(category => (
-            <Text
-            style={{
-              
-              color: "white",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              borderRadius: 20,
-              marginVertical: 10,
-              textTransform: "uppercase",
-              fontSize: 10,
-            }}
-          >
-            {category}
-          </Text>
-          ))}
         </View>
         <View style={styles.employer}>
 
-          <Text style={{ fontSize: 20 }}>{item?.employer?.firstName + " " + item?.employer?.lastName[0]}</Text>
-          <View
-            style={{
-              flex: 1,
-              gap: 4,
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
-            <View style={{borderRadius: 50 }}>
-              {item?.employer?.status?.isVerified ? (
-                <Ionicons
-                  name="checkmark"
-                  size={15}
-                  style={{ color: "white", padding: 2 }}
-                />
-              ) : (
-                <Ionicons
-                  name="close"
-                  size={15}
-                  style={{ color: "white", padding: 2 }}
-                />
-              )}
-            </View>
- 
-          </View>
+          <Text style={{ fontSize: 20 }}>{item.company}</Text>
+         
         </View>
         <View style={styles.jobLocation}>
           <Ionicons name="location-outline" size={20} />
-          <Text>{item?.location?.lga}</Text>
+          <Text>{item.location}</Text>
         </View>
       </TouchableOpacity>
     </Link>

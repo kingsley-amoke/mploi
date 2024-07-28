@@ -28,15 +28,8 @@ import {
 import { fetchUser, getLoggedUser } from "../utils/userActions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
-import {
-  collection,
-  doc,
-  DocumentData,
-  getDoc,
-  getDocs,
-} from "firebase/firestore";
 import { firestoreDB, realtimeDB } from "../utils/firebaseConfig";
-import { getServices, getUser, getUsers } from "../utils/data";
+import { getJobs, getServices, getUser, getUsers } from "../utils/data";
 import { onValue, ref } from "firebase/database";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
@@ -114,10 +107,10 @@ export default function RootLayout() {
   //   storeUsers(users);
   // }
 
-  // const fetchAllRecruitments = async () => {
-  //   const recruitments = await fetchRecruitments();
-  //   console.log(recruitments)
-  // }
+  const fetchAllJobs = async () => {
+    const jobs = await getJobs();
+    storeJobs(jobs);
+  }
 
   useLayoutEffect(() => {
     checkLocalUser();
@@ -125,7 +118,7 @@ export default function RootLayout() {
     fetchAllChats()
     // fetchNotifications()
     fetchAllUsers()
-    // fetchAllRecruitments()
+    fetchAllJobs()
   }, []);
 
   return (
