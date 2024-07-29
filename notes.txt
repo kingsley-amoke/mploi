@@ -1,0 +1,3 @@
+shopr
+cleanup the app
+fix chat keyboard

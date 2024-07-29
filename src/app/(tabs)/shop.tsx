@@ -1,45 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { StyleSheet, View } from "react-native";
-
-
-import * as Location from 'expo-location';
+import { useUserStore } from "@/src/state/store";
+import { latitudeDelta, longitudeDelta } from "@/src/utils/data";
+import { Badge, Button, Text } from "react-native-paper";
+import Map from "@/src/components/Map";
+import { useRouter } from "expo-router";
 
 export default function Shop() {
 
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [errorMsg, setErrorMsg] = useState('');
+  const router = useRouter();
+  const { user } = useUserStore();
 
-  useEffect(() => {
-    (async () => {
-      
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
+  if (!user) return;
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
+ 
 
-  if(!location) return
-
-  const coords = {
-    latitude: location.coords.latitude,
-    longitude: location.coords.longitude,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  }
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        initialRegion={coords}
-      >
-        <Marker coordinate={coords} draggable/>
-      </MapView>
+     
+      {/* <Map user={user} />
+       */}
+
+       <Button mode="outlined" onPress={() => router.push(`/service/79FLxEvRtSaB772tdLivJInnITm2`)}>Book</Button>
 
     </View>
   );

@@ -1,13 +1,15 @@
 import Profile from "@/src/components/Profile";
 import { useUsersStore } from "@/src/state/store";
 import { fetchUserById } from "@/src/utils/data";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import React, { useLayoutEffect, useState } from "react";
 
 const UserProfile = () => {
   const { users } = useUsersStore();
   const navigation = useNavigation();
+  const router= useRouter();
 
   const { id } = useLocalSearchParams();
 
@@ -23,6 +25,15 @@ const UserProfile = () => {
       } else {
         navigation.setOptions({
           title: user?.firstName + " " + user?.lastName,
+          headerRight: () => (
+            <MaterialIcons
+            name="home"
+            color='white'
+            size={30}
+              style={{ paddingRight: 10 }}
+              onPress={() => router.replace('/')}
+           />
+          )
         });
         setUser(user);
       }

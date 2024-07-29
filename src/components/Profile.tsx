@@ -18,6 +18,7 @@ import AboutUser from "./AboutUser";
 import BookService from "./BookService";
 
 const Profile = ({ user }: { user: DocumentData | null }) => {
+  if(!user) return;
   const { colorScheme } = useTheme();
 
   const iconColor = colorScheme === "dark" ? "white" : "black";

@@ -68,6 +68,12 @@ export interface loacationTypes{
   lga: string,
 }
 
+export interface Coordinstes{
+  latitude: number,
+  longitude: number,
+
+}
+
 export interface DBUser {
   _id: string;
   address: string;
@@ -91,6 +97,7 @@ export interface DBUser {
   referee: string;
   phoneVerified: boolean;
   createdAt: Number;
+  coordinates: Coordinstes
 }
 
 export interface SyncUserTypes {

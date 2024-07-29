@@ -13,11 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { MaterialIcons as Icon, MaterialIcons } from "@expo/vector-icons";
-// import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
 import { useRouter } from "expo-router";
-import Button from "./Button";
 import { fetchAllBanks, validateAccountNumber } from "@/src/utils/paystack";
-import { ContactType, DBUser, serviceTypes } from "@/src/utils/types";
+import { serviceTypes } from "@/src/utils/types";
 import { useCategoryStore, useUserStore } from "@/src/state/store";
 import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
@@ -67,57 +65,6 @@ const EditProfile = () => {
 
   const [banks, setBanks] = useState();
 
-  const guarantors: ContactType[] = [];
-
-  //handles date selection
-
-  // const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
-  // const today = new Date();
-  // const startDate = getFormatedDate(
-  //   today.setDate(today.getDate() + 1),
-  //   "YYYY/MM/DD"
-  // );
-  // const [selectedStartDate, setSelectedStartDate] = useState("01/01/1990");
-  // const [startedDate, setStartedDate] = useState("12/12/2023");
-
-  // const handleChangeStartDate = (propDate) => {
-  //   setStartedDate(propDate);
-  // };
-
-  // const handleOnPressStartDate = () => {
-  //   setOpenStartDatePicker(!openStartDatePicker);
-  // };
-
-  //contact picker for guarantors
-
-  const getContact = async () => {
-    // on android we need to explicitly request for contacts permission and make sure it's granted
-    // before calling API methods
-    if (Platform.OS === "android") {
-      const request = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS
-      );
-
-      // denied permission
-      if (request === PermissionsAndroid.RESULTS.DENIED)
-        throw Error("Permission Denied");
-      // user chose 'deny, don't ask again'
-      else if (request === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN)
-        throw Error("Permission Denied");
-    }
-
-    // Here we are sure permission is granted for android or that platform is not android
-    // console.log("permitted");
-    // const selection = await selectContactPhone();
-    // if (!selection) {
-    //   return null;
-    // }
-
-    // let { contact, selectedPhone } = selection;
-    // console.log(`Selected ${selectedPhone.type} phone number ${selectedPhone.number} from ${contact.name}`);
-    // return selectedPhone.number;
-    // guarantors.push({ name: contact.name, phone: selectedPhone.number });
-  };
 
   const handleProfileImageSelection = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -150,14 +97,6 @@ const EditProfile = () => {
         });
     }
   };
-
-  // const fetchItems = async (active:boolean) => {
-  //   if (!active) return;
-  //   const items = await getServices();
-  //   setItems(items);
-  //   const res = await fetchAllBanks()
-  //   setBanks(res);
-  // };
 
   const validateUserBank = async () => {
     if (userBankName[0] === " " || userAccountNumber.length !== 10) {
@@ -228,70 +167,7 @@ const EditProfile = () => {
     // };
 
   };
-
-  //handles date selection
-
-  // function renderDatePicker() {
-  //   return (
-  //     <Modal
-  //       animationType="slide"
-  //       transparent={true}
-  //       visible={openStartDatePicker}
-  //     >
-  //       <View
-  //         style={{
-  //           flex: 1,
-  //           alignItems: "center",
-  //           justifyContent: "center",
-  //         }}
-  //       >
-  //         <View
-  //           style={{
-  //             margin: 20,
-  //             backgroundColor: COLORS.primary,
-  //             alignItems: "center",
-  //             justifyContent: "center",
-  //             borderRadius: 20,
-  //             padding: 35,
-  //             width: "90%",
-  //             shadowColor: "#000",
-  //             shadowOffset: {
-  //               width: 0,
-  //               height: 2,
-  //             },
-  //             shadowOpacity: 0.25,
-  //             shadowRadius: 4,
-  //             elevation: 5,
-  //           }}
-  //         >
-  //           <DatePicker
-  //             mode="calendar"
-  //             minimumDate={startDate}
-  //             selected={startedDate}
-  //             onDateChanged={handleChangeStartDate}
-  //             onSelectedChange={(date) => setSelectedStartDate(date)}
-  //             options={{
-  //               backgroundColor: COLORS.primary,
-  //               textHeaderColor: "#469ab6",
-  //               textDefaultColor: COLORS.white,
-  //               selectedTextColor: COLORS.white,
-  //               mainColor: "#469ab6",
-  //               textSecondaryColor: COLORS.white,
-  //               borderColor: "rgba(122,146,165,0.1)",
-  //             }}
-  //           />
-
-  //           <TouchableOpacity onPress={handleOnPressStartDate}>
-  //             <Text style={{ ...FONTS.body3, color: COLORS.white }}>Close</Text>
-  //           </TouchableOpacity>
-  //         </View>
-  //       </View>
-  //     </Modal>
-  //   );
-  // }
-
-  // const sortedItems = categories?.sort((a, b) => a.name.localeCompare(b.name));
-
+  
   const allStates = getStates();
 
   const lgas = getLGAsByState(state[0]);
@@ -304,6 +180,7 @@ const EditProfile = () => {
 
     getBanks();
   }, []);
+
 
   return (
     <KeyboardAvoidingView
@@ -354,6 +231,9 @@ const EditProfile = () => {
                 />
               </View>
             </TouchableOpacity>
+          </View>
+          <View>
+            <Text>Please update your profile to continue!</Text>
           </View>
           <Text
             style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
@@ -421,29 +301,6 @@ const EditProfile = () => {
                 editable={true}
               />
             </View>
-            {/* <View
-            style={{
-              flexDirection: "column",
-              marginBottom: 6,
-            }}
-          >
-            <Text style={{ ...FONTS.h4 }}>Date or Birth</Text>
-            <TouchableOpacity
-              onPress={handleOnPressStartDate}
-              style={{
-                height: 44,
-                width: "100%",
-                borderColor: COLORS.secondaryGray,
-                borderWidth: 1,
-                borderRadius: 4,
-                marginVertical: 6,
-                justifyContent: "center",
-                paddingLeft: 8,
-              }}
-            >
-              <Text>{selectedStartDate}</Text>
-            </TouchableOpacity>
-          </View> */}
           </View>
 
           <Text
@@ -554,49 +411,6 @@ const EditProfile = () => {
                 onChangeText={(value) => setNin(value)}
                 editable={true}
               />
-            </View>
-
-            <View
-              style={{
-                flexDirection: "column",
-                marginBottom: 6,
-              }}
-            >
-              <Text>Guarantor 1</Text>
-              <Button
-                style={{
-                  width: "100%",
-
-                  borderWidth: 1,
-                  borderRadius: 4,
-                  marginVertical: 6,
-                  justifyContent: "center",
-                  paddingLeft: 8,
-                }}
-                title="Select"
-                onPress={() => getContact()}
-              ></Button>
-            </View>
-            <View
-              style={{
-                flexDirection: "column",
-                marginBottom: 6,
-              }}
-            >
-              <Text>Guarantor 2</Text>
-              <Button
-                style={{
-                  width: "100%",
-
-                  borderWidth: 1,
-                  borderRadius: 4,
-                  marginVertical: 6,
-                  justifyContent: "center",
-                  paddingLeft: 8,
-                }}
-                title="Select"
-                onPress={() => getContact()}
-              ></Button>
             </View>
           </View>
           <Text

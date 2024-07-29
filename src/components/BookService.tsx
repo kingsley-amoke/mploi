@@ -1,120 +1,112 @@
-import { StyleSheet,  View } from 'react-native'
-import React, { useState } from 'react'
-import { DocumentData } from 'firebase/firestore'
-import { Button, Text, } from 'react-native-paper'
-import { Colors } from '../constants/Colors'
-import useTheme from '../hooks/useTheme'
-import { useChatStore, useUserStore } from '../state/store'
-import { realtimeDB } from '../utils/firebaseConfig'
-import { ref, set } from 'firebase/database'
-import { useRouter } from 'expo-router'
+import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { DocumentData } from "firebase/firestore";
+import { Button, Text } from "react-native-paper";
+import { Colors } from "../constants/Colors";
+import useTheme from "../hooks/useTheme";
+import { useChatStore, useUserStore } from "../state/store";
+import { useRouter } from "expo-router";
 
-const BookService = ({user}: {user: DocumentData | null}) => {
+import { onValue, ref } from "firebase/database";
+import { realtimeDB } from "../utils/firebaseConfig";
+import { handleRequestService } from "../utils/data";
 
-    const router = useRouter();
+const BookService = ({ user }: { user: DocumentData }) => {
 
-    const {user:loggedUser} = useUserStore();
-    const { chats } = useChatStore();
 
-    const { colorScheme } = useTheme();
+  const router = useRouter();
 
-    const [applying, setApplying] = useState(false);
-  
-    const borderColor =
-      colorScheme === "dark"
-        ? Colors.dark.onSurfaceDisabled
-        : Colors.light.onSurfaceDisabled;
+  const { user: loggedUser } = useUserStore();
 
-    const bgColor =
+  const { colorScheme } = useTheme();
+
+  const [applying, setApplying] = useState(false);
+
+  const borderColor =
+    colorScheme === "dark"
+      ? Colors.dark.onSurfaceDisabled
+      : Colors.light.onSurfaceDisabled;
+
+  const bgColor =
     colorScheme === "dark"
       ? Colors.dark.primaryContainer
       : Colors.light.primaryContainer;
 
-      const createRoom = async (loggedUser: DocumentData | null, user: DocumentData) => {
+  const handleBookService = async () => {
+    setApplying(true);
 
-          
-          const id = `${Date.now()}`;
+    //check existing request
 
-          const chatsRef = ref(realtimeDB, "chats/" + id)
-    
+    const requestRef = ref(realtimeDB, "requests/");
+  
+    onValue(requestRef, (snapshot) => {
+      const data = snapshot.val();
+  
+      if (!data) return;
+      const myData = Object.keys(data).map((key) => {
+        return data[key];
+      });
+  
+      const existingRequest = myData.filter((data) => data.client._id === loggedUser?._id && data.serviceProvider._id === user._id);
+
+      if (existingRequest.length > 0) {
+        console.log("There is a pending request");
+        
+        setApplying(false);
+      } else {
+        const id = `${Date.now()}`;
+  
         const data = {
-          _id: id,
-         client: loggedUser,
-         serviceProvider: user
+          id: id,
+          client: loggedUser,
+          serviceProvider: user,
         };
-        set(chatsRef, data).then(() => {
-
-          // router.push(`/rooms/${data._id}`)
-          console.log('room created')
-        }
-
-        );
-      };
-
-
-      const handleBookService = async() => {
-        setApplying(true);
-
-        const existingRoom = [];
-
-        
-          // const existingRoom = chats.filter(
-          //   (doc) => doc.client._id === loggedUser?._id || doc.serviceProvider._id === user._id
-          // );
-    
-          if (existingRoom.length > 0) {
-            console.log('room not empty')
-            // router.push(`/rooms/${existingRoom[0]._id}`);
-            setApplying(false);
-          } else {
-            createRoom(loggedUser, user!);
-            setApplying(false);
-          }
-    
+  
+        handleRequestService(data).then(() => {
+          router.push(`/service/${user._id}?request=${data.id}`);
           setApplying(false);
-        
+        });
       }
-  return  loggedUser?._id === user?._id && !loggedUser?.isAdmin ? (
 
-        <Button
-        style={{
+    })
+
+
+  };
+
+
+  return loggedUser?._id === user?._id && !loggedUser?.isAdmin ? (
+    <Button
+      style={{
         borderColor: borderColor,
         borderWidth: 1,
-      paddingVertical: 10,
-      marginVertical: 10,
-      marginBottom: 40,
-      backgroundColor: bgColor,
-      
-    }}
-    onPress={() => router.push('/admin')}
+        paddingVertical: 10,
+        marginVertical: 10,
+        marginBottom: 40,
+        backgroundColor: bgColor,
+      }}
+      onPress={() => router.push("/admin")}
     >
-      
-    <Text variant="labelLarge">Admin Dashboard</Text>
-  
-</Button>
-) :(
-
-  <Button
-  style={{
-          borderColor: borderColor,
-          borderWidth: 1,
-          paddingVertical: 10,
-          marginVertical: 10,
-          marginBottom: 40,
-          backgroundColor: bgColor,
-
-        }}
-        onPress={handleBookService}
-        >{!applying ? (
-          
-          <Text variant="labelLarge">Book Service</Text>
-        ) : (
-          <Text variant="labelLarge">Please Wait</Text>
-      )
-
-    }
+      <Text variant="labelLarge">Admin Dashboard</Text>
     </Button>
-  )
-    }
+  ) : (
+    <Button
+      style={{
+        borderColor: borderColor,
+        borderWidth: 1,
+        paddingVertical: 10,
+        marginVertical: 10,
+        marginBottom: 40,
+        backgroundColor: bgColor,
+      }}
+      onPress={handleBookService}
+    >
+      {!applying ? (
+        <Text variant="labelLarge">Book Service</Text>
+      ) : (
+        <Text variant="labelLarge">Please Wait</Text>
+      )}
+    </Button>
+  );
+};
 
-export default BookService
+export default BookService;

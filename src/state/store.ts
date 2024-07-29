@@ -27,12 +27,12 @@ export interface JobStore {
 }
 
 export interface CareerStore {
-    careers: RecruitmentTypes[];
-    storeCareers: (careers: RecruitmentTypes[]) => void;
-    addCareer: (career: RecruitmentTypes) => void;
-    updateCareer: (career: RecruitmentTypes) => void;
-    deleteCareer: (career: RecruitmentTypes) => void;
-  }
+  careers: RecruitmentTypes[];
+  storeCareers: (careers: RecruitmentTypes[]) => void;
+  addCareer: (career: RecruitmentTypes) => void;
+  updateCareer: (career: RecruitmentTypes) => void;
+  deleteCareer: (career: RecruitmentTypes) => void;
+}
 
 export interface categoryStore {
   categories: DocumentData[];
@@ -43,6 +43,12 @@ export interface categoryStore {
 export interface chatStore {
   chats: DocumentData[];
   storeChats: (chats: DocumentData[]) => void;
+}
+
+export interface requestStore {
+  requests: DocumentData[];
+  storeRequests: (requests: DocumentData[]) => void;
+  deleteRequest: (request: DocumentData) => void;
 }
 
 export interface notificationStore {
@@ -116,54 +122,54 @@ export const useJobsStore = create<JobStore>((set) => ({
 }));
 
 export const useCareerStore = create<CareerStore>((set) => ({
-    careers: [],
-    storeCareers: (careers) => {
-      set((state) => {
-        state.careers =careers;
-  
-        return {
-          careers: state.careers,
-        };
-      });
-    },
-    addCareer: (career) => {
-      set((state) => {
-        state.careers.push(career);
-  
-        return {
-          careers: state.careers,
-        };
-      });
-    },
+  careers: [],
+  storeCareers: (careers) => {
+    set((state) => {
+      state.careers = careers;
 
-    updateCareer: (career) => {
-        set((state) => {
-            const updatedCareers = state.careers.filter(
-              (storedCareer) => storedCareer._id!== career._id
-            );
+      return {
+        careers: state.careers,
+      };
+    });
+  },
+  addCareer: (career) => {
+    set((state) => {
+      state.careers.push(career);
 
-            updatedCareers.push(career);
+      return {
+        careers: state.careers,
+      };
+    });
+  },
 
-            return {
-                careers: state.careers,
-            }
-        })
-    },
+  updateCareer: (career) => {
+    set((state) => {
+      const updatedCareers = state.careers.filter(
+        (storedCareer) => storedCareer._id !== career._id
+      );
 
-    deleteCareer: (career) => {
-        set((state) => {
-            const updatedCareers = state.careers.filter(
-                (storedCareer) => storedCareer._id!== career._id
-              );
+      updatedCareers.push(career);
 
-              state.careers = updatedCareers
-    
-          return {
-            careers: state.careers,
-          };
-        });
-      },
-  }));
+      return {
+        careers: state.careers,
+      };
+    });
+  },
+
+  deleteCareer: (career) => {
+    set((state) => {
+      const updatedCareers = state.careers.filter(
+        (storedCareer) => storedCareer._id !== career._id
+      );
+
+      state.careers = updatedCareers;
+
+      return {
+        careers: state.careers,
+      };
+    });
+  },
+}));
 
 export const useCategoryStore = create<categoryStore>((set) => ({
   categories: [],
@@ -198,6 +204,28 @@ export const useChatStore = create<chatStore>((set) => ({
       };
     });
   },
+}));
+
+export const useRequestStore = create<requestStore>((set) => ({
+  requests: [],
+  storeRequests: (requests) => {
+    set((state) => {
+      state.requests = requests;
+
+      return {
+        chats: state.requests,
+      };
+    });
+  },
+  deleteRequest: (request) => {
+    set((state) => {
+      const filteredRequests = state.requests.filter(req => req._id !== request._id);
+
+      return {
+        requests: filteredRequests
+      }
+    })
+  }
 }));
 
 export const useNotificationStore = create<notificationStore>((set) => ({

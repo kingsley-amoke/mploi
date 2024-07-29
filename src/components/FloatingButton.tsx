@@ -2,6 +2,7 @@ import { Platform, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { FAB, Portal } from 'react-native-paper'
 import { useRouter } from 'expo-router';
+import { Colors } from '../constants/Colors';
 
 const FloatingButton = () => {
 
@@ -17,7 +18,7 @@ const FloatingButton = () => {
     <Portal.Host>
         <Portal>
           <FAB.Group
-          backdropColor="#fff"
+          backdropColor='rgba(0, 0, 0, .8)'
             open={open}
             visible
             icon={open ? "close" : "plus"}
@@ -25,12 +26,12 @@ const FloatingButton = () => {
               {
                 icon: "account-plus-outline",
                 label: "Offer a service",
-                onPress: () => router.push("addJob"),
+                onPress: () => console.log("addJob"),
               },
               {
                 icon: "account-search-outline",
                 label: "Request a service",
-                onPress: () => console.log("Pressed request"),
+                onPress: () => router.push("/service"),
               },
             ]}
             onStateChange={onStateChange}

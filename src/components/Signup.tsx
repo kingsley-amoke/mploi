@@ -1,38 +1,28 @@
 import {
   View,
-  Image,
   Pressable,
-  TouchableOpacity,
   GestureResponderEvent,
+  ScrollView,
 } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import Button from "@/src/components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { fetchUser, syncUser } from "@/src/utils/userActions";
 import { useRouter } from "expo-router";
-import { AuthRequestPromptOptions, AuthSessionResult } from "expo-auth-session";
-// import { SuccessToast } from "@/src/utils/data";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import * as Location from "expo-location";
+
 import { useUserStore } from "@/src/state/store";
 import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 import { DBUser } from "../utils/types";
-import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { ref } from "firebase/database";
 import { firestoreDB } from "../utils/firebaseConfig";
 
-const Signup = ({
-  promptAsync,
-}: {
-  promptAsync: (
-    options?: AuthRequestPromptOptions | undefined
-  ) => Promise<AuthSessionResult>;
-}) => {
+const Signup = () => {
   const auth = getAuth();
   const router = useRouter();
 
@@ -58,6 +48,7 @@ const Signup = ({
   const [isPasswordShown, setIsPasswordShown] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -73,65 +64,77 @@ const Signup = ({
       return;
     }
 
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+
+    const coords = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+
     setLoading(true);
-    await createUserWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
+    await createUserWithEmailAndPassword(auth, email, password).then(
+      async (userCredential) => {
         // Signed up
 
-        const user = userCredential.user;           
+        const user = userCredential.user;
 
-            const userPhone = countryCode + phone
+        const userPhone = countryCode + phone;
 
-            const newUser: DBUser = {
-              _id: user.uid,
-              email: user.email!,
-              firstName: "",
-              lastName: "",
-              image: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-              address:"",
-              nin: "",
-              status: {isVIP: false, isVerified: false},
-              referee: referee || "",
-              phone: userPhone,
-              phoneVerified: false,
-              createdAt: Date.now(),
-              bio: "",
-              location: {country: "",
-                state: "",
-                lga: "",},
-              walletBalance: "",
-              referralBalance: "",
-              referral: [""],
-              bankDetails: {accountName: "", accountNumber: "", bank:""},
-              isAdmin: false,
-              
-            }
+        const newUser: DBUser = {
+          _id: user.uid,
+          email: user.email!,
+          firstName: "",
+          lastName: "",
+          image:
+            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+          address: "",
+          nin: "",
+          status: { isVIP: false, isVerified: false },
+          referee: referee || "",
+          phone: userPhone,
+          phoneVerified: false,
+          createdAt: Date.now(),
+          bio: "",
+          location: { country: "", state: "", lga: "" },
+          walletBalance: "",
+          referralBalance: "",
+          referral: [""],
+          bankDetails: { accountName: "", accountNumber: "", bank: "" },
+          isAdmin: false,
+          coordinates: coords,
+        };
 
-            const userRef = doc(firestoreDB, "users", newUser._id)
+        const userRef = doc(firestoreDB, "users", newUser._id);
 
-            setDoc(userRef, newUser).then(async() => {
+        setDoc(userRef, newUser).then(async () => {
+          const docSnap = await getDoc(userRef);
 
-             
-              const docSnap = await getDoc(userRef);
+          storeUser(docSnap.data()!);
 
-              storeUser(docSnap.data()!)
-
-              setLoading(false);
-              AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()))
-              router.push('profile/edit');
-            })
-
-          })}
-  
+          setLoading(false);
+          AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
+          router.push("profile/edit");
+        });
+      }
+    );
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, marginHorizontal: 22 }}>
+      <ScrollView style={{ flex: 1, marginHorizontal: 22 }}>
         {!isChecked && error && (
           <Text style={{ color: "red", fontSize: 16 }}>
             Please accept the terms and conditions
           </Text>
         )}
+        <Text style={{ color: "red", fontSize: 16 }}>{errorMsg}</Text>
         <View style={{ marginVertical: 22 }}>
           <Text
             style={{
@@ -150,6 +153,27 @@ const Signup = ({
           >
             Start working today
           </Text>
+        </View>
+        <View style={{ marginBottom: 12 }}>
+          <TextInput
+            mode="outlined"
+            label="First Name"
+            placeholder="First Name"
+            placeholderTextColor={placeholderColor}
+            keyboardType="default"
+            onChangeText={(value) => setEmail(value)}
+          />
+        </View>
+        
+        <View style={{ marginBottom: 12 }}>
+          <TextInput
+            mode="outlined"
+            label="Last Name"
+            placeholder="Last Name"
+            placeholderTextColor={placeholderColor}
+            keyboardType="default"
+            onChangeText={(value) => setEmail(value)}
+          />
         </View>
 
         <View style={{ marginBottom: 12 }}>
@@ -195,23 +219,19 @@ const Signup = ({
             label="Password"
             placeholder="Enter your password"
             placeholderTextColor={placeholderColor}
-            
-           
             onChangeText={(value) => setPassword(value)}
           />
         </View>
 
         <View style={{ marginBottom: 12 }}>
-         
-            <TextInput
+          <TextInput
             mode="outlined"
             label="Referee (optional)"
-              placeholder="Your referee's email address"
-              placeholderTextColor={placeholderColor}
-              keyboardType="email-address"
-              onChangeText={(value) => setReferee(value)}
-            />
-         
+            placeholder="Your referee's email address"
+            placeholderTextColor={placeholderColor}
+            keyboardType="email-address"
+            onChangeText={(value) => setReferee(value)}
+          />
         </View>
         <View
           style={{
@@ -247,84 +267,8 @@ const Signup = ({
             marginVertical: 20,
           }}
         >
-          <View
-            style={{
-              flex: 1,
-              height: 1,
-
-              marginHorizontal: 10,
-            }}
-          />
-          <Text style={{ fontSize: 14 }}>Or Sign up with</Text>
-          <View
-            style={{
-              flex: 1,
-              height: 1,
-
-              marginHorizontal: 10,
-            }}
-          />
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => console.log("Pressed")}
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-              height: 52,
-              borderWidth: 1,
-              borderColor: borderColor,
-              marginRight: 4,
-              borderRadius: 10,
-            }}
-          >
-            <Image
-              source={require("@/assets/images/facebook.png")}
-              style={{
-                height: 36,
-                width: 36,
-                marginRight: 8,
-              }}
-              resizeMode="contain"
-            />
-
-            <Text>Facebook</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => promptAsync()}
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-              height: 52,
-              borderWidth: 1,
-              borderColor: borderColor,
-              marginRight: 4,
-              borderRadius: 10,
-            }}
-          >
-            <Image
-              source={require("@/assets/images/google.png")}
-              style={{
-                height: 36,
-                width: 36,
-                marginRight: 8,
-              }}
-              resizeMode="contain"
-            />
-
-            <Text>Google</Text>
-          </TouchableOpacity>
+          
+          
         </View>
 
         <View
@@ -348,7 +292,7 @@ const Signup = ({
             </Text>
           </Pressable>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

@@ -22,11 +22,11 @@ import {
   useChatStore,
   useJobsStore,
   useNotificationStore,
+  useRequestStore,
   useUsersStore,
   useUserStore,
 } from "../state/store";
 import { fetchUser, getLoggedUser } from "../utils/userActions";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import { firestoreDB, realtimeDB } from "../utils/firebaseConfig";
 import { getJobs, getServices, getUser, getUsers } from "../utils/data";
@@ -56,6 +56,7 @@ export default function RootLayout() {
   const { storeJobs } = useJobsStore();
   const { storeCategory } = useCategoryStore();
   const { storeChats } = useChatStore();
+  const {storeRequests} = useRequestStore();
   const { storeNotifications } = useNotificationStore();
 
   const router = useRouter();
@@ -97,6 +98,20 @@ export default function RootLayout() {
     });
   }
 
+  const fetchAllRequests = async () => {
+    const requestRef = ref(realtimeDB, "requests/");
+    onValue(requestRef, (snapshot) => {
+      const data = snapshot.val();
+
+      if(!data) return
+      const myData = Object.keys(data).map(key => {
+        return data[key];
+    })
+
+    storeRequests(myData)
+    });
+  }
+
   // const fetchNotifications = async () => {
   //   const notifications = await fetchAllNotifications();
   //   storeNotifications(notifications);
@@ -116,7 +131,7 @@ export default function RootLayout() {
     checkLocalUser();
     fetchServices();
     fetchAllChats()
-    // fetchNotifications()
+    fetchAllRequests()
     fetchAllUsers()
     fetchAllJobs()
   }, []);
@@ -174,6 +189,27 @@ export default function RootLayout() {
                   onPress={() => router.push("profile/edit")}
                 />
               ),
+            }}
+          />
+          <Stack.Screen
+            name="service/index"
+            options={{
+              title: "All Services",
+              
+            }}
+          />
+          <Stack.Screen
+            name="service/[id]"
+            options={{
+             headerShown:false
+              
+            }}
+          />
+           <Stack.Screen
+            name="service/requests"
+            options={{
+              title: "Service Requests",
+              
             }}
           />
         </Stack>

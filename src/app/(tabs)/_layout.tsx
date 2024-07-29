@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import { Tabs } from "expo-router";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomHeader from "@/src/components/CustomHeader";
@@ -11,7 +11,7 @@ const TabLayout = () => {
     <Tabs
       screenOptions={{
         headerTitleAlign: "center",
-        tabBarStyle: { height: 70 },
+        tabBarStyle: Platform.OS === 'android' ? { height: 70  } : { height:100 },
         tabBarLabelStyle: { marginBottom: 10, fontSize: 14 },
         tabBarIconStyle: { fontSize: 40 },
         
