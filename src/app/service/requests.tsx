@@ -8,6 +8,8 @@ import { realtimeDB } from "@/src/utils/firebaseConfig";
 import { createChat } from "@/src/utils/data";
 
 const requests = () => {
+
+  const router = useRouter();
   const { requests, deleteRequest } = useRequestStore();
 
   const RequestRenderItem = ({ item }: { item: DocumentData }) => {
@@ -24,6 +26,7 @@ const requests = () => {
       createChat(item).then(() => {
         remove(requestRef).then(() => {
           deleteRequest(item);
+          router.push(`/rooms/${item._id}`)
         });
       });
     };
