@@ -6,6 +6,7 @@ import { DocumentData } from "firebase/firestore";
 import { ref, remove } from "firebase/database";
 import { realtimeDB } from "@/src/utils/firebaseConfig";
 import { createChat } from "@/src/utils/data";
+import { useRouter } from "expo-router";
 
 const requests = () => {
 
@@ -13,11 +14,16 @@ const requests = () => {
   const { requests, deleteRequest } = useRequestStore();
 
   const RequestRenderItem = ({ item }: { item: DocumentData }) => {
+
+    console.log(item._id)
+
     const handleDecline = () => {
-      const requestRef = ref(realtimeDB, "requests/");
+
+      const requestRef = ref(realtimeDB, `requests/${item._id}`,);
 
       remove(requestRef).then(() => {
         deleteRequest(item);
+        router.push('/');
       });
     };
 

@@ -13,7 +13,7 @@ const index = () => {
   const { requests } = useRequestStore();
   const {user} = useUserStore();
 
-  const myRequests = requests.filter(req => req._id === user?._id)
+  const myRequests = requests.filter(req => req.serviceProvider._id === user?._id)
 
   return (
     <View style={{ flex: 1 }}>

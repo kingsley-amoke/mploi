@@ -12,8 +12,6 @@ const RequestService = () => {
 
     const user = users.filter(user => user._id === id)[0];
 
-    console.log(request)
-
   return (
     <View style={styles.container}>
      

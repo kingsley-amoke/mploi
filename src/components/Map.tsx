@@ -1,11 +1,9 @@
 import { StyleSheet,  View } from 'react-native'
 import React, { Fragment } from 'react'
 import { Avatar, Button, Text, } from 'react-native-paper';
-import { useUserStore } from '../state/store';
 import { latitudeDelta, longitudeDelta } from '../utils/data';
 import MapView, { Marker } from 'react-native-maps';
 import { DocumentData } from 'firebase/firestore';
-import { getDistance } from 'geolib';
 import { ref, remove } from 'firebase/database';
 import { realtimeDB } from '../utils/firebaseConfig';
 import { useRouter } from 'expo-router';
@@ -13,23 +11,16 @@ import { useRouter } from 'expo-router';
 const Map = ({user, requestID}: {user:DocumentData, requestID: string | string[] | undefined}) => {
 
   const router = useRouter();
-
-    const { user:loggedUser } = useUserStore();
   
     const coordinates = {
-      latitude: parseFloat(user.coordinates.latitude),
-      longitude: parseFloat(user.coordinates.longitude),
+      latitude: parseFloat(user?.coordinates.latitude),
+      longitude: parseFloat(user?.coordinates.longitude),
       latitudeDelta: latitudeDelta,
       longitudeDelta: longitudeDelta,
     };
 
-    const distanceToUser = getDistance(
-      { latitude: loggedUser?.coordinates.latitude, longitude: loggedUser?.coordinates.longitude },
-      {latitude: coordinates.latitude, longitude: coordinates.longitude}
-    );
- 
     const handleCancelService = async() => {
-      const requestRef = ref(realtimeDB, "requests/" + requestID);
+      const requestRef = ref(realtimeDB, `requests/${requestID}`);
 
       remove(requestRef).then(()=>{
         console.log('Request canceled')

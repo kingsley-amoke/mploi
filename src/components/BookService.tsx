@@ -35,14 +35,15 @@ const BookService = ({ user }: { user: DocumentData }) => {
   const handleBookService = async () => {
     setApplying(true);
 
-    //check existing request
+    // check existing request
 
     const requestRef = ref(realtimeDB, "requests/");
   
     onValue(requestRef, (snapshot) => {
-      const data = snapshot.val();
-  
-      if (!data) return;
+      let data =  snapshot.val() || [];
+
+
+
       const myData = Object.keys(data).map((key) => {
         return data[key];
       });
@@ -61,6 +62,7 @@ const BookService = ({ user }: { user: DocumentData }) => {
           client: loggedUser,
           serviceProvider: user,
         };
+
   
         handleRequestService(data).then(() => {
           router.push(`/service/${user._id}?request=${data.id}`);
@@ -98,7 +100,7 @@ const BookService = ({ user }: { user: DocumentData }) => {
         marginBottom: 40,
         backgroundColor: bgColor,
       }}
-      onPress={handleBookService}
+      onPress={()=>handleBookService()}
     >
       {!applying ? (
         <Text variant="labelLarge">Book Service</Text>
