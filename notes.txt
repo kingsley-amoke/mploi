@@ -1,3 +1,6 @@
 shopr
 cleanup the app
 fix chat keyboard
+add reviews
+admin
+subscription

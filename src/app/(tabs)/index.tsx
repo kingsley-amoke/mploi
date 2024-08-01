@@ -1,3 +1,4 @@
+import Carousel from "@/src/components/Carousel";
 import FloatingButton from "@/src/components/FloatingButton";
 import UserCard from "@/src/components/UserCard";
 import { useJobsStore, useUsersStore } from "@/src/state/store";
@@ -31,18 +32,14 @@ const Home = () => {
             minHeight: 130,
             maxHeight: 200,
           }}
-          
           actions={[
             {
-              
               label: "Apply",
               onPress: () => router.push(`/admin/jobs/${item._id}`),
-              
             },
           ]}
         >
-          
-            {item.title}
+          {item.title}
         </Banner>
       </View>
     );
@@ -73,6 +70,7 @@ const Home = () => {
         showsHorizontalScrollIndicator={false}
       />
 
+     
       <View style={{ width: "100%", paddingHorizontal: 20 }}>
         <Text style={{ textAlign: "left", fontSize: 20, fontWeight: "700" }}>
           Top Services

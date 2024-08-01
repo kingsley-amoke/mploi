@@ -1,12 +1,31 @@
+import { useRouter } from 'expo-router';
 import { DocumentData } from 'firebase/firestore';
 import React from 'react';
 import {Card, Text } from 'react-native-paper';
+import { useImageStore } from '../state/store';
 
 
-export const PhotosCard = ({item}: {item:string}) => (
-  <Card style={{width:100}}>
-    <Card.Cover source={{ uri: item }} style={{height:100}}/>
-  </Card>
-);
+export const PhotosCard = ({item}: {item:string}) => {
+
+  const router = useRouter();
+  const {updateImage} = useImageStore();
+
+
+//view image fullscreen
+
+const handleViewImage = () => {
+  updateImage(item);
+  router.push(`/image`)
+}
+
+  return (
+    <Card style={{width:100}} onPress={() =>handleViewImage()}>
+      <Card.Cover source={{ uri: item }} style={{height:100}}/>
+      </Card>
+  )
+  
+ 
+  
+}
 
 export default PhotosCard;

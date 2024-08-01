@@ -2,7 +2,6 @@ import { Platform, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { FAB, Portal } from 'react-native-paper'
 import { useRouter } from 'expo-router';
-import { Colors } from '../constants/Colors';
 
 const FloatingButton = () => {
 
@@ -24,9 +23,9 @@ const FloatingButton = () => {
             icon={open ? "close" : "plus"}
             actions={[
               {
-                icon: "account-plus-outline",
-                label: "Offer a service",
-                onPress: () => console.log("addJob"),
+                icon: "cart-plus",
+                label: "Add product",
+                onPress: () => router.push("products/add"),
               },
               {
                 icon: "account-search-outline",

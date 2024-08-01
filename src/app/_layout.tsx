@@ -170,6 +170,12 @@ export default function RootLayout() {
               headerShown: false
             }}
           />
+           <Stack.Screen
+            name="products"
+            options={{
+              headerShown: false
+            }}
+          />
 
           <Stack.Screen
             name="profile/edit"

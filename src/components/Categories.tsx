@@ -67,14 +67,16 @@ const Categories = () => {
         <TextInput
           mode="outlined"
           placeholder="Search services"
-          style={{ width: 370 }}
+          style={{ width: 370, paddingLeft:30 }}
+          autoFocus
+          
           onChangeText={(value) => setSearch(value)}
         />
         <MaterialIcons
           name="search"
           size={20}
           color="white"
-          style={{ position: "absolute", right: 69 }}
+          style={{ position: "absolute", left: 30 }}
         />
       </View>
 

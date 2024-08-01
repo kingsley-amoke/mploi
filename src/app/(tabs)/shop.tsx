@@ -1,29 +1,38 @@
-import React, { Fragment, useEffect, useState } from "react";
-import MapView, { Marker } from "react-native-maps";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { useUserStore } from "@/src/state/store";
-import { latitudeDelta, longitudeDelta } from "@/src/utils/data";
-import { Badge, Button, Text } from "react-native-paper";
-import Map from "@/src/components/Map";
-import { useRouter } from "expo-router";
 
+import ViewImage from "@/src/components/ViewImage";
+import { useUserStore } from "@/src/state/store";
+import { Button, Text } from "react-native-paper";
+import { ref } from "firebase/storage";
+import { collection, doc, setDoc } from "firebase/firestore";console.log("Document successfully written!");
+import { firestoreDB } from "@/src/utils/firebaseConfig";
+
+
+
+
+interface subShopTypes {
+    
+  name:string
+}
+interface shopTypes {
+  _id:string,
+  name:string,
+  subshops?: subShopTypes[]
+}
 export default function Shop() {
 
-  const router = useRouter();
-  const { user } = useUserStore();
+  const [loading, setLoading] = useState(false);
 
-  if (!user) return;
 
- 
+  const addShop = () => {
+  console.log('nothing')
+      
+  };
 
   return (
     <View style={styles.container}>
-     
-      {/* <Map user={user} />
-       */}
-
-       <Button mode="outlined" onPress={() => router.push(`/service/79FLxEvRtSaB772tdLivJInnITm2`)}>Book</Button>
-
+      <Button mode="outlined" disabled={loading} onPress={addShop}>Add</Button>
     </View>
   );
 }

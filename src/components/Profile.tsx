@@ -1,8 +1,6 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, TouchableOpacity  } from "react-native";
 import {
   Avatar,
-  Button,
-  Divider,
   SegmentedButtons,
   Text,
 } from "react-native-paper";
@@ -16,10 +14,17 @@ import { DocumentData } from "firebase/firestore";
 import UserPhotos from "./UserPhotos";
 import AboutUser from "./AboutUser";
 import BookService from "./BookService";
+import { useRouter } from "expo-router";
+import { useImageStore } from "../state/store";
 
 const Profile = ({ user }: { user: DocumentData | null }) => {
   if(!user) return;
+
+  const router = useRouter();
   const { colorScheme } = useTheme();
+  const {updateImage} = useImageStore();
+
+  const [value, setValue] = useState("about");
 
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
@@ -28,16 +33,22 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
       ? Colors.dark.onSurfaceDisabled
       : Colors.light.onSurfaceDisabled;
 
-  
 
-  const [value, setValue] = useState("about");
+
+//view image fullscreen
+
+const handleViewImage = () => {
+  updateImage(user?.image);
+  router.push(`/image`)
+}
+
 
   return (
     <SafeAreaView style={{ margin: 10 }}>
       <View style={{ flexDirection: "row", gap: 20 }}>
-        <View>
+        <TouchableOpacity onPress={() =>handleViewImage()}>
           <Avatar.Image size={60} source={{ uri: user?.image }} />
-        </View>
+        </TouchableOpacity>
         <View>
           <View>
             {user?.status?.isVerified ? (

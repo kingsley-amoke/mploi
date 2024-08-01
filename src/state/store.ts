@@ -56,6 +56,11 @@ export interface notificationStore {
   storeNotifications: (notifications: NotificationTypes[]) => void;
 }
 
+export interface imageStore {
+  image: string | null;
+  updateImage: (image: string) => void;
+}
+
 // global states
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -240,3 +245,17 @@ export const useNotificationStore = create<notificationStore>((set) => ({
     });
   },
 }));
+
+
+export const useImageStore = create<imageStore>((set) => ({
+  image: null,
+  updateImage: (image) => {
+    set((state) => {
+      state.image = image;
+
+      return {
+        image: state.image,
+      };
+    });
+  },
+}) )

@@ -1,3 +1,4 @@
+import { DocumentData } from "firebase/firestore";
 import { ImageSourcePropType } from "react-native";
 
 export interface chatTypes{
@@ -197,4 +198,26 @@ export interface SubscriptionTypes{
   name: string;
   price: number;
   duration: string;
+}
+
+interface SubShopTypes {
+    
+  name:string
+}
+export interface ShopTypes {
+  _id:string,
+  name:string,
+  subshops?: SubShopTypes[]
+}
+
+export interface ProductTypes{
+_id:string,
+name:string,
+description:string,
+location:string,
+price:number,
+negotiable:boolean,
+seller: DocumentData,
+images: string[],
+category: ShopTypes
 }
