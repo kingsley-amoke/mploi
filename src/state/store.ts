@@ -40,6 +40,15 @@ export interface categoryStore {
   addCategory: (category: DocumentData) => void;
 }
 
+export interface shopsStore {
+  shops: DocumentData[];
+  storeShops: (shops: DocumentData[]) => void;
+}
+
+export interface ProductsStore{
+  products: DocumentData[];
+  storeProducts: (products: DocumentData[]) => void;  
+}
 export interface chatStore {
   chats: DocumentData[];
   storeChats: (chats: DocumentData[]) => void;
@@ -193,6 +202,32 @@ export const useCategoryStore = create<categoryStore>((set) => ({
 
       return {
         categories: state.categories,
+      };
+    });
+  },
+}));
+
+export const useShopsStore = create<shopsStore>((set) => ({
+  shops: [],
+  storeShops: (shops) => {
+    set((state) => {
+      state.shops = shops;
+
+      return {
+        shops: state.shops,
+      };
+    });
+  },
+}));
+
+export const useProductsStore = create<ProductsStore>((set) => ({
+  products: [],
+  storeProducts: (products) => {
+    set((state) => {
+      state.products = products;
+
+      return {
+        products: state.products,
       };
     });
   },

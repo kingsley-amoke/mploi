@@ -8,7 +8,7 @@ const UserCard = ({user}: {user:DocumentData}) => (
     <Card.Cover source={{ uri: user.image }} style={{height:100}}/>
     <Card.Content style={{marginVertical:10}}>
       <Text variant="titleLarge">{user.firstName} {user.lastName[0]}</Text>
-      <Text variant="bodyMedium">Mechanic</Text>
+      <Text variant="bodyMedium">{user.skills[1]}</Text>
       <Text>{user.location.lga}</Text>
     </Card.Content>
    

@@ -103,15 +103,6 @@ const add = () => {
 
     }
 
-    // _id: string;
-    // title: string;
-    // experience: string;
-    // location: loacationTypes;
-    // workTime: string;
-    // desc:string;
-    // requirements: string;
-    // others: string;
-    // pay: string;
 
   return (
     <ScrollView style={{flex:1, marginVertical:30}}>

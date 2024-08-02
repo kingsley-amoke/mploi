@@ -23,13 +23,14 @@ import {
   useJobsStore,
   useNotificationStore,
   useRequestStore,
+  useShopsStore,
   useUsersStore,
   useUserStore,
 } from "../state/store";
 import { fetchUser, getLoggedUser } from "../utils/userActions";
 import { Feather } from "@expo/vector-icons";
 import { firestoreDB, realtimeDB } from "../utils/firebaseConfig";
-import { getJobs, getServices, getUser, getUsers } from "../utils/data";
+import { getJobs, getServices, getShops, getUser, getUsers } from "../utils/data";
 import { onValue, ref } from "firebase/database";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
@@ -57,7 +58,7 @@ export default function RootLayout() {
   const { storeCategory } = useCategoryStore();
   const { storeChats } = useChatStore();
   const {storeRequests} = useRequestStore();
-  const { storeNotifications } = useNotificationStore();
+  const { storeShops } = useShopsStore();
 
   const router = useRouter();
 
@@ -82,6 +83,11 @@ export default function RootLayout() {
   const fetchServices = async () => {
     const categories = await getServices();
     storeCategory(categories);
+  };
+
+  const fetchShops = async () => {
+    const shops = await getShops();
+    storeShops(shops);
   };
 
   const fetchAllChats = ( ) => {
@@ -112,15 +118,6 @@ export default function RootLayout() {
     });
   }
 
-  // const fetchNotifications = async () => {
-  //   const notifications = await fetchAllNotifications();
-  //   storeNotifications(notifications);
-  // };
-
-  // const fetchAllUsers = async () => {
-  //   const users = await fetchUsers();
-  //   storeUsers(users);
-  // }
 
   const fetchAllJobs = async () => {
     const jobs = await getJobs();
@@ -134,6 +131,7 @@ export default function RootLayout() {
     fetchAllRequests()
     fetchAllUsers()
     fetchAllJobs()
+    fetchShops()
   }, []);
 
   return (

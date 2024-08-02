@@ -8,6 +8,7 @@ import {
 import NaijaStates from "naija-state-local-government";
 import { firestoreDB, realtimeDB } from "./firebaseConfig";
 import { get, onValue, ref, serverTimestamp, set } from "firebase/database";
+import shop from "../app/(tabs)/settings";
 
 //get image blog
 export const getBlobFroUri = async (uri: string) => {
@@ -204,3 +205,16 @@ export const createChat = async (
   set(requestRef, data)
 };
 
+//fetch all shops
+
+export const getShops = async () => {
+  const shopRef = collection(firestoreDB, "shop");
+
+  const shops: DocumentData[] = [];
+
+  const querySnapshot = await getDocs(shopRef);
+  querySnapshot.forEach((doc) => {
+    shops.push(doc.data());
+  });
+  return shops;
+};

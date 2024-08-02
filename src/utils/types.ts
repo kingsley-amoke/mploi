@@ -217,7 +217,15 @@ description:string,
 location:string,
 price:number,
 negotiable:boolean,
-seller: DocumentData,
+sellerID: string,
 images: string[],
-category: ShopTypes
+category: string,
+}
+
+export interface ReviewTypes{
+  _id: string,
+  productID: string,
+  userID: string,
+  rating: number,
+  review: string,
 }

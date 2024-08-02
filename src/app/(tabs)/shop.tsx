@@ -1,27 +1,16 @@
+import UserCard from "@/src/components/UserCard";
+import { useUsersStore } from "@/src/state/store";
+import { Link } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-
-import ViewImage from "@/src/components/ViewImage";
-import { useUserStore } from "@/src/state/store";
-import { Button, Text } from "react-native-paper";
-import { ref } from "firebase/storage";
-import { collection, doc, setDoc } from "firebase/firestore";console.log("Document successfully written!");
-import { firestoreDB } from "@/src/utils/firebaseConfig";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { ActivityIndicator, Button, MD2Colors, Text } from "react-native-paper";
 
 
 
-
-interface subShopTypes {
-    
-  name:string
-}
-interface shopTypes {
-  _id:string,
-  name:string,
-  subshops?: subShopTypes[]
-}
 export default function Shop() {
 
+  const {users} = useUsersStore();
   const [loading, setLoading] = useState(false);
 
 
@@ -32,7 +21,42 @@ export default function Shop() {
 
   return (
     <View style={styles.container}>
-      <Button mode="outlined" disabled={loading} onPress={addShop}>Add</Button>
+     <ScrollView>
+        {users.length > 0 ? (
+          <View
+            style={{
+              width: "100%",
+              marginVertical: 20,
+              flexDirection: "row",
+              marginHorizontal: "auto",
+              flexWrap: "wrap",
+              gap: 10,
+            }}
+          >
+            {users.map((user) => (
+              <Link
+                href={{
+                  pathname: `/profile/[id]`,
+                  params: { id: user._id },
+                }}
+                key={user._id}
+                asChild
+              >
+                <TouchableOpacity style={{ width: 200 }}>
+                  <UserCard user={user} />
+                </TouchableOpacity>
+              </Link>
+
+            ))}
+          </View>
+        ) : (
+          <ActivityIndicator
+            animating={true}
+            color={MD2Colors.teal900}
+            style={{ marginVertical: 200 }}
+          />
+        )}
+      </ScrollView>
     </View>
   );
 }
