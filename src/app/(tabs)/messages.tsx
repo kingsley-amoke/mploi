@@ -51,8 +51,8 @@ const index = () => {
             >
               <Text style={{ fontWeight: "bold" }}>Recent Messages</Text>
 
-              <TouchableOpacity onPress={() => router.replace("/rooms/")}>
-                <Ionicons name="chatbox" size={28} color="#555" />
+              <TouchableOpacity>
+                <Ionicons name="chatbox" size={20} color="#555" />
               </TouchableOpacity>
             </View>
 
@@ -112,22 +112,22 @@ const MessageCard = ({ room }: { room: DocumentData }) => {
         }}
       >
         <View style={{ flexDirection: "row", gap: 20 }}>
-          <Avatar.Image source={{ uri: chatImage }} size={60} />
+          <Avatar.Image source={{ uri: chatImage }} size={40} />
           <View style={{ alignItems: "flex-start", justifyContent: "center" }}>
             <Text
               style={{
                 fontWeight: "bold",
                 textTransform: "capitalize",
-                fontSize: 20,
+                fontSize: 16,
               }}
             >
               {chatName}
             </Text>
-            <Text>{lastMessage?.text}</Text>
+            <Text style={{fontSize:12}}>{lastMessage?.text}</Text>
           </View>
         </View>
         <View>
-          <Text>
+          <Text style={{fontSize:8, fontStyle: 'italic'}}>
             {new Date(lastMessage?.timeStamp).toLocaleTimeString("en-US", {
               hour: "numeric",
               minute: "numeric",

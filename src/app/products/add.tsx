@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
-import { useShopsStore, useUserStore } from "@/src/state/store";
+import { useProductsStore, useShopsStore, useUserStore } from "@/src/state/store";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import useTheme from "@/src/hooks/useTheme";
 import { Colors } from "@/src/constants/Colors";
@@ -17,6 +17,7 @@ const add = () => {
   const router = useRouter();
   const { user } = useUserStore();
   const { shops } = useShopsStore();
+  const {storeProducts} = useProductsStore();
   const { colorScheme } = useTheme();
 
   const [name, setName] = useState("");
@@ -53,19 +54,16 @@ const add = () => {
       sellerID: user?._id!,
     };
 
-    console.log(data)
-    router.push('/products/1')
 
-    // const productRef = doc(firestoreDB, "products", data._id);
-    // setDoc(productRef, data).then(() => {
-    //   console.log("Product updated successfully");
-    //   setPosting(false);
-    //   router.push(`/products/images?id=${data._id}`)
-    // });
+    const productRef = doc(firestoreDB, "products", data._id);
+    setDoc(productRef, data).then(() => {
+      console.log("Product updated successfully");
+      setPosting(false);
+      storeProducts(data)
+      router.push(`/products/images?id=${data._id}`)
+    });
     setPosting(false);
   };
-
-  console.log(shops)
 
   return (
     <ScrollView style={{ flex: 1, marginVertical: 30 }}>

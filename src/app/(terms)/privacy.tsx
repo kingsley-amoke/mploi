@@ -16,7 +16,7 @@ const privacy = () => {
 
   return (
     <ScrollView
-      style={{ marginVertical: 20, marginHorizontal: 30 }}
+      style={{ paddingVertical: 10, marginHorizontal: 30 }}
       showsVerticalScrollIndicator={false}
     >
       <Text style={{ marginVertical: 10 }}>
@@ -221,7 +221,7 @@ const privacy = () => {
         consent to the new policy.
       </Text>
       <Text style={{ marginVertical: 10 }}>Our contact</Text>
-      <Text style={{ marginVertical: 10 }}>
+      <Text style={{ marginVertical: 10, marginBottom:20 }}>
         For any enquiry, please contact us on info@mploiglobal.com or call
         07017663503
       </Text>

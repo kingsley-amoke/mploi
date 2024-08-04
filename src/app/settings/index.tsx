@@ -8,8 +8,13 @@ import { useNavigation } from 'expo-router'
 
 const settings = () => {
 
-  const navigation = useNavigation()
-  const [isSwitchOn, setIsSwitchOn] = useState(true);
+  const {colorScheme} = useTheme()
+
+  console.log(colorScheme)
+
+  const switchState = colorScheme === 'dark' ? true : false
+
+  const [isSwitchOn, setIsSwitchOn] = useState(switchState);
 
   const {toggleTheme} = useTheme();
 
@@ -17,13 +22,6 @@ const settings = () => {
     toggleTheme();
     setIsSwitchOn(!isSwitchOn);
   }
-
-  useEffect(() => {
-
-    navigation.setOptions({
-      title: 'Change Theme',
-    });
-  }, [])
 
   return (
     <View style={{margin:16, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>

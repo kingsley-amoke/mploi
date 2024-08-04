@@ -7,7 +7,7 @@ const Disclaimer = () => {
 
   return (
     <ScrollView
-      style={{ marginVertical: 20, marginHorizontal: 30 }}
+      style={{ paddingVertical: 10, marginHorizontal: 30 }}
       showsVerticalScrollIndicator={false}
     >
       <Text >

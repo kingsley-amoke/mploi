@@ -18,19 +18,9 @@ const BookService = ({ user }: { user: DocumentData }) => {
 
   const { user: loggedUser } = useUserStore();
 
-  const { colorScheme } = useTheme();
 
   const [applying, setApplying] = useState(false);
 
-  const borderColor =
-    colorScheme === "dark"
-      ? Colors.dark.onSurfaceDisabled
-      : Colors.light.onSurfaceDisabled;
-
-  const bgColor =
-    colorScheme === "dark"
-      ? Colors.dark.primaryContainer
-      : Colors.light.primaryContainer;
 
   const handleBookService = async () => {
     setApplying(true);
@@ -79,12 +69,13 @@ const BookService = ({ user }: { user: DocumentData }) => {
   return loggedUser?._id === user?._id && !loggedUser?.isAdmin ? (
     <Button
       style={{
-        borderColor: borderColor,
+        borderColor: Colors.light.onPrimary,
         borderWidth: 1,
-        paddingVertical: 10,
         marginVertical: 10,
+        marginHorizontal:20,
+        paddingVertical:5,
         marginBottom: 40,
-        backgroundColor: bgColor,
+        backgroundColor: Colors.light.onPrimary,
       }}
       onPress={() => router.push("/admin")}
     >
@@ -93,12 +84,13 @@ const BookService = ({ user }: { user: DocumentData }) => {
   ) : (
     <Button
       style={{
-        borderColor: borderColor,
+        borderColor: Colors.light.onPrimary,
         borderWidth: 1,
-        paddingVertical: 10,
+        marginHorizontal:20,
+        paddingVertical:5,
         marginVertical: 10,
         marginBottom: 40,
-        backgroundColor: bgColor,
+        backgroundColor: Colors.light.onPrimary,
       }}
       onPress={()=>handleBookService()}
     >

@@ -3,10 +3,9 @@ import { Tabs } from "expo-router";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomHeader from "@/src/components/CustomHeader";
 import { useUserStore } from "@/src/state/store";
+import { Colors } from "@/src/constants/Colors";
 
 const TabLayout = () => {
-
-    const {user} = useUserStore();
   return (
     <Tabs
       screenOptions={{
@@ -14,8 +13,12 @@ const TabLayout = () => {
         tabBarStyle: Platform.OS === 'android' ? { height: 70  } : { height:100 },
         tabBarLabelStyle: { marginBottom: 10, fontSize: 14 },
         tabBarIconStyle: { fontSize: 40 },
-        
+        headerTransparent: false,
+        headerStyle:{backgroundColor:Colors.light.primaryContainer},
+        headerTintColor: Colors.light.onPrimaryContainer
+
       }}
+        
     >
       <Tabs.Screen
         name="index"
@@ -26,7 +29,6 @@ const TabLayout = () => {
             <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
 
-          header: () => <CustomHeader title={`Hello ${user ? user?.firstName : 'MPLOir'}!`} />,
         }}
       />
       <Tabs.Screen
@@ -44,7 +46,7 @@ const TabLayout = () => {
           title: "Career",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
-              name="briefcase-clock-outline"
+              name="briefcase-clock"
               size={size}
               color={color}
             />

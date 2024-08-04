@@ -22,7 +22,7 @@ const Home = () => {
 
   const BannerRenderItem = ({ item }: { item: DocumentData }) => {
     return (
-      <View style={{ width: 150, height: 30, marginLeft: 10 }} key={item._id}>
+      <View style={{ width: 150, marginLeft: 10 }} key={item._id}>
         <Banner
           visible
           style={{
@@ -71,7 +71,7 @@ const Home = () => {
       />
 
      
-      <View style={{ width: "100%", paddingHorizontal: 20 }}>
+      <View style={{ width: "100%", paddingHorizontal: 20, marginVertical:10 }}>
         <Text style={{ textAlign: "left", fontSize: 20, fontWeight: "700" }}>
           Top Services
         </Text>
@@ -98,7 +98,7 @@ const Home = () => {
                 key={user._id}
                 asChild
               >
-                <TouchableOpacity style={{ width: 200 }}>
+                <TouchableOpacity style={{ width: 150 }}>
                   <UserCard user={user} />
                 </TouchableOpacity>
               </Link>

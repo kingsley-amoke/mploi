@@ -10,7 +10,7 @@ import { Avatar, Button, Divider, Text, TextInput } from "react-native-paper";
 import React, { useLayoutEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import { useImageStore, useUsersStore, useUserStore } from "@/src/state/store";
+import { useImageStore, useProductsStore, useReviewsStore, useUsersStore, useUserStore } from "@/src/state/store";
 import { doc, DocumentData, setDoc } from "firebase/firestore";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
 import { ProductTypes, ReviewTypes } from "@/src/utils/types";
@@ -20,6 +20,9 @@ const ProductDetails = () => {
 
   const { user } = useUserStore();
   const { users } = useUsersStore();
+  const {products} = useProductsStore();
+  const {reviews } = useReviewsStore();
+
   const { image, updateImage } = useImageStore();
 
   const [star, setStar] = useState(0);
@@ -27,41 +30,10 @@ const ProductDetails = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
-  const product: ProductTypes = {
-    name: "xfghjk",
-    description: "srdfgbhjkbjgdszxdcgvb",
-    price: 43145,
-    location: "fgdgsfd",
-    category: "rtesfdftgrgefsd",
-    images: ["1", "2", "3", "4"],
-    sellerID: "12345fc",
-    _id: "12345fc",
-    negotiable: true,
-  };
 
-  const reviews: ReviewTypes[] = [
-    {
-      _id: "fdsdgf",
-      productID: "12345fc",
-      userID: user?._id,
-      rating: 4,
-      review: " This is a very good product",
-    },
-    {
-      _id: "fdsdg7",
-      productID: "12345fc",
-      userID: user?._id,
-      rating: 4,
-      review: " This is a very good product",
-    },
-    {
-      _id: "fd8dgf",
-      productID: "12345fc",
-      userID: user?._id,
-      rating: 4,
-      review: " This is a very good product",
-    },
-  ];
+  const product = products.find((product) => product._id === productID)
+
+  const productReviews = reviews.filter((review) => review.productID === productID)
 
   const handleSubmitReviews = () => {
     setSubmitting(true);
@@ -103,7 +75,7 @@ const ProductDetails = () => {
     );
   };
 
-  const ReviewRenderItem = ({ item }: { item: ReviewTypes }) => {
+  const ReviewRenderItem = ({ item }: { item: DocumentData }) => {
     const reviewer = users.find((user) => user?._id === item.userID);
 
     return (
@@ -120,7 +92,7 @@ const ProductDetails = () => {
       >
         <Avatar.Icon icon="cart"/>
         <View style={{gap:10}}>
-          <Text style={{fontWeight:'bold', fontSize:16}}>You</Text>
+          <Text style={{fontWeight:'bold', fontSize:16}}>{reviewer?._id === user?._id ? 'You' : reviewer?.lastName}</Text>
           <View
             style={{
               flexDirection: "row",
@@ -207,7 +179,7 @@ const ProductDetails = () => {
   };
 
   useLayoutEffect(() => {
-    updateImage(product.images[0]);
+    updateImage(product?.images[0]);
   }, []);
 
   return (
@@ -234,7 +206,7 @@ const ProductDetails = () => {
             <Text>{image}</Text>
           </View>
           <FlatList
-            data={product.images}
+            data={product?.images}
             horizontal
             renderItem={ImageRenderItem}
             showsHorizontalScrollIndicator={false}
@@ -248,11 +220,11 @@ const ProductDetails = () => {
             Product Details
           </Text>
           <View style={{gap:10}}>
-            <Text>Name: {product.name}</Text>
-            <Text>Description: {product.description}</Text>
-            <Text>Location: {product.location}</Text>
-            <Text>Price: {product.price}</Text>
-            <Text>Negotiable: {product.negotiable ? "Yes" : "No"}</Text>
+            <Text>Name: {product?.name}</Text>
+            <Text>Description: {product?.description}</Text>
+            <Text>Location: {product?.location}</Text>
+            <Text>Price: {product?.price}</Text>
+            <Text>Negotiable: {product?.negotiable ? "Yes" : "No"}</Text>
             <Text>Average rating: 4.5</Text>
           </View>
         </View>
@@ -368,17 +340,26 @@ const ProductDetails = () => {
             style={{ width: 350 }}
             onChangeText={(value) => setReview(value)}
           />
-          <MaterialIcons
-            name="send"
-            color="white"
-            size={30}
-            onPress={handleSubmitReviews}
-          />
+          {
+submitting ? (
+  <MaterialIcons  name="downloading"
+  color="white"
+  size={30}/>
+) : (
+
+  <MaterialIcons
+  name="send"
+  color="white"
+  size={30}
+  onPress={handleSubmitReviews}
+  />
+)
+          }
         </View>
       </View>
       <View style={{ marginBottom: 50, gap:20 }}>
       <Divider bold horizontalInset style={{borderColor:'grey'}} />
-        {reviews.map((review) => (
+        {productReviews.map((review) => (
           <ReviewRenderItem key={review._id} item={review} />
         ))}
       </View>

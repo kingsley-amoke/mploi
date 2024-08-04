@@ -218,3 +218,17 @@ export const getShops = async () => {
   });
   return shops;
 };
+
+//fetch all products
+
+export const getProducts = async () => {
+  const productsRef = collection(firestoreDB, "products");
+
+  const products: DocumentData[] = [];
+
+  const querySnapshot = await getDocs(productsRef);
+  querySnapshot.forEach((doc) => {
+    products.push(doc.data());
+  });
+  return products;
+};

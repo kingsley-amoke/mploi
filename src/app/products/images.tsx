@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { Button } from "react-native-paper";
+import { StyleSheet,  TouchableOpacity,  View } from 'react-native'
+import { Button, Text } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 
@@ -8,10 +8,11 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import { getBlobFroUri } from "@/src/utils/data";
 import { PhotosCard } from "@/src/components/PhotosCard";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useProductsStore, useUserStore } from "@/src/state/store";
 import useTheme from "@/src/hooks/useTheme";
 import { useLocalSearchParams } from 'expo-router';
+import { Colors } from '@/src/constants/Colors';
 
 const images = () => {
 
@@ -19,10 +20,6 @@ const images = () => {
 
     const {products} = useProductsStore();
 
-  const { colorScheme } = useTheme();
-
-
-  const iconColor = colorScheme === "dark" ? "white" : "black";
 
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -76,9 +73,10 @@ const images = () => {
           const productRef = doc(firestoreDB, "products", id?.toString()!);
 
           // updates user images array
-          updateDoc(productRef, {
-            images: [...images, url],
-          });
+        //   updateDoc(productRef, {
+        //     images: [...images, url],
+        //   }
+        // );
         });
       })
       .catch((error) => {
@@ -93,9 +91,14 @@ const images = () => {
     loadImages();
   }, [products]);
 
+  console.log(products, id)
+  console.log(images)
+
   return (
-    <View>
-      <Text>images</Text>
+    <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+    <TouchableOpacity style={{padding:50, backgroundColor:Colors.dark.primary, borderWidth:1}} onPress={() => selectImage(true)}>
+      <MaterialCommunityIcons name='plus' size={100} color='grey' />
+    </TouchableOpacity>
     </View>
   )
 }

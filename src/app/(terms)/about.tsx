@@ -7,7 +7,7 @@ const About = () => {
 
   return (
     <ScrollView
-      style={{ marginVertical: 20, marginHorizontal: 30 }}
+      style={{ paddingVertical: 10, marginHorizontal: 30 }}
       showsVerticalScrollIndicator={false}
     >
       <Text>
@@ -44,8 +44,8 @@ const About = () => {
         For more information about our website, MPLOi APP and our businesses,
         please contact us on info@mploiglobal.com or call 07017663503
       </Text>
-      <Text style={{ marginVertical: 10 }}>MPLOi</Text>
-      <Text>work now, earn now now</Text>
+      <Text style={{ marginVertical: 10}}>MPLOi</Text>
+      <Text  style={{ marginVertical: 10, paddingBottom:10 }}>work now, earn now now</Text>
     </ScrollView>
   );
 };

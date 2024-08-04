@@ -89,7 +89,7 @@ const handleViewImage = () => {
           }}
         />
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Text>{user?.skills[1]}</Text>
+          <Text style={{fontSize:12}}>{user?.skills[1]}</Text>
         </View>
       </View>
       <View
@@ -120,6 +120,7 @@ const handleViewImage = () => {
           onValueChange={setValue}
           buttons={[
             {
+                      
               value: "about",
               label: "About",
             },
@@ -132,9 +133,13 @@ const handleViewImage = () => {
               label: "Reviews",
             },
           ]}
+         density='medium'
         />
         {value === "about" ? (
+          <View>
+
           <AboutUser user={user} />
+          </View>
         ) : value === "photos" ? (
           <View>
             <UserPhotos user={user} />

@@ -7,7 +7,7 @@ const Terms = () => {
 
   return (
     <ScrollView
-      style={{ marginVertical: 20, marginHorizontal: 30 }}
+      style={{ paddingVertical: 10, marginHorizontal: 30 }}
       showsVerticalScrollIndicator={false}
     >
       <Text style={{ marginVertical: 10 }}>
@@ -97,7 +97,7 @@ const Terms = () => {
               encourage such illegality, if reported, such user account shall be
               blocked by MPLOi.
             </Text>
-            <Text style={{ marginVertical: 5 }}>
+            <Text style={{ marginVertical: 5, paddingBottom:10 }}>
               vi.  <Text style={{fontWeight:"700"}}>JOB AGENTS: </Text> MPLOi APP does not encourage touting and
               activities of job agents on our app. Any Client involved in
               arranging jobs outside the provisions of MPLOi APP shall be

@@ -7,7 +7,7 @@ import {
   PermissionsAndroid,
   KeyboardAvoidingView,
 } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -185,23 +185,23 @@ const EditProfile = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1, marginBottom: 20 }}
+      style={{ flex: 1, marginBottom: 10 }}
     >
       <SafeAreaView
         style={{
           flex: 1,
           paddingHorizontal: 22,
-          paddingTop: 22,
+          
         }}
       >
         <ScrollView
-          style={{ marginBottom: 40 }}
+          style={{ marginBottom: 10 }}
           showsVerticalScrollIndicator={false}
         >
           <View
             style={{
               alignItems: "center",
-              marginVertical: 22,
+              
             }}
           >
             <TouchableOpacity onPress={handleProfileImageSelection}>
@@ -507,24 +507,8 @@ const EditProfile = () => {
               />
             </View>
           </View>
-          <TouchableOpacity
-            style={{
-              marginVertical: 20,
-              borderColor: borderColor,
-              borderWidth: 1,
-
-              paddingHorizontal: 16,
-              paddingVertical: 12,
-
-              height: 44,
-              borderRadius: 6,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onPress={() => updateProfile()}
-          >
-            <Text>{!loading ? "Save Change" : "Saving"}</Text>
-          </TouchableOpacity>
+         
+          <Button mode="contained" style={{marginTop:10}} onPress={() => updateProfile()}>{!loading ? "Save Change" : "Saving"}</Button>
 
           {/* {renderDatePicker()} */}
         </ScrollView>

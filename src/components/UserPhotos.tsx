@@ -103,7 +103,7 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
           flexDirection: "row",
           marginHorizontal: "auto",
           flexWrap: "wrap",
-          gap: 30,
+          gap: 20,
         }}
       >
         {images.map((image) => (

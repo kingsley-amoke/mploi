@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ScrollView, View, Text as NativeText } from "react-native";
+import { ScrollView, View, Text as NativeText, useColorScheme } from "react-native";
 import {
   Avatar,
   Button,
@@ -14,10 +14,14 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { handleRequestService, latitudeDelta, longitudeDelta } from "../utils/data";
 import { getDistance } from "geolib";
+import useTheme from "../hooks/useTheme";
+import { Colors } from "../constants/Colors";
 
 
 const Categories = () => {
   const router = useRouter();
+
+  const colorScheme = useColorScheme();
 
   const { categories } = useCategoryStore();
   const { users } = useUsersStore();
@@ -40,6 +44,7 @@ const Categories = () => {
       user._id !== loggedUser?._id && user.skills.includes(selectedService)
   );
 
+  const textColor = colorScheme === 'light' ? '#000': '#fff'
 
 
   return (
@@ -48,7 +53,6 @@ const Categories = () => {
         flex: 1,
         width: "100%",
         marginVertical: 20,
-        marginHorizontal: 10,
         alignItems: "center",
       }}
     >
@@ -67,7 +71,7 @@ const Categories = () => {
         <TextInput
           mode="outlined"
           placeholder="Search services"
-          style={{ width: 370, paddingLeft:30 }}
+         style={{width:300, paddingLeft:10}}
           autoFocus
           
           onChangeText={(value) => setSearch(value)}
@@ -75,8 +79,8 @@ const Categories = () => {
         <MaterialIcons
           name="search"
           size={20}
-          color="white"
-          style={{ position: "absolute", left: 30 }}
+          color={textColor}
+          style={{ position: "absolute", left: 35 }}
         />
       </View>
 
@@ -96,19 +100,23 @@ const Categories = () => {
                 <List.Accordion
                   title={category.name}
                   id={category.name}
+                  titleStyle={{color: textColor}}
                   onLongPress={() => console.log(category.name)}
+                  
                 >
                   {category.subcategories &&
                     category.subcategories.map(
                       (subcategory: { name: string }, index: number) => (
                         <List.Item
                           title={subcategory.name}
+                          titleStyle={{color:textColor}}
                           style={{ marginLeft: 20 }}
                           onPress={() => {
                             setSelectedService(subcategory.name);
                             showModal();
                           }}
                           key={subcategory.name}
+                          
                         />
                       )
                     )}

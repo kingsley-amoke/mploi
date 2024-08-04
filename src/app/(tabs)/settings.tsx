@@ -1,28 +1,25 @@
-import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native'
 import React from 'react'
 import { useRouter } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Text } from 'react-native-paper';
 import useTheme from '@/src/hooks/useTheme';
 import { signOut } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '@/src/utils/firebaseConfig';
+import { ExternalLink } from '@/src/components/ExternalLink';
 
 const shop = () => {
     // const {user} = useUserStore()
 
   const router = useRouter()
-  const {colorScheme} = useTheme()
+  const colorScheme = useColorScheme();
 
-  const color = colorScheme === 'dark' ? 'white' : 'black';
+  const color = colorScheme === "dark" ? "white" : "black";
 
 
   const navigateToEditProfile = () => {
     router.push("/profile/edit");
-  };
-
-  const navigateToSecurity = () => {
-    console.log("Security function");
   };
 
   const navigateToNotifications = () => {
@@ -49,7 +46,7 @@ const shop = () => {
     console.log("Free Space function");
   };
 
-  const navigateToDataSaver = () => {
+  const navigateToGithub = () => {
     console.log("Data saver");
     
   };
@@ -57,10 +54,6 @@ const shop = () => {
   const navigateToReportProblem = () => {
     console.log("Report a problem");
   };
-
-  const navigateToTheme = () => {
-    router.push('/settings')
-  }
 
   const about = () => {
      router.push('/about')
@@ -81,7 +74,6 @@ const shop = () => {
       text: "Edit Profile",
       action: navigateToEditProfile,
     },
-    { icon: "security", text: "Security", action: navigateToSecurity },
     {
       icon: "notifications-none",
       text: "Notifications",
@@ -105,21 +97,24 @@ const shop = () => {
     },
   ];
 
-  // const cacheAndCellularItems = [
-  //   {
-  //     icon: "delete-outline",
-  //     text: "Free up space",
-  //     action: navigateToFreeSpace,
-  //   },
-  //   { icon: "save-alt", text: "Data Saver", action: navigateToDataSaver },
-  // ];
+  const DeveloperInfoItems = [
+    {
+      icon: 'link',
+      text: "Portfolio",
+      action: 'https://kingsleyamoke.com.ng/'
+    },
+
+    {
+      icon: 'facebook-square',
+      text: "Facebook",
+      action: 'https://facebook.com/kingsley.chibuike.54/'
+      
+    },
+    { icon: "github", text: "GitHub", action: 'https://github.com/kingsley-amoke' },
+    {icon: 'linkedin', text: "LinkedIn", action: 'https://linkedin.com/in/kingsley-amoke' },
+  ];
 
   const actionsItems = [
-    {
-      icon: "toggle-off",
-      text: "Change Theme",
-      action: navigateToTheme ,
-    },
     { icon: "info-outline", text: "About", action: about },
     { icon: "logout", text: "Log out", action: logout },
   ];
@@ -141,12 +136,13 @@ interface settingsItemsProps{
         borderRadius: 12,
       }}
     >
-      <MaterialIcons name={icon} size={24} color={color}/>
+     
+      <MaterialIcons name={icon} size={20} color={color}/>
       <Text
         style={{
           marginLeft: 36,
           fontWeight: 600,
-          fontSize: 16,
+          fontSize: 14,
         }}
       >
         {text}{" "}
@@ -161,10 +157,10 @@ interface settingsItemsProps{
       }}
     >
 
-      <ScrollView style={{ marginHorizontal: 12 }}>
+      <ScrollView style={{ marginHorizontal: 12, }} showsVerticalScrollIndicator={false}>
         {/* Account Settings */}
         <View style={{ marginBottom: 12 }}>
-          <Text style={{ marginVertical: 10 }}>Account</Text>
+        <Text style={{  marginVertical: 10, textTransform:'uppercase', marginLeft:12, fontSize:12 }}>Account</Text>
           <View
             
           >
@@ -179,7 +175,7 @@ interface settingsItemsProps{
         {/* Support and About settings */}
 
         <View style={{ marginBottom: 12 }}>
-          <Text style={{  marginVertical: 10 }}>
+        <Text style={{  marginVertical: 10, textTransform:'uppercase', marginLeft:12, fontSize:12 }}>
             Terms & Policies{" "}
           </Text>
           <View
@@ -192,27 +188,49 @@ interface settingsItemsProps{
             ))}
           </View>
         </View>
-
-        {/* Cache & Cellular */}
-        {/* <View style={{ marginBottom: 12 }}>
-          <Text style={{  marginVertical: 10 }}>
-            Cache & Cellular{" "}
+        {/* Developer Information */}
+        <View style={{ marginBottom: 12 }}>
+          <Text style={{  marginVertical: 10, textTransform:'uppercase', marginLeft:12, fontSize:12 }}>
+            Developer Info{" "}
           </Text>
           <View
             
           >
-            {cacheAndCellularItems.map((item, index) => (
-              <React.Fragment key={index}>
-                {renderSettingsItem(item)}
-              </React.Fragment>
+            {DeveloperInfoItems.map((item, index) => (
+              <ExternalLink href={item.action} key={index}>
+              <TouchableOpacity
+             
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingVertical: 8,
+                paddingLeft: 12,
+                borderRadius: 12,
+              }}
+              
+            >
+        
+              <FontAwesome name={item.icon} size={20} color={color}/>
+              <Text
+                style={{
+                  marginLeft: 36,
+                  fontWeight: 600,
+                  fontSize: 14,
+
+                }}
+              >
+                {item.text}{" "}
+              </Text>
+            </TouchableOpacity>
+                  </ExternalLink>
             ))}
           </View>
-        </View> */}
+        </View>
 
         {/* Actions Settings */}
 
         <View style={{ marginBottom: 12 }}>
-          <Text style={{  marginVertical: 10 }}>Actions</Text>
+        <Text style={{  marginVertical: 10, textTransform:'uppercase', marginLeft:12, fontSize:12 }}>Actions</Text>
           <View
            
           >

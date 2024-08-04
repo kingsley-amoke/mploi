@@ -22,6 +22,7 @@ import {
   useChatStore,
   useJobsStore,
   useNotificationStore,
+  useProductsStore,
   useRequestStore,
   useShopsStore,
   useUsersStore,
@@ -30,7 +31,7 @@ import {
 import { fetchUser, getLoggedUser } from "../utils/userActions";
 import { Feather } from "@expo/vector-icons";
 import { firestoreDB, realtimeDB } from "../utils/firebaseConfig";
-import { getJobs, getServices, getShops, getUser, getUsers } from "../utils/data";
+import { getJobs, getProducts, getServices, getShops, getUser, getUsers } from "../utils/data";
 import { onValue, ref } from "firebase/database";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
@@ -45,7 +46,7 @@ const CombinedDefaultTheme = merge(LightTheme, customLightTheme);
 const CombinedDarkTheme = merge(DarkTheme, customDarkTheme);
 
 export default function RootLayout() {
-  const { colorScheme } = useTheme();
+  const colorScheme = useColorScheme();
 
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
@@ -59,6 +60,7 @@ export default function RootLayout() {
   const { storeChats } = useChatStore();
   const {storeRequests} = useRequestStore();
   const { storeShops } = useShopsStore();
+  const {storeProducts} = useProductsStore();
 
   const router = useRouter();
 
@@ -88,6 +90,11 @@ export default function RootLayout() {
   const fetchShops = async () => {
     const shops = await getShops();
     storeShops(shops);
+  };
+
+  const fetchProducts = async () => {
+    const products = await getProducts();
+    storeProducts(products);
   };
 
   const fetchAllChats = ( ) => {
@@ -132,10 +139,13 @@ export default function RootLayout() {
     fetchAllUsers()
     fetchAllJobs()
     fetchShops()
+    fetchProducts()
   }, []);
+
 
   return (
     <PaperProvider theme={paperTheme}>
+       <StatusBar style='light' />
       <ThemeProvider value={paperTheme}>
         <Stack>
           <Stack.Screen
@@ -160,6 +170,9 @@ export default function RootLayout() {
             name="admin/index"
             options={{
               title: 'Admin Dashboard',
+              headerTitleAlign:'center',
+             headerStyle:{backgroundColor:Colors.light.primary},
+             headerTintColor:'white'
             }}
           />
            <Stack.Screen
@@ -178,7 +191,10 @@ export default function RootLayout() {
           <Stack.Screen
             name="profile/edit"
             options={{
-              headerShown: false,
+              title: 'Edit Profile',
+              headerTitleAlign:'center',
+              headerStyle: {backgroundColor:Colors.light.primary},
+              headerTintColor: 'white'
             }}
           />
           <Stack.Screen
@@ -199,6 +215,9 @@ export default function RootLayout() {
             name="service/index"
             options={{
               title: "All Services",
+              headerTitleAlign:'center',
+             headerStyle:{backgroundColor:Colors.light.primary},
+             headerTintColor:'white'
               
             }}
           />
@@ -213,12 +232,32 @@ export default function RootLayout() {
             name="service/requests"
             options={{
               title: "Service Requests",
+              headerTitleAlign:'center',
+             headerStyle:{backgroundColor:Colors.light.primary},
+             headerTintColor:'white'
+              
+            }}
+          />
+           <Stack.Screen
+            name="image/index"
+            options={{
+              headerShown:false
+              
+            }}
+          />
+          <Stack.Screen
+            name="settings/index"
+            options={{
+             title: 'Change Theme',
+             headerTitleAlign:'center',
+             headerStyle:{backgroundColor:Colors.light.primary},
+             headerTintColor:'white'
               
             }}
           />
         </Stack>
       </ThemeProvider>
-      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+     
     </PaperProvider>
   );
 }

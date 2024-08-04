@@ -20,7 +20,7 @@ const CustomHeader = ({title}: {title: string}) => {
   const _handleMore = () => console.log('Shown more');
 
   return (
-    <Appbar.Header>
+    <Appbar.Header >
       
       <Appbar.Content title={title} />
       <Appbar.Action icon="magnify" onPress={_handleSearch} />

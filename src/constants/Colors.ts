@@ -8,14 +8,14 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    "primary": "rgb(104, 71, 192)",
+    "primary": "rgb(33, 20, 100)",
     "onPrimary": "rgb(255, 255, 255)",
-    "primaryContainer": "rgb(232, 221, 255)",
-    "onPrimaryContainer": "rgb(33, 0, 93)",
-    "secondary": "rgb(140, 51, 179)",
+    "primaryContainer": "rgb(33, 20, 100)",
+    "onPrimaryContainer": "rgb(255, 255, 255)",
+    "secondary": "rgb(16, 109, 32)",
     "onSecondary": "rgb(255, 255, 255)",
-    "secondaryContainer": "rgb(248, 216, 255)",
-    "onSecondaryContainer": "rgb(50, 0, 71)",
+    "secondaryContainer": "rgb(50, 0, 71)",
+    "onSecondaryContainer": "rgb(255, 255, 255)",
     "tertiary": "rgb(16, 109, 32)",
     "onTertiary": "rgb(255, 255, 255)",
     "tertiaryContainer": "rgb(157, 248, 152)",
@@ -25,7 +25,7 @@ export const Colors = {
     "errorContainer": "rgb(255, 218, 214)",
     "onErrorContainer": "rgb(65, 0, 2)",
     "background": "rgb(255, 251, 255)",
-    "onBackground": "rgb(28, 27, 30)",
+    "onBackground": "rgb(255, 255, 255)",
     "surface": "rgb(255, 251, 255)",
     "onSurface": "rgb(28, 27, 30)",
     "surfaceVariant": "rgb(230, 224, 236)",
@@ -46,7 +46,7 @@ export const Colors = {
       "level5": "rgb(234, 226, 246)"
     },
     "surfaceDisabled": "rgba(28, 27, 30, 0.12)",
-    "onSurfaceDisabled": "rgba(28, 27, 30, 0.38)",
+    "onSurfaceDisabled": "rgba(255, 255, 255)",
     "backdrop": "rgba(50, 47, 56, 0.4)"
   },
   dark: {
@@ -66,7 +66,7 @@ export const Colors = {
     "onError": "rgb(105, 0, 5)",
     "errorContainer": "rgb(147, 0, 10)",
     "onErrorContainer": "rgb(255, 180, 171)",
-    "background": "rgb(28, 27, 30)",
+    "background": "rgb(10, 10, 10)",
     "onBackground": "rgb(230, 225, 230)",
     "surface": "rgb(28, 27, 30)",
     "onSurface": "rgb(230, 225, 230)",

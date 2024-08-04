@@ -5,6 +5,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  useColorScheme,
 } from "react-native";
 import { TextInput, Text, Avatar } from "react-native-paper";
 import React, { useLayoutEffect, useRef, useState } from "react";
@@ -23,17 +24,10 @@ const Room = () => {
 
   const navigation = useNavigation();
 
-  const { colorScheme } = useTheme();
+  const colorScheme = useColorScheme();
 
-  const iconColor = colorScheme === "dark" ? "white" : "black";
+  const textColor = colorScheme === "dark" ? "white" : "black";
 
-  const placeholderColor =
-    colorScheme === "dark"
-      ? Colors.dark.onSurfaceDisabled
-      : Colors.light.onSurfaceDisabled;
-
-  const bgColor =
-    colorScheme === "dark" ? Colors.dark.backdrop : Colors.light.backdrop;
 
   const userChatBg = Colors.light.primary;
   const clientChatBg = Colors.light.secondary;
@@ -47,6 +41,7 @@ const Room = () => {
   const [messages, setMessages] = useState<DocumentData[]>([]);
 
   const sendMessage = async () => {
+    if(message === '') return
     const id = `${Date.now()}`;
     const timeStamp = serverTimestamp();
 
@@ -57,9 +52,8 @@ const Room = () => {
       senderId: user?._id,
       timeStamp: timeStamp,
     };
-    set(ref(realtimeDB, "chats/" + roomId + "/messages/" + id), data).then(() =>
-      setMessage("")
-    );
+    setMessage("");
+    set(ref(realtimeDB, "chats/" + roomId + "/messages/" + id), data);
   };
 
   const fetchRoomMessages = () => {
@@ -90,7 +84,7 @@ const Room = () => {
     return (
       <View
         style={{
-          backgroundColor: bgColor,
+          backgroundColor: Colors.light.primary,
           flexDirection: "row",
           height: 100,
           alignItems: "flex-end",
@@ -102,12 +96,12 @@ const Room = () => {
         <Ionicons
           name="chevron-back"
           size={30}
-          color={iconColor}
+          color='white'
           onPress={() => navigation.goBack()}
         />
         <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
           <Avatar.Image source={{ uri: chatImage }} size={35} />
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{chatName}</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold", color:'white' }}>{chatName}</Text>
         </View>
       </View>
     );
@@ -160,7 +154,7 @@ const Room = () => {
                           justifyContent: "center",
                           alignItems: "center",
                           gap: 10,
-                          marginBottom: 20,
+                          marginBottom: 10,
                           backgroundColor: userChatBg,
                           borderRadius: 20,
                           borderBottomRightRadius: 1,
@@ -172,7 +166,7 @@ const Room = () => {
                             margin: 1,
                             alignSelf: "flex-end",
                             paddingHorizontal: 10,
-                            paddingVertical: 5,
+                            paddingVertical: 2,
 
                             position: "relative",
                           }}
@@ -181,7 +175,8 @@ const Room = () => {
                             <Text
                               style={{
                                 fontWeight: "bold",
-                                fontSize: 20,
+                                fontSize: 14,
+                                color:'white'
                               }}
                             >
                               {msg.text}
@@ -199,7 +194,9 @@ const Room = () => {
                               <Text
                                 style={{
                                   fontWeight: "bold",
-                                  fontSize: 10,
+                                  fontSize: 8,
+                                  color:'white',
+                                  fontStyle:'italic'
                                 }}
                               >
                                 {new Date(msg?.timeStamp).toLocaleTimeString(
@@ -216,6 +213,7 @@ const Room = () => {
                               <Ionicons
                                 name="checkmark-done-outline"
                                 size={15}
+                                color='white'
                               />
                             </Text>
                           </View>
@@ -238,7 +236,7 @@ const Room = () => {
                           justifyContent: "center",
                           alignItems: "center",
                           gap: 10,
-                          marginBottom: 20,
+                          marginBottom: 10,
                           backgroundColor: clientChatBg,
                           borderRadius: 20,
                           borderBottomLeftRadius: 1,
@@ -247,20 +245,20 @@ const Room = () => {
                         <View
                           style={{
                             margin: 1,
-                            paddingHorizontal: 20,
+                            paddingHorizontal: 10,
                             paddingVertical: 5,
 
                             position: "relative",
                           }}
                         >
                           <View>
-                            <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                            <Text style={{ fontWeight: "bold", fontSize: 14, color:'white' }}>
                               {msg.text}
                             </Text>
                           </View>
                           <View style={{ alignSelf: "flex-end" }}>
                             {msg?.timeStamp && (
-                              <Text style={{ fontWeight: "300", fontSize: 10 }}>
+                              <Text style={{ fontWeight: "300", fontSize: 8, color:'white', fontStyle:'italic' }}>
                                 {new Date(msg?.timeStamp).toLocaleTimeString(
                                   "en-US",
                                   {
@@ -285,8 +283,8 @@ const Room = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 paddingHorizontal: 10,
-                marginHorizontal: 20,
-                marginBottom: 20,
+                marginHorizontal: 5,
+                marginBottom: 10,
                 marginTop: 20,
               }}
             >
@@ -295,11 +293,9 @@ const Room = () => {
                 style={{
                   flex: 1,
                   fontWeight: "bold",
-                  paddingLeft: 10,
-                  borderRadius: 50,
                 }}
                 placeholder="Type here..."
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor='grey'
                 value={message}
                 onChangeText={(text) => setMessage(text)}
               />
@@ -308,7 +304,7 @@ const Room = () => {
                 style={{ paddingHorizontal: 10 }}
                 onPress={sendMessage}
               >
-                <FontAwesome name="send" size={24} color="#555" />
+                <FontAwesome name="send" size={24} color={textColor}/>
               </TouchableOpacity>
             </View>
           </>

@@ -49,6 +49,12 @@ export interface ProductsStore{
   products: DocumentData[];
   storeProducts: (products: DocumentData[]) => void;  
 }
+
+export interface ReviewsStore{
+  reviews: DocumentData[];
+  storeReviews: (reviews: DocumentData[]) => void; 
+  updateReviews: (reviews: DocumentData) => void; 
+}
 export interface chatStore {
   chats: DocumentData[];
   storeChats: (chats: DocumentData[]) => void;
@@ -233,6 +239,28 @@ export const useProductsStore = create<ProductsStore>((set) => ({
   },
 }));
 
+export const useReviewsStore = create<ReviewsStore>((set) => ({
+  reviews: [],
+  storeReviews: (reviews) => {
+    set((state) => {
+      state.reviews = reviews;
+
+      return {
+        reviews: state.reviews,
+      };
+    });
+  },
+  updateReviews: (reviews) => {
+    set((state) => {
+      const updatedReviews = [...state.reviews, reviews]
+
+      return {
+        reviews: updatedReviews
+      }
+    })
+  }
+}));
+
 export const useChatStore = create<chatStore>((set) => ({
   chats: [],
   storeChats: (chats) => {
@@ -253,7 +281,7 @@ export const useRequestStore = create<requestStore>((set) => ({
       state.requests = requests;
 
       return {
-        chats: state.requests,
+        requests: state.requests,
       };
     });
   },

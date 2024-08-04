@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, useColorScheme, View } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
 import { Text } from "react-native-paper";
@@ -10,7 +10,7 @@ const PublicLayout = () => {
 
   // const router = useRouter();
 
-  const { colorScheme } = useTheme();
+  const colorScheme = useColorScheme()
 
   const bgColor =
     colorScheme === "dark" ? Colors.dark.shadow : Colors.light.primary;
