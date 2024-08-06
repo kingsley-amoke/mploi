@@ -9,6 +9,14 @@ const ProductLayout = () => {
         name="add"
         options={{
           title: "Add Product",
+          headerTitleAlign:'center'
+        }}
+      />
+      <Stack.Screen
+        name="images"
+        options={{
+          title: "Add Images",
+          headerTitleAlign:'center'
         }}
       />
       <Stack.Screen name="[id]" />

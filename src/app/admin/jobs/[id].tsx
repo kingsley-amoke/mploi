@@ -1,13 +1,14 @@
 import {
     ScrollView,
     StyleSheet,
+    useColorScheme,
     View,
   } from "react-native";
-  import {  Button, Text,} from 'react-native-paper'
+  import {  Button, Divider, Text,} from 'react-native-paper'
   import React, { useEffect, useState } from "react";
   import { Link, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
   import { SafeAreaView } from "react-native-safe-area-context";
-  import { Ionicons } from "@expo/vector-icons";
+  import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 
   import * as MailComposer from 'expo-mail-composer';
 
@@ -18,6 +19,7 @@ import {
   } from "@/src/state/store";
 import { ExternalLink } from "@/src/components/ExternalLink";
 import { socialLinks } from "@/src/utils/data";
+
  
   
   const JobPage = () => {
@@ -25,11 +27,15 @@ import { socialLinks } from "@/src/utils/data";
     const {id} = useLocalSearchParams();
 
     const navigation = useNavigation();
+
+    const colorScheme = useColorScheme();
+
+    const textColor = colorScheme === "dark" ? "white" : "black";
   
     const { jobs } = useJobsStore();
     const { user } = useUserStore();
 
-    const job = jobs.filter(job => job._id === id)[0];
+    const job = jobs.find(job => job._id === id)!;
  
 
     const date = parseInt(job._id);
@@ -39,6 +45,8 @@ import { socialLinks } from "@/src/utils/data";
     const today = new Date(Date.now()).getTime();
   
     const daysAgo = Math.floor((today - jobDate) / (1000 * 60 * 60 * 24));
+
+    const salary = new Intl.NumberFormat('en-UK', {style:'currency', currency: 'NGN'}).format(job.salary)
 
 
     //TODO: implement apply for job
@@ -85,11 +93,12 @@ import { socialLinks } from "@/src/utils/data";
           MPLOi Global Resources
         </Text>
       </View>
+        <Divider bold horizontalInset style={{ marginBottom:10 }} />
       <View>
         <Text>Experience Level: {job.experience}</Text>
         <Text>Location: {job.location}</Text>
         <Text>{job.workTime}</Text>
-        <Text>Pay: {job.salary}</Text>
+        <Text>Pay: {salary}</Text>
       </View>
       <View style={{ marginVertical: 10 }}>
         <Text style={{ fontSize: 16, fontWeight: "bold", marginVertical: 10 }}>
@@ -117,7 +126,7 @@ import { socialLinks } from "@/src/utils/data";
           updated.
         </Text>
         <Text style={{ marginVertical: 10 }}>Like and follow us on:</Text>
-        <View style={{ flexDirection: "row", marginBottom: 10, gap: 10 }}>
+        <View style={{ flexDirection: "row", marginBottom: 10, gap: 20 }}>
           <ExternalLink href={socialLinks.whatsapp.link}>
             <Ionicons name="logo-whatsapp" size={30} color={socialLinks.whatsapp.color} />
           </ExternalLink>
@@ -125,7 +134,7 @@ import { socialLinks } from "@/src/utils/data";
             <Ionicons name="logo-facebook" size={30} color={socialLinks.facebook.color} />
           </ExternalLink>
           <ExternalLink href={socialLinks.twitter.link}>
-            <Ionicons name="logo-twitter" size={30} color={socialLinks.twitter.color} />
+            <FontAwesome6 name="x-twitter" size={30} color={textColor} />
           </ExternalLink>
           <ExternalLink href={socialLinks.instagram.link}>
             <Ionicons name="logo-instagram" size={30} color={socialLinks.instagram.color}/>

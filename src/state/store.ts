@@ -48,6 +48,7 @@ export interface shopsStore {
 export interface ProductsStore{
   products: DocumentData[];
   storeProducts: (products: DocumentData[]) => void;  
+  addProduct: (product: DocumentData) => void;
 }
 
 export interface ReviewsStore{
@@ -237,6 +238,15 @@ export const useProductsStore = create<ProductsStore>((set) => ({
       };
     });
   },
+  addProduct: (product) => {
+    set((state) => {
+      state.products.push(product);
+
+      return {
+        products: state.products,
+      };
+    });
+  }
 }));
 
 export const useReviewsStore = create<ReviewsStore>((set) => ({

@@ -1,6 +1,6 @@
-shopr
+contact seller
 cleanup the app
-fix chat keyboard
 add reviews
 admin
 subscription
+book service

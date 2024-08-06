@@ -232,3 +232,39 @@ export const getProducts = async () => {
   });
   return products;
 };
+
+//fetch all reviews
+
+export const getReviews = async () => {
+  const reviewsRef = collection(firestoreDB, "reviews");
+
+  const reviews: DocumentData[] = [];
+
+  const querySnapshot = await getDocs(reviewsRef);
+  querySnapshot.forEach((doc) => {
+    reviews.push(doc.data());
+  });
+  return reviews;
+};
+
+//format price
+
+export const formatPrice = (price: number ) => {
+  const formattedPrice = new Intl.NumberFormat('en-UK', { style:'currency', currency: 'NGN', currencySign: 'accounting'}).format(price);
+  return formattedPrice;
+}
+
+//calculate average rating
+
+export const averageRating = (items: DocumentData[]) => {
+
+  if(items.length <1) return 0
+
+  const totalPrice = items.reduce((accumulator ,item) => {
+    return accumulator += item.rating;
+  }, 0);
+
+  const average = totalPrice/items.length;
+
+  return average.toFixed(2);
+}

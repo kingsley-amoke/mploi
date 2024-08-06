@@ -35,7 +35,9 @@ const Room = () => {
   const { user } = useUserStore();
   const { chats } = useChatStore();
 
-  const room = chats.filter((chat) => chat._id === roomId)[0];
+  const room = chats.find((chat) => chat._id === roomId);
+
+  if(!room) return
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<DocumentData[]>([]);
@@ -114,6 +116,7 @@ const Room = () => {
 
     fetchRoomMessages();
   }, [roomId]);
+
 
   return (
     <View style={{ flex: 1 }}>

@@ -1,5 +1,6 @@
 import {
   FlatList,
+  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,37 +9,48 @@ import {
 } from "react-native";
 import { Avatar, Button, Divider, Text, TextInput } from "react-native-paper";
 import React, { useLayoutEffect, useState } from "react";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
-import { useImageStore, useProductsStore, useReviewsStore, useUsersStore, useUserStore } from "@/src/state/store";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import {
+  useImageStore,
+  useProductsStore,
+  useReviewsStore,
+  useUsersStore,
+  useUserStore,
+} from "@/src/state/store";
 import { doc, DocumentData, setDoc } from "firebase/firestore";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
 import { ProductTypes, ReviewTypes } from "@/src/utils/types";
+import { averageRating, formatPrice } from "@/src/utils/data";
+import { Colors } from "@/src/constants/Colors";
 
 const ProductDetails = () => {
   const { id: productID } = useLocalSearchParams();
 
+  const navigation = useNavigation();
+
   const { user } = useUserStore();
   const { users } = useUsersStore();
-  const {products} = useProductsStore();
-  const {reviews } = useReviewsStore();
+  const { products } = useProductsStore();
+  const { reviews, updateReviews } = useReviewsStore();
 
   const { image, updateImage } = useImageStore();
 
-  const [star, setStar] = useState(0);
+  const [star, setStar] = useState(1);
   const [review, setReview] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
 
+  const product = products.find((product) => product._id === productID);
 
-  const product = products.find((product) => product._id === productID)
-
-  const productReviews = reviews.filter((review) => review.productID === productID)
+  const productReviews = reviews.filter(
+    (review) => review.productID === productID
+  );
 
   const handleSubmitReviews = () => {
     setSubmitting(true);
 
-    const id = `${Date.now()}}`;
+    const id = `${Date.now()}`;
 
     const data = {
       _id: id,
@@ -48,9 +60,12 @@ const ProductDetails = () => {
       userID: user?._id,
     };
 
+    setReview("");
+
     const reviewRef = doc(firestoreDB, "reviews", data._id);
 
     setDoc(reviewRef, data).then(() => {
+      updateReviews(data);
       setSubmitting(false);
     });
   };
@@ -70,7 +85,12 @@ const ProductDetails = () => {
         }}
         onPress={() => updateImage(item)}
       >
-        <Text>{item}</Text>
+        <Image
+          source={{ uri: item }}
+          width={90}
+          height={90}
+          style={{ borderRadius: 10 }}
+        />
       </TouchableOpacity>
     );
   };
@@ -90,9 +110,11 @@ const ProductDetails = () => {
           gap: 30,
         }}
       >
-        <Avatar.Icon icon="cart"/>
-        <View style={{gap:10}}>
-          <Text style={{fontWeight:'bold', fontSize:16}}>{reviewer?._id === user?._id ? 'You' : reviewer?.lastName}</Text>
+        <Avatar.Image source={{ uri: reviewer?.image }} />
+        <View style={{ gap: 10 }}>
+          <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+            {reviewer?._id === user?._id ? "You" : reviewer?.lastName}
+          </Text>
           <View
             style={{
               flexDirection: "row",
@@ -178,7 +200,16 @@ const ProductDetails = () => {
     );
   };
 
+  const contactSeller = () => {
+    console.log("contact seller");
+  };
+
   useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: product?.name.substring(0, 25),
+      headerStyle: { backgroundColor: Colors.light.primary },
+      headerTintColor: "white",
+    });
     updateImage(product?.images[0]);
   }, []);
 
@@ -193,8 +224,8 @@ const ProductDetails = () => {
         >
           <View
             style={{
-              width: 350,
-              height: 350,
+              width: 300,
+              height: 300,
               justifyContent: "center",
               alignItems: "center",
               borderRadius: 10,
@@ -203,42 +234,60 @@ const ProductDetails = () => {
               marginBottom: 30,
             }}
           >
-            <Text>{image}</Text>
+            {image && (
+              <Image
+                source={{ uri: image }}
+                width={290}
+                height={290}
+                style={{ borderRadius: 10 }}
+              />
+            )}
           </View>
-          <FlatList
-            data={product?.images}
-            horizontal
-            renderItem={ImageRenderItem}
-            showsHorizontalScrollIndicator={false}
-          />
+          {product?.images.length > 1 && (
+            <FlatList
+              data={product?.images}
+              horizontal
+              renderItem={ImageRenderItem}
+              showsHorizontalScrollIndicator={false}
+            />
+          )}
         </View>
-        <Divider bold horizontalInset style={{borderColor:'grey', marginTop:20}}/>
+        <Divider
+          bold
+          horizontalInset
+          style={{ borderColor: "grey", marginTop: 20 }}
+        />
         <View style={{ marginVertical: 20 }}>
           <Text
             style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}
           >
             Product Details
           </Text>
-          <View style={{gap:10}}>
+          <View style={{ gap: 10 }}>
             <Text>Name: {product?.name}</Text>
             <Text>Description: {product?.description}</Text>
             <Text>Location: {product?.location}</Text>
-            <Text>Price: {product?.price}</Text>
+            <Text>Price: {formatPrice(product?.price)}</Text>
             <Text>Negotiable: {product?.negotiable ? "Yes" : "No"}</Text>
-            <Text>Average rating: 4.5</Text>
           </View>
         </View>
       </View>
-      <Divider bold horizontalInset style={{borderColor:'grey', marginVertical:20}}/>
+      <Divider
+        bold
+        horizontalInset
+        style={{ borderColor: "grey", marginVertical: 20 }}
+      />
       <View>
-        <Button mode="contained">Contact Seller</Button>
+        <Button mode="contained" onPress={contactSeller}>
+          Contact Seller
+        </Button>
       </View>
       <View style={{ marginBottom: 40 }}>
         <View style={{ marginVertical: 30 }}>
           <Text
             style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}
           >
-            Submit your review
+            Review this product
           </Text>
         </View>
 
@@ -336,29 +385,35 @@ const ProductDetails = () => {
         >
           <TextInput
             mode="outlined"
-            label="Review"
-            style={{ width: 350 }}
+            label="write a review..."
+            style={{ width: 300 }}
+            value={review}
             onChangeText={(value) => setReview(value)}
           />
-          {
-submitting ? (
-  <MaterialIcons  name="downloading"
-  color="white"
-  size={30}/>
-) : (
-
-  <MaterialIcons
-  name="send"
-  color="white"
-  size={30}
-  onPress={handleSubmitReviews}
-  />
-)
-          }
+          {submitting ? (
+            <Feather name="loader" color="white" size={30} />
+          ) : (
+            <MaterialIcons
+              name="send"
+              color="white"
+              size={30}
+              onPress={handleSubmitReviews}
+            />
+          )}
+        </View>
+        <View>
+          <Text>Total: ({productReviews.length})</Text>
+          <Text>Average: {averageRating(productReviews)}</Text>
         </View>
       </View>
-      <View style={{ marginBottom: 50, gap:20 }}>
-      <Divider bold horizontalInset style={{borderColor:'grey'}} />
+      {submitting && (
+        <Text style={{ color: "grey", textAlign: "center", marginBottom: 10 }}>
+          Submitting...
+        </Text>
+      )}
+
+      <View style={{ marginBottom: 50, gap: 20 }}>
+        <Divider bold horizontalInset style={{ borderColor: "grey" }} />
         {productReviews.map((review) => (
           <ReviewRenderItem key={review._id} item={review} />
         ))}

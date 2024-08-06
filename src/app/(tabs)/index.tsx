@@ -1,6 +1,7 @@
 import Carousel from "@/src/components/Carousel";
 import FloatingButton from "@/src/components/FloatingButton";
 import UserCard from "@/src/components/UserCard";
+import { Colors } from "@/src/constants/Colors";
 import { useJobsStore, useUsersStore } from "@/src/state/store";
 import { Link, useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
@@ -13,7 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Text, ActivityIndicator, MD2Colors, Banner } from "react-native-paper";
+import { Text, ActivityIndicator, MD2Colors, Banner, Button } from "react-native-paper";
 
 const Home = () => {
   const { users } = useUsersStore();
@@ -21,26 +22,28 @@ const Home = () => {
   const router = useRouter();
 
   const BannerRenderItem = ({ item }: { item: DocumentData }) => {
+
+    const salary = new Intl.NumberFormat('currencr', {style:'currency', currency: 'NGN'}).format(item.salary);
+
     return (
-      <View style={{ width: 150, marginLeft: 10 }} key={item._id}>
-        <Banner
-          visible
-          style={{
-            borderBottomColor: "teal",
-            borderBottomWidth: 1,
-            marginBottom: 0,
-            minHeight: 130,
-            maxHeight: 200,
-          }}
-          actions={[
-            {
-              label: "Apply",
-              onPress: () => router.push(`/admin/jobs/${item._id}`),
-            },
-          ]}
-        >
-          {item.title}
-        </Banner>
+      <View style={{ width: 150, marginLeft: 10, height:130, borderBottomColor: Colors.dark.primary,
+        borderBottomWidth: 1, backgroundColor: Colors.dark.backdrop, padding:5  }} key={item._id}>
+       
+        <View style={{flexDirection:'row', gap:10, alignItems:'center'}}>
+          <Text>Position: </Text>
+          <Text>{item.title}</Text>
+        </View>
+        <View style={{flexDirection:'row',gap:5, alignItems:'center',flexWrap:'wrap'}}>
+          <Text>Location: </Text>
+          <Text style={{fontSize:12,}}>{item.location}</Text>
+        </View>
+        <View style={{flexDirection:'row', gap:10, alignItems:'center'}}>
+          <Text>Salary: </Text>
+          <Text style={{fontSize:12, fontStyle:'italic'}}>{salary}</Text>
+        </View>
+        <View style={{flex:1, justifyContent:'flex-end', alignItems:'flex-end', }}>
+          <Text onPress={ () => router.push(`/admin/jobs/${item._id}`)} style={{borderWidth:1, borderColor:Colors.dark.primary, margin:10, paddingHorizontal:10, paddingVertical:5, borderRadius:10}}>Apply</Text>
+        </View>
       </View>
     );
   };
@@ -68,10 +71,12 @@ const Home = () => {
         renderItem={(item) => BannerRenderItem(item)}
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={{marginBottom:10, maxHeight:130}}
+       
       />
 
      
-      <View style={{ width: "100%", paddingHorizontal: 20, marginVertical:10 }}>
+      <View style={{ width: "100%", paddingHorizontal: 20, }}>
         <Text style={{ textAlign: "left", fontSize: 20, fontWeight: "700" }}>
           Top Services
         </Text>
@@ -82,7 +87,7 @@ const Home = () => {
           <View
             style={{
               width: "100%",
-              marginVertical: 20,
+              marginVertical: 10,
               flexDirection: "row",
               marginHorizontal: "auto",
               flexWrap: "wrap",

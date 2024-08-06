@@ -24,6 +24,7 @@ import {
   useNotificationStore,
   useProductsStore,
   useRequestStore,
+  useReviewsStore,
   useShopsStore,
   useUsersStore,
   useUserStore,
@@ -31,7 +32,7 @@ import {
 import { fetchUser, getLoggedUser } from "../utils/userActions";
 import { Feather } from "@expo/vector-icons";
 import { firestoreDB, realtimeDB } from "../utils/firebaseConfig";
-import { getJobs, getProducts, getServices, getShops, getUser, getUsers } from "../utils/data";
+import { getJobs, getProducts, getReviews, getServices, getShops, getUser, getUsers } from "../utils/data";
 import { onValue, ref } from "firebase/database";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
@@ -61,6 +62,7 @@ export default function RootLayout() {
   const {storeRequests} = useRequestStore();
   const { storeShops } = useShopsStore();
   const {storeProducts} = useProductsStore();
+  const {storeReviews} = useReviewsStore();
 
   const router = useRouter();
 
@@ -131,6 +133,12 @@ export default function RootLayout() {
     storeJobs(jobs);
   }
 
+
+  const fetchReviews = async () => {
+    const reviews = await getReviews();
+    storeReviews(reviews);
+  }
+
   useLayoutEffect(() => {
     checkLocalUser();
     fetchServices();
@@ -140,6 +148,7 @@ export default function RootLayout() {
     fetchAllJobs()
     fetchShops()
     fetchProducts()
+    fetchReviews()
   }, []);
 
 

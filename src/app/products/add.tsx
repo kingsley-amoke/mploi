@@ -17,7 +17,7 @@ const add = () => {
   const router = useRouter();
   const { user } = useUserStore();
   const { shops } = useShopsStore();
-  const {storeProducts} = useProductsStore();
+  const {addProduct} = useProductsStore();
   const { colorScheme } = useTheme();
 
   const [name, setName] = useState("");
@@ -25,7 +25,7 @@ const add = () => {
   const [location, setLocation] = useState("");
   const [price, setPrice] = useState("");
   const [negotiable, setNegotiable] = useState(true);
-  const [category, setCategory] = useState("----------");
+  const [category, setCategory] = useState("Select category");
 
   const [posting, setPosting] = useState(false);
 
@@ -59,7 +59,7 @@ const add = () => {
     setDoc(productRef, data).then(() => {
       console.log("Product updated successfully");
       setPosting(false);
-      storeProducts(data)
+      addProduct(data)
       router.push(`/products/images?id=${data._id}`)
     });
     setPosting(false);
@@ -116,8 +116,7 @@ const add = () => {
         </View>
         <View
           style={{
-            borderWidth: 1,
-            borderRadius: 8,
+            borderBottomWidth: 1,
             borderColor: borderColor,
           }}
         >

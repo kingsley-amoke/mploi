@@ -1,10 +1,10 @@
-import useTheme from "@/src/hooks/useTheme";
+
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { Divider, Text } from "react-native-paper";
+import { Button, Divider, Text } from "react-native-paper";
 
 export const JobRenderItem = ({ item, iconColor }: { item: DocumentData, iconColor: string }) => {
   const date = parseInt(item._id);
@@ -15,8 +15,11 @@ export const JobRenderItem = ({ item, iconColor }: { item: DocumentData, iconCol
 
   const daysAgo = Math.floor((today - jobDate) / (1000 * 60 * 60 * 24));
 
+  
+  const salary = new Intl.NumberFormat('en-UK', {style: 'currency', currency: 'NGN'}).format(item.salary);
+
   return (
-    <View style={{ marginVertical: 20, paddingHorizontal: 30 }}>
+    <View style={{ marginVertical: 10, paddingHorizontal: 30 }}>
       <Link
         href={{
           pathname: `admin/jobs/${item._id}`,
@@ -26,86 +29,47 @@ export const JobRenderItem = ({ item, iconColor }: { item: DocumentData, iconCol
       >
         <TouchableOpacity>
           <View style={{ flexDirection: "row-reverse", justifyContent:'space-between', alignItems:'center' }}>
-            <Text style={styles.jobTime}>
+            <Text style={{color:'grey', fontSize:10, fontWeight:'bold', fontStyle:'italic'}}>
               Posted: {daysAgo < 1 ? "Today" : daysAgo + " days ago"}
             </Text>
-            <Text style={styles.jobTitle}>{item.title}</Text>
+            <Text style={{fontSize:16, fontWeight:'bold'}}>{item.title}</Text>
           </View>
           <View
             style={{
-              flex: 1,
+             
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
             }}
           >
-            <Text style={styles.jobSalary}>
-              {new Intl.NumberFormat("en-UK", {
-                style: "currency",
-                currency: "NGN",
-              }).format(item.salary)}
+            <Text style={{fontStyle:'italic', fontSize:12}}>
+              {salary}
             </Text>
             <Text
               style={{
                 fontWeight: "bold",
                 textTransform: "capitalize",
-                fontSize: 18,
+                fontSize: 14,
               }}
             >
-              {!item?.taken ? "Open" : "Close"}
+              {!item.taken ? "Open" : "Close"}
             </Text>
           </View>
-          <View style={styles.employer}>
-            <Text style={{ fontSize: 20 }}>{item.company}</Text>
+          <View>
+            <Text style={{ fontSize: 16 }}>{item.company}</Text>
           </View>
-          <View style={styles.jobLocation}>
-            <Ionicons name="location-outline" size={20} color={iconColor} />
+          <View style={{flexDirection:'row', alignItems:'center', gap:5}}>
+            <Ionicons name="location-outline" size={15} color={iconColor} />
             <Text>{item.location}</Text>
+          </View>
+          <View style={{justifyContent:'flex-end', alignItems:'flex-end'}}>
+            <Button mode="outlined" >See Details</Button>
           </View>
         </TouchableOpacity>
       </Link>
 
-      <Divider bold horizontalInset style={{ marginTop: 40 }} />
+      <Divider bold horizontalInset style={{ marginTop: 14 }} />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  jobTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  jobDesc: {
-    marginBottom: 10,
-    fontSize: 16,
-  },
-  jobSalary: {
-    fontStyle: "italic",
-    marginVertical: 10,
-  },
-  jobTime: {
-    fontSize: 14,
-  },
-  jobLocation: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    gap: 5,
-  },
-  jobKeywords: {
-    flexDirection: "row",
-    gap: 5,
-  },
-  employer: {
-    flex: 1,
-    flexDirection: "row",
-    gap: 30,
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  userImage: {
-    height: 30,
-    width: 30,
-    borderRadius: 50,
-  },
-});
