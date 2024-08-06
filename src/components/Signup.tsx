@@ -3,12 +3,12 @@ import {
   Pressable,
   GestureResponderEvent,
   ScrollView,
+  useColorScheme,
 } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Checkbox from "expo-checkbox";
-import Button from "@/src/components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
@@ -17,7 +17,6 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import * as Location from "expo-location";
 
 import { useUserStore } from "@/src/state/store";
-import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 import { DBUser } from "../utils/types";
 import { firestoreDB } from "../utils/firebaseConfig";
@@ -26,7 +25,7 @@ const Signup = () => {
   const auth = getAuth();
   const router = useRouter();
 
-  const { colorScheme } = useTheme();
+  const  colorScheme  = useColorScheme();
 
   const placeholderColor =
     colorScheme === "dark"
@@ -38,10 +37,6 @@ const Signup = () => {
       ? Colors.dark.onSurfaceDisabled
       : Colors.light.onSurfaceDisabled;
 
-  const textColor =
-    colorScheme === "dark"
-      ? Colors.dark.onBackground
-      : Colors.light.onBackground;
 
   const { storeUser } = useUserStore();
 
@@ -249,16 +244,19 @@ const Signup = () => {
         </View>
 
         <Button
-          title={loading ? "Please wait..." : "Sign Up"}
-          filled
+          mode="contained"
+      
           style={{
             marginTop: 18,
             marginBottom: 4,
-            borderColor: borderColor,
+           
           }}
           disabled={loading}
           onPress={(e: GestureResponderEvent) => handleSignup(e)}
-        />
+        >
+          {loading ? "Please wait..." : "Sign Up"}
+        </Button>
+        
 
         <View
           style={{

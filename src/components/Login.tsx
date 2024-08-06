@@ -4,13 +4,13 @@ import {
   Pressable,
   TouchableOpacity,
   GestureResponderEvent,
+  useColorScheme,
 } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
-import Button from "@/src/components/Button";
 
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,7 +27,7 @@ const Login = () => {
   const auth = getAuth();
   const router = useRouter();
 
-  const { colorScheme } = useTheme();
+  const colorScheme = useColorScheme();
 
   const placeholderColor =
     colorScheme === "dark"
@@ -139,29 +139,23 @@ const Login = () => {
         </View>
 
         <Button
-          title={loading ? "Please wait..." : "Login"}
-          filled
+          mode="contained"
           disabled={loading}
           style={{
             marginTop: 18,
             marginBottom: 4,
-            borderColor: borderColor,
           }}
           onPress={(e: GestureResponderEvent) => handleLogin(e)}
-        />
-
-        
+        >
+          {loading ? <Text style={{color:'#ffffff'}}>Please wait...</Text> : <Text style={{color:'#ffffff', fontWeight:'800'}}>Login</Text>}
+        </Button>
 
         <View
           style={{
             flexDirection: "row",
             justifyContent: "center",
           }}
-        >
-          
-
-          
-        </View>
+        ></View>
 
         <View
           style={{

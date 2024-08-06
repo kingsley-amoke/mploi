@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import { Text } from "react-native-paper";
 import { Colors } from "@/src/constants/Colors";
 import useTheme from "@/src/hooks/useTheme";
+import { StatusBar } from "expo-status-bar";
 
 const PublicLayout = () => {
   // const imageUrl = user?.user?.externalAccounts[0].imageUrl!;
@@ -12,10 +13,13 @@ const PublicLayout = () => {
 
   const colorScheme = useColorScheme()
 
+
   const bgColor =
     colorScheme === "dark" ? Colors.dark.shadow : Colors.light.primary;
 
   return (
+    <>
+    <StatusBar style="light"/>
     <Stack>
       <Stack.Screen
         name="login"
@@ -34,11 +38,11 @@ const PublicLayout = () => {
                 top: 0,
               }}
             >
-              <Text style={{fontSize: 30, fontWeight: "bold", marginTop:10}}> MPLOi</Text>
+              <Text style={{fontSize: 30, fontWeight: "bold", marginTop:10, color:'white'}}> MPLOi</Text>
             </View>
           ),
         }}
-      />
+        />
       <Stack.Screen
         name="register"
         options={{
@@ -52,12 +56,13 @@ const PublicLayout = () => {
               left: 0,
               right: 0,
               top: 0,}}>
-              <Text style={{ fontSize: 30, fontWeight: "bold", marginTop:10 }}> MPLOi</Text>
+              <Text style={{ fontSize: 30, fontWeight: "bold", marginTop:10, color:'white' }}> MPLOi</Text>
             </View>
           ),
         }}
       />
     </Stack>
+              </>
   );
 };
 

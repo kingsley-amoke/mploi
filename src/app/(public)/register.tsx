@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import  Signup from "@/src/components/Signup";
 
@@ -10,9 +10,12 @@ const register = () => {
 
 
   return (
-    <View style={{ minHeight: 1000, marginTop: 120 }}>
+    <ScrollView showsVerticalScrollIndicator={false}>
+
+    <View style={{ minHeight: 100, marginTop: 120 }}>
       <Signup  />
     </View>
+    </ScrollView>
   );
 };
 
