@@ -37,7 +37,7 @@ export default function Shop() {
           />
           <Card.Content style={{ marginVertical: 5,}}>
             <Text style={{ fontWeight: "bold"}}>
-              {item.name}
+              {item.name.length > 20 ? item.name.substring(0, 14)+"..." : item.name}
             </Text>
             <Text style={{ fontSize: 10 }}>{formatPrice(item.price)}</Text>
           </Card.Content>
@@ -90,7 +90,7 @@ export default function Shop() {
           style={{ position: "absolute", left: 35 }}
         />
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
 
       <View style={{ width: "100%", paddingHorizontal: 20 }}>
         <Text

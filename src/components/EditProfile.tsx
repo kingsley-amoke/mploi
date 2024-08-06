@@ -6,6 +6,7 @@ import {
   Platform,
   PermissionsAndroid,
   KeyboardAvoidingView,
+  useColorScheme,
 } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import React, { useEffect, useLayoutEffect, useState } from "react";
@@ -33,7 +34,7 @@ import { getLoggedUser } from "../utils/userActions";
 const EditProfile = () => {
   const router = useRouter();
 
-  const { colorScheme } = useTheme();
+  const colorScheme = useColorScheme();
 
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
@@ -181,6 +182,7 @@ const EditProfile = () => {
     getBanks();
   }, []);
 
+  console.log(categories)
 
   return (
     <KeyboardAvoidingView
@@ -424,7 +426,7 @@ const EditProfile = () => {
                 flexDirection: "column",
                 marginBottom: 6,
                 borderColor: borderColor,
-                borderWidth: 2,
+                borderWidth: 1,
                 borderRadius: 10,
               }}
             >
@@ -462,7 +464,7 @@ const EditProfile = () => {
                   flexDirection: "column",
                   marginBottom: 6,
                   borderColor: borderColor,
-                  borderWidth: 2,
+                  borderWidth: 1,
                   borderRadius: 10,
                 }}
               >

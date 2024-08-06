@@ -210,6 +210,8 @@ export default function RootLayout() {
             name="profile/index"
             options={{
               title: "My Profile",
+               headerStyle:{backgroundColor:Colors.light.primary},
+             headerTintColor:'white',
               headerRight: () => (
                 <Feather
                   name="edit"
@@ -217,6 +219,7 @@ export default function RootLayout() {
                   color={iconColor}
                   onPress={() => router.push("profile/edit")}
                 />
+
               ),
             }}
           />
@@ -258,6 +261,16 @@ export default function RootLayout() {
             name="settings/index"
             options={{
              title: 'Change Theme',
+             headerTitleAlign:'center',
+             headerStyle:{backgroundColor:Colors.light.primary},
+             headerTintColor:'white'
+              
+            }}
+          />
+            <Stack.Screen
+            name="wallet/index"
+            options={{
+             title: 'Wallet',
              headerTitleAlign:'center',
              headerStyle:{backgroundColor:Colors.light.primary},
              headerTintColor:'white'

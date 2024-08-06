@@ -4,9 +4,12 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomHeader from "@/src/components/CustomHeader";
 import { useUserStore } from "@/src/state/store";
 import { Colors } from "@/src/constants/Colors";
+import { StatusBar } from "expo-status-bar";
 
 const TabLayout = () => {
   return (
+    <>
+    <StatusBar style='light' />
     <Tabs
       screenOptions={{
         headerTitleAlign: "center",
@@ -20,6 +23,7 @@ const TabLayout = () => {
       }}
         
     >
+      
       <Tabs.Screen
         name="index"
         options={{
@@ -70,8 +74,9 @@ const TabLayout = () => {
             <Feather name="settings" size={size} color={color} />
           ),
         }}
-      />
+        />
     </Tabs>
+        </>
   );
 };
 

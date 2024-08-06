@@ -3,6 +3,7 @@ import {
   Image,
   ScrollView,
   StyleSheet,
+  useColorScheme,
   View,
 } from "react-native";
 import { Button } from "react-native-paper";
@@ -21,7 +22,7 @@ import useTheme from "../hooks/useTheme";
 export default function UserPhotos({ user }: { user: DocumentData | null }) {
   const { user: loggedUser } = useUserStore();
 
-  const { colorScheme } = useTheme();
+  const  colorScheme  = useColorScheme();
 
   const iconColor = colorScheme === "dark" ? "white" : "black";
 

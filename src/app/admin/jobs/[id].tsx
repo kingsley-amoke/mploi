@@ -19,6 +19,7 @@ import {
   } from "@/src/state/store";
 import { ExternalLink } from "@/src/components/ExternalLink";
 import { socialLinks } from "@/src/utils/data";
+import { Colors } from "@/src/constants/Colors";
 
  
   
@@ -74,6 +75,9 @@ import { socialLinks } from "@/src/utils/data";
     useEffect(() => {
       navigation.setOptions({
         title: job.title + ' ' + 'at' +  ' ' + job.company,
+        headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.light.primary },
+          headerTintColor: "white",
       })
     }, [id])
   

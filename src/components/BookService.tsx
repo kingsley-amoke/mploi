@@ -68,36 +68,38 @@ const BookService = ({ user }: { user: DocumentData }) => {
 
   return loggedUser?._id === user?._id && !loggedUser?.isAdmin ? (
     <Button
+    mode="contained"
       style={{
-        borderColor: Colors.light.onPrimary,
+       
         borderWidth: 1,
         marginVertical: 10,
         marginHorizontal:20,
         paddingVertical:5,
         marginBottom: 40,
-        backgroundColor: Colors.light.onPrimary,
+       
       }}
       onPress={() => router.push("/admin")}
     >
-      <Text variant="labelLarge">Admin Dashboard</Text>
+      <Text variant="labelLarge" style={{color:'white'}}>Admin Dashboard</Text>
     </Button>
   ) : (
     <Button
+    mode="contained"
       style={{
-        borderColor: Colors.light.onPrimary,
+        
         borderWidth: 1,
         marginHorizontal:20,
         paddingVertical:5,
         marginVertical: 10,
         marginBottom: 40,
-        backgroundColor: Colors.light.onPrimary,
+       
       }}
       onPress={()=>handleBookService()}
     >
       {!applying ? (
-        <Text variant="labelLarge">Book Service</Text>
+        <Text variant="labelLarge" style={{color:'white'}}>Book Service</Text>
       ) : (
-        <Text variant="labelLarge">Please Wait</Text>
+        <Text variant="labelLarge" style={{color:'white'}}>Please Wait</Text>
       )}
     </Button>
   );

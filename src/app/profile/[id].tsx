@@ -1,4 +1,5 @@
 import Profile from "@/src/components/Profile";
+import { Colors } from "@/src/constants/Colors";
 import { useUsersStore } from "@/src/state/store";
 import { fetchUserById } from "@/src/utils/data";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -25,6 +26,8 @@ const UserProfile = () => {
       } else {
         navigation.setOptions({
           title: user?.firstName + " " + user?.lastName,
+           headerStyle:{backgroundColor:Colors.light.primary},
+             headerTintColor:'white',
           headerRight: () => (
             <MaterialIcons
             name="home"

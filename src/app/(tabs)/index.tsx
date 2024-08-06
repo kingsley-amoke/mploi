@@ -27,7 +27,7 @@ const Home = () => {
 
     return (
       <View style={{ width: 150, marginLeft: 10, height:130, borderBottomColor: Colors.dark.primary,
-        borderBottomWidth: 1, backgroundColor: Colors.dark.backdrop, padding:5  }} key={item._id}>
+        borderBottomWidth: 1, backgroundColor: Colors.dark.backdrop, padding:5, borderRadius:10  }} key={item._id}>
        
         <View style={{flexDirection:'row', gap:10, alignItems:'center'}}>
           <Text>Position: </Text>

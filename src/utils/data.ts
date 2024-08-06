@@ -266,5 +266,5 @@ export const averageRating = (items: DocumentData[]) => {
 
   const average = totalPrice/items.length;
 
-  return average.toFixed(2);
+  return average.toFixed(1);
 }

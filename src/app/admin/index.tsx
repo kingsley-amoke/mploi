@@ -5,8 +5,11 @@ import { SegmentedButtons } from 'react-native-paper'
 import UsersPage from './components/UsersPage'
 import CareerPage from './components/CareerPage'
 import ProductsPage from './components/ProductsPage'
+import { useProductsStore } from '@/src/state/store'
 
 const index = () => {
+
+  const {products} = useProductsStore();
 
     const [value, setValue] = useState("users");
 
@@ -49,7 +52,7 @@ const index = () => {
       ) : value === 'career' ? (
         <CareerPage />
       ) : (
-        <ProductsPage />
+        <ProductsPage products={products}/>
       )
     }
     </SafeAreaView>

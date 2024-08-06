@@ -30,8 +30,8 @@ const shop = () => {
     router.push('/privacy')
   };
 
-  const navigateToSubscription = () => {
-    router.navigate('/subscription')
+  const navigateToWallet = () => {
+    router.navigate('/wallet')
   };
 
   const navigateToDisclaimer = () => {
@@ -79,8 +79,7 @@ const shop = () => {
       text: "Notifications",
       action: navigateToNotifications,
     },
-    { icon: "credit-card", text: "Subscriptions", action: navigateToSubscription },
-    {icon: "wallet", text: "Wallet", action: navigateToSubscription}
+    {icon: "wallet", text: "Wallet", action: navigateToWallet}
   ];
 
   const TermsItems = [

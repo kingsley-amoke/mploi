@@ -1,6 +1,8 @@
 contact seller
 cleanup the app
-add reviews
 admin
-subscription
+wallet 
 book service
+submit cv
+post product
+service charge

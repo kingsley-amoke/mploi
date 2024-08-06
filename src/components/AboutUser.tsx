@@ -1,12 +1,12 @@
 import { DocumentData } from "firebase/firestore";
 import React from "react";
-import { View } from "react-native";
+import { useColorScheme, View } from "react-native";
 import { Divider, Text } from "react-native-paper";
 import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 
 export default function AboutUser({ user }: { user: DocumentData | null }) {
-  const { colorScheme } = useTheme();
+  const  colorScheme  = useColorScheme();
 
   const borderColor =
     colorScheme === "dark"
