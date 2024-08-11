@@ -51,7 +51,7 @@ const Map = ({user, requestID}: {user:DocumentData, requestID: string | string[]
             }}
           >
             <View style={{ flexDirection: "row", gap:20 }}>
-              <Avatar.Image source={{uri:user.image}} size={50}/>
+              <Avatar.Image source={{uri:user?.image}} size={50}/>
               <View>
             <Text style={{fontSize:12, fontWeight:'bold', color:'grey'}}>{new Date(Date.now()).toLocaleDateString()}</Text>
             <Text style={{fontSize:18, fontWeight:'bold', color: Colors.dark.onBackground}}>{user.firstName} {user.lastName}</Text>

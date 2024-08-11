@@ -3,6 +3,7 @@ import { ScrollView, View, Text as NativeText, useColorScheme } from "react-nati
 import {
   Avatar,
   Button,
+  Dialog,
   List,
   Modal,
   Portal,
@@ -124,16 +125,12 @@ const Categories = () => {
           );
         })}
         <Portal>
-          <Modal
+          <Dialog
             visible={visible}
             onDismiss={hideModal}
-            contentContainerStyle={{
-              backgroundColor: "white",
-              padding: 20,
-              height: "70%",
-            }}
+            style={{padding:5, justifyContent:'center', alignItems:'center'}}
           >
-            <View style={{ alignItems: "center" }}>
+            <View style={{ alignItems: "center", marginBottom:20 }}>
               {recommendedUsers.map((user) => {
                 const coordinates = {
                   latitude: parseFloat(user.coordinates.latitude),
@@ -222,7 +219,7 @@ const Categories = () => {
                 );
               })}
             </View>
-          </Modal>
+          </Dialog>
         </Portal>
       </ScrollView>
     </View>

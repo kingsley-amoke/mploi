@@ -149,7 +149,6 @@ const EditProfile = () => {
       skills: updatedSkills,
     };
 
-    console.log(data);
 
     updateDoc(userRef, data).then(async () => {
       const user = await getDoc(userRef);
@@ -181,8 +180,6 @@ const EditProfile = () => {
 
     getBanks();
   }, []);
-
-  console.log(categories)
 
   return (
     <KeyboardAvoidingView

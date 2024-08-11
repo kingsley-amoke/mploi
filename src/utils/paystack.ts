@@ -2,6 +2,7 @@
 
 import { doc, DocumentData, setDoc, updateDoc } from "firebase/firestore"
 import { firestoreDB } from "./firebaseConfig"
+import { recharge, setTransaction } from "./data"
 
 const url = process.env.EXPO_PUBLIC_PAYSTACK_URL!
 const secretKey = process.env.EXPO_PUBLIC_PAYSTACK_KEY!
@@ -105,19 +106,3 @@ export const verifyPayment = async (user: DocumentData, reference: string) => {
     return "finished";
   };
 
-  const recharge = (id: string, rechargeAmount: string) => {
-
-    const userRef = doc(firestoreDB, "users", id?.toString()!);
-
-    updateDoc(userRef, {
-      walletBalance: rechargeAmount,
-    });
-  }
-
-  const setTransaction = (transaction: DocumentData) => {
-
-
-    const transRef = doc(firestoreDB, "transactions", transaction.transactionId)
-    
-    setDoc(transRef, transaction)
-  }

@@ -1,6 +1,6 @@
 import { SafeAreaView, StyleSheet, useColorScheme, View } from "react-native";
 import React, { useRef, useState } from "react";
-import { Button, Modal, Portal, SegmentedButtons, Surface, Text, TextInput, useTheme } from "react-native-paper";
+import { Button, Dialog, Modal, Portal, SegmentedButtons, Surface, Text, TextInput, useTheme } from "react-native-paper";
 import { useUserStore } from "@/src/state/store";
 import { useRouter } from "expo-router";
 import { Colors } from "@/src/constants/Colors";
@@ -61,14 +61,11 @@ const index = () => {
   }
 
     return(
-      <Modal 
+      <Dialog
        visible={visible}
       onDismiss={hideModal}
-      contentContainerStyle={{
-        backgroundColor: "gray",
-        padding: 20,
-        height: "70%",
-      }}>
+      style={{padding:5, justifyContent:'center', alignItems:'center'}}
+     >
       <Paystack 
       paystackKey={paystackKey}
       amount={amount}
@@ -84,15 +81,15 @@ const index = () => {
       }}
       ref={paystackWebViewRef}
 />
-<View style={{gap:20, marginHorizontal:20}}>
+<View style={{gap:20,marginVertical:10, marginHorizontal:5,width:'90%'}}>
 
-      <TextInput mode="outlined" label="Amount" onChangeText={(value) => setAmount(parseFloat(value))} />
+      <TextInput mode="outlined" label="Amount" style={{width:'100%'}} onChangeText={(value) => setAmount(parseFloat(value))} />
 <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
       <Button mode="outlined" onPress={() => hideModal()}>Cancel</Button>
       <Button mode="contained" onPress={()=> paystackWebViewRef.current.startTransaction()}>Continue</Button>
 </View>
 </View>
-      </Modal>
+      </Dialog>
     )
 
   }

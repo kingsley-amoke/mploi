@@ -1,10 +1,9 @@
 contact seller
 cleanup the app
 admin
-wallet 
 book service
-submit cv
 post product button
 update product image after upload
 service charge
 transactions
+validate register

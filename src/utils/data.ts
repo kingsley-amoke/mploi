@@ -4,6 +4,8 @@ import {
   DocumentData,
   getDoc,
   getDocs,
+  setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import NaijaStates from "naija-state-local-government";
 import { firestoreDB, realtimeDB } from "./firebaseConfig";
@@ -291,4 +293,32 @@ export const averageRating = (items: DocumentData[]) => {
     marginTop:70
   }
 }))
+}
+
+export const recharge = (id: string, rechargeAmount: string) => {
+
+  const userRef = doc(firestoreDB, "users", id?.toString()!);
+
+  updateDoc(userRef, {
+    walletBalance: rechargeAmount,
+  });
+}
+
+export const deduct = async(user:DocumentData, charge: number) => {
+
+  const amount = (parseFloat(user.walletBalance) - charge).toString();
+
+  const userRef = doc(firestoreDB, "users", user._id?.toString()!);
+
+  updateDoc(userRef, {
+    walletBalance: amount,
+  });
+}
+
+export const setTransaction = (transaction: DocumentData) => {
+
+
+  const transRef = doc(firestoreDB, "transactions", transaction.transactionId)
+  
+  setDoc(transRef, transaction)
 }
