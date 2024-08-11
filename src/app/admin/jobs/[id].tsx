@@ -1,10 +1,11 @@
 import {
+  Pressable,
     ScrollView,
     StyleSheet,
     useColorScheme,
     View,
   } from "react-native";
-  import {  Button, Divider, Text,} from 'react-native-paper'
+  import {  Button, Divider, Modal, Portal, Text,} from 'react-native-paper'
   import React, { useEffect, useState } from "react";
   import { Link, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
   import { SafeAreaView } from "react-native-safe-area-context";
@@ -50,25 +51,69 @@ import { Colors } from "@/src/constants/Colors";
     const salary = new Intl.NumberFormat('en-UK', {style:'currency', currency: 'NGN'}).format(job.salary)
 
 
+
+
     //TODO: implement apply for job
 
-    const handleApply = () => {
-      MailComposer.isAvailableAsync().then((value) => {
-        if(value){
+    const HandleApply = () => {
+
+      const [visible, setVisible] = useState(false);
+      const [active, setActive] = useState(1)
+ 
+      const showModal = () => setVisible(true);
+      const hideModal = () => setVisible(false);
+      return(
+        <>
+        <Portal>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={{
+            backgroundColor: "gray",
+            padding: 20,
+            height: "70%",
+          }}
+          >
+         <View style={{justifyContent:'center', alignItems:'center'}}>
+          <Text style={{color:'white', fontWeight:'bold'}}>How would you like to apply for this job?</Text>
+          <View style={{width:300, marginVertical:20, gap:10}}>
+            <Pressable style={{flexDirection:'row', padding:10, justifyContent:'space-between', alignItems:'center', borderWidth:1, borderColor:Colors.dark.primary, borderRadius:10, backgroundColor: active === 1 ? Colors.light.primary : 'gray'}} onPress={()=>setActive(1)}>
+              <Text style={{color:'white', fontWeight:'bold'}}>No Feedback</Text>
+              <Text style={{color:'white'}}>Free</Text>
+            </Pressable>
+            <Pressable style={{flexDirection:'row', padding:10, justifyContent:'space-between', alignItems:'center', borderWidth:1, borderColor:Colors.dark.primary, borderRadius:10,  backgroundColor: active === 2 ? Colors.light.primary : 'gray'}} onPress={()=>setActive(2)}>
+              <Text style={{color:'white', fontWeight:'bold'}}>Feedback/Update</Text>
+              <Text style={{color:'white'}}>#1000</Text>
+            </Pressable>
+            <Pressable style={{flexDirection:'row', padding:10, justifyContent:'space-between', alignItems:'flex-end', borderWidth:1, borderColor:Colors.dark.primary, borderRadius:10, backgroundColor: active === 3 ? Colors.light.primary : 'gray'}} onPress={()=>setActive(3)}>
+              <Text style={{color:'white', fontWeight:'bold', flexWrap:'wrap', width:'70%'}}>Update, follow up, recieve calls from our agents for information and interview date, time and venue</Text>
+              <Text style={{color:'white'}}>#2000</Text>
+            </Pressable>
+          </View>
+          <Button mode="contained" onPress={() => console.log('proceed to payment')}>Proceed</Button>
+         </View>
+        </Modal>
+        </Portal>
+         <Button mode="contained"  onPress={showModal}>Apply</Button>
+          </>
+      )
+      // MailComposer.isAvailableAsync().then((value) => {
+      //   if(value){
 
 
-          const options:MailComposer.MailComposerOptions = {
-            recipients: ['klordbravo@gmail.com'],
-            body: 'Text mail',
-            subject: 'Test mail',
-            attachments: []
-          }
+      //     const options:MailComposer.MailComposerOptions = {
+      //       recipients: ['klordbravo@gmail.com'],
+      //       body: 'Text mail',
+      //       subject: 'Test mail',
+      //       attachments: []
+      //     }
 
-          MailComposer.composeAsync(options).then((res) => {
-            console.log(res);
-          })
-        }
-      })
+      //     MailComposer.composeAsync(options).then((res) => {
+      //       console.log(res);
+      //     })
+      //   }
+      // })
+
     }
 
 
@@ -118,7 +163,7 @@ import { Colors } from "@/src/constants/Colors";
         <Text>Note: {job.others}</Text>
       </View>
       <View style={{ marginVertical: 10 }}>
-        <Button mode="contained"  onPress={handleApply}>Apply</Button>
+       <HandleApply />
       </View>
       <View style={{ marginVertical: 10 }}>
         <Text style={{ fontSize: 16, fontWeight: "bold", marginVertical: 10 }}>

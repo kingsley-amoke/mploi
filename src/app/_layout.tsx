@@ -34,6 +34,7 @@ import { Feather } from "@expo/vector-icons";
 import { firestoreDB, realtimeDB } from "../utils/firebaseConfig";
 import { getJobs, getProducts, getReviews, getServices, getShops, getUser, getUsers } from "../utils/data";
 import { onValue, ref } from "firebase/database";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
 const customLightTheme = { ...MD3LightTheme, colors: Colors.light };
@@ -153,6 +154,7 @@ export default function RootLayout() {
 
 
   return (
+    <RootSiblingParent>
     <PaperProvider theme={paperTheme}>
        <StatusBar style='light' />
       <ThemeProvider value={paperTheme}>
@@ -281,5 +283,6 @@ export default function RootLayout() {
       </ThemeProvider>
      
     </PaperProvider>
+    </RootSiblingParent>
   );
 }

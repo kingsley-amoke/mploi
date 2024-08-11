@@ -8,7 +8,8 @@ import {
 import NaijaStates from "naija-state-local-government";
 import { firestoreDB, realtimeDB } from "./firebaseConfig";
 import { get, onValue, ref, serverTimestamp, set } from "firebase/database";
-import shop from "../app/(tabs)/settings";
+
+import Toast from 'react-native-root-toast'
 
 //get image blog
 export const getBlobFroUri = async (uri: string) => {
@@ -267,4 +268,27 @@ export const averageRating = (items: DocumentData[]) => {
   const average = totalPrice/items.length;
 
   return average.toFixed(1);
+}
+
+ //toast
+
+ export const CustomToast = (message: string, bgColor:string, textColor:string) => {
+
+  return (Toast.show(message, {
+    duration: Toast.durations.LONG,
+    position: Toast.positions.TOP,
+    shadow: true,
+    animation: true,
+  hideOnPress: true,
+  delay: 0,
+  backgroundColor: bgColor,
+  textColor: textColor,
+  textStyle:{
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  containerStyle: {
+    marginTop:70
+  }
+}))
 }

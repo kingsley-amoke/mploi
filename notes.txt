@@ -4,5 +4,7 @@ admin
 wallet 
 book service
 submit cv
-post product
+post product button
+update product image after upload
 service charge
+transactions

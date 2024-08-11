@@ -14,8 +14,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { handleRequestService, latitudeDelta, longitudeDelta } from "../utils/data";
 import { getDistance } from "geolib";
-import useTheme from "../hooks/useTheme";
-import { Colors } from "../constants/Colors";
 
 
 const Categories = () => {

@@ -10,8 +10,10 @@ import { create } from "zustand";
 
 //state types
 export interface UserStore {
-  user: DocumentData | null;
+  user: DocumentData;
   storeUser: (user: DocumentData) => void;
+  increaseUserBalance: (amount: number) => void;
+  decreaseUserBalance: (amount: number) => void;
 }
 
 export interface UsersStore {
@@ -80,7 +82,7 @@ export interface imageStore {
 // global states
 
 export const useUserStore = create<UserStore>((set) => ({
-  user: null,
+  user: {"walletBalance": "100000000", "email": "smoq1@gmail.com", "is_admin": true, "referee": "",},
   storeUser: (user) => {
     set((state) => {
       state.user = user;
@@ -90,6 +92,26 @@ export const useUserStore = create<UserStore>((set) => ({
       };
     });
   },
+  increaseUserBalance: (amount) => {
+    set((state) => {
+      state.user.walletBalance = (
+        parseFloat(state.user?.walletBalance || 0) + amount
+      ).toString();
+      return {
+        user: state.user,
+      };
+    });
+  },
+  decreaseUserBalance: ( amount) => {
+    set((state) => {
+      state.user.walletBalance = (
+        parseFloat(state.user?.walletBalance) - amount
+      ).toString();
+      return {
+        user: state.user,
+      };
+    });
+  }
 }));
 
 export const useUsersStore = create<UsersStore>((set) => ({
