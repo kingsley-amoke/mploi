@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import NaijaStates from "naija-state-local-government";
 import { firestoreDB, realtimeDB } from "./firebaseConfig";
-import { get, onValue, ref, serverTimestamp, set } from "firebase/database";
+import { ref, serverTimestamp, set } from "firebase/database";
 
 import Toast from 'react-native-root-toast'
 
@@ -289,9 +289,9 @@ export const averageRating = (items: DocumentData[]) => {
     fontSize: 16,
     fontWeight: 'bold'
   },
-  containerStyle: {
-    marginTop:70
-  }
+  // containerStyle: {
+  //   marginTop:70
+  // }
 }))
 }
 

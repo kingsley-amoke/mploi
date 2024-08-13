@@ -19,7 +19,7 @@ export const JobRenderItem = ({ item, iconColor }: { item: DocumentData, iconCol
   const salary = new Intl.NumberFormat('en-UK', {style: 'currency', currency: 'NGN'}).format(item.salary);
 
   return (
-    <View style={{ marginVertical: 10, paddingHorizontal: 30 }}>
+    <View style={{ marginVertical: 10, marginHorizontal:10 }}>
       <Link
         href={{
           pathname: `admin/jobs/${item._id}`,

@@ -6,6 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import React, { useLayoutEffect, useState } from "react";
+import { useColorScheme } from "react-native";
 
 const UserProfile = () => {
   const { users } = useUsersStore();
@@ -15,6 +16,11 @@ const UserProfile = () => {
   const { id } = useLocalSearchParams();
 
   const [user, setUser] = useState<DocumentData | null>(null);
+
+  const colorScheme = useColorScheme();
+
+  const iconColor = colorScheme === 'dark' ? '#fff' : '#000';
+
 
   useLayoutEffect(() => {
     if (!id) {
@@ -26,13 +32,12 @@ const UserProfile = () => {
       } else {
         navigation.setOptions({
           title: user?.firstName + " " + user?.lastName,
-           headerStyle:{backgroundColor:Colors.light.primary},
-             headerTintColor:'white',
+          headerLeft:null,
           headerRight: () => (
             <MaterialIcons
             name="home"
-            color='white'
-            size={30}
+            color={iconColor}
+            size={20}
               style={{ paddingRight: 10 }}
               onPress={() => router.replace('/')}
            />

@@ -13,7 +13,9 @@ const index = () => {
   const { requests } = useRequestStore();
   const {user} = useUserStore();
 
-  const myRequests = requests.filter(req => req.serviceProvider._id === user?._id)
+  // console.log(requests)
+  const myRequests = requests.filter(req => req.serviceProvider?._id === user?._id)
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -32,7 +34,7 @@ const index = () => {
               <Text style={{ fontWeight: "bold", fontSize: 18 }}>
                 Service requests{" "}
               </Text>
-              <Badge style={{ color: "#000", fontWeight: "bold" }}>
+              <Badge style={{ color: "#fff", fontWeight: "bold" }}>
                 {myRequests.length}
               </Badge>
             </TouchableOpacity>

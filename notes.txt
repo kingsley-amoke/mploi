@@ -1,9 +1,12 @@
 contact seller
 cleanup the app
 admin
-book service
-post product button
-update product image after upload
-service charge
+maps
 transactions
 validate register
+paystack issues
+display search results only 10kms away from the user
+add toasts when needed
+autheorization
+cancel request
+add shop ads to homepage

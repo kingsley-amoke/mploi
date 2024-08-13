@@ -1,4 +1,4 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack} from "expo-router";
 import { useColorScheme } from "react-native";
 import {
   MD3DarkTheme,
@@ -14,25 +14,28 @@ import {
 import merge from "deepmerge";
 
 import { Colors } from "../constants/Colors";
-import useTheme from "../hooks/useTheme";
 import { StatusBar } from "expo-status-bar";
 import { useLayoutEffect } from "react";
 import {
   useCategoryStore,
   useChatStore,
   useJobsStore,
-  useNotificationStore,
   useProductsStore,
   useRequestStore,
   useReviewsStore,
   useShopsStore,
   useUsersStore,
-  useUserStore,
 } from "../state/store";
-import { fetchUser, getLoggedUser } from "../utils/userActions";
 import { Feather } from "@expo/vector-icons";
-import { firestoreDB, realtimeDB } from "../utils/firebaseConfig";
-import { getJobs, getProducts, getReviews, getServices, getShops, getUser, getUsers } from "../utils/data";
+import { realtimeDB } from "../utils/firebaseConfig";
+import {
+  getJobs,
+  getProducts,
+  getReviews,
+  getServices,
+  getShops,
+  getUsers,
+} from "../utils/data";
 import { onValue, ref } from "firebase/database";
 import { RootSiblingParent } from "react-native-root-siblings";
 
@@ -54,35 +57,22 @@ export default function RootLayout() {
 
   const paperTheme =
     colorScheme === "dark" ? CombinedDarkTheme : CombinedDefaultTheme;
-
-  const { storeUser } = useUserStore();
+    
   const { storeUsers } = useUsersStore();
   const { storeJobs } = useJobsStore();
   const { storeCategory } = useCategoryStore();
   const { storeChats } = useChatStore();
-  const {storeRequests} = useRequestStore();
+  const { storeRequests } = useRequestStore();
   const { storeShops } = useShopsStore();
-  const {storeProducts} = useProductsStore();
-  const {storeReviews} = useReviewsStore();
+  const { storeProducts } = useProductsStore();
+  const { storeReviews } = useReviewsStore();
 
-  const router = useRouter();
 
-  const checkLocalUser = async () => {
-    const loggedUser = await getLoggedUser();
-    if (loggedUser) {
-    getUser(loggedUser._id).then((user) => {
-      storeUser(user);
-      router.replace("/");
-    })
-    } else {
-      router.replace("/login");
-    }
-  };
 
   const fetchAllUsers = async () => {
-   getUsers().then((users) => {
-     storeUsers(users);
-   })
+    getUsers().then((users) => {
+      storeUsers(users);
+    });
   };
 
   const fetchServices = async () => {
@@ -100,189 +90,164 @@ export default function RootLayout() {
     storeProducts(products);
   };
 
-  const fetchAllChats = ( ) => {
-    const chatRef = ref(realtimeDB, 'chats/');
+  const fetchAllChats = () => {
+    const chatRef = ref(realtimeDB, "chats/");
     onValue(chatRef, (snapshot) => {
       const data = snapshot.val();
 
-      if(!data) return
-      const myData = Object.keys(data).map(key => {
+      if (!data) return;
+      const myData = Object.keys(data).map((key) => {
         return data[key];
-    })
+      });
 
-    storeChats(myData)
+      storeChats(myData);
     });
-  }
+  };
 
   const fetchAllRequests = async () => {
     const requestRef = ref(realtimeDB, "requests/");
     onValue(requestRef, (snapshot) => {
       const data = snapshot.val();
 
-      if(!data) return
-      const myData = Object.keys(data).map(key => {
+      if (!data) return;
+      const myData = Object.keys(data).map((key) => {
         return data[key];
-    })
+      });
 
-    storeRequests(myData)
+      storeRequests(myData);
     });
-  }
-
+  };
 
   const fetchAllJobs = async () => {
     const jobs = await getJobs();
     storeJobs(jobs);
-  }
-
+  };
 
   const fetchReviews = async () => {
     const reviews = await getReviews();
     storeReviews(reviews);
-  }
+  };
 
   useLayoutEffect(() => {
-    checkLocalUser();
     fetchServices();
-    fetchAllChats()
-    fetchAllRequests()
-    fetchAllUsers()
-    fetchAllJobs()
-    fetchShops()
-    fetchProducts()
-    fetchReviews()
+    fetchAllChats();
+    fetchAllRequests();
+    fetchAllUsers();
+    fetchAllJobs();
+    fetchShops();
+    fetchProducts();
+    fetchReviews();
   }, []);
 
-
   return (
-    <RootSiblingParent>
+        <RootSiblingParent>
     <PaperProvider theme={paperTheme}>
-       <StatusBar style='light' />
-      <ThemeProvider value={paperTheme}>
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(public)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(terms)"
-            options={{
-              headerShown: false,
-            }}
-          />
-           <Stack.Screen
-            name="admin/index"
-            options={{
-              title: 'Admin Dashboard',
-              headerTitleAlign:'center',
-             headerStyle:{backgroundColor:Colors.light.primary},
-             headerTintColor:'white'
-            }}
-          />
-           <Stack.Screen
-            name="admin/jobs"
-            options={{
-              headerShown: false
-            }}
-          />
-           <Stack.Screen
-            name="products"
-            options={{
-              headerShown: false
-            }}
-          />
-
-          <Stack.Screen
-            name="profile/edit"
-            options={{
-              title: 'Edit Profile',
-              headerTitleAlign:'center',
-              headerStyle: {backgroundColor:Colors.light.primary},
-              headerTintColor: 'white'
-            }}
-          />
-          <Stack.Screen
-            name="profile/index"
-            options={{
-              title: "My Profile",
-               headerStyle:{backgroundColor:Colors.light.primary},
-             headerTintColor:'white',
-              headerRight: () => (
-                <Feather
-                  name="edit"
-                  size={30}
-                  color={iconColor}
-                  onPress={() => router.push("profile/edit")}
-                />
-
-              ),
-            }}
-          />
-          <Stack.Screen
-            name="service/index"
-            options={{
-              title: "All Services",
-              headerTitleAlign:'center',
-             headerStyle:{backgroundColor:Colors.light.primary},
-             headerTintColor:'white'
-              
-            }}
-          />
-          <Stack.Screen
-            name="service/[id]"
-            options={{
-             headerShown:false
-              
-            }}
-          />
-           <Stack.Screen
-            name="service/requests"
-            options={{
-              title: "Service Requests",
-              headerTitleAlign:'center',
-             headerStyle:{backgroundColor:Colors.light.primary},
-             headerTintColor:'white'
-              
-            }}
-          />
-           <Stack.Screen
-            name="image/index"
-            options={{
-              headerShown:false
-              
-            }}
-          />
-          <Stack.Screen
-            name="settings/index"
-            options={{
-             title: 'Change Theme',
-             headerTitleAlign:'center',
-             headerStyle:{backgroundColor:Colors.light.primary},
-             headerTintColor:'white'
-              
-            }}
-          />
+        <ThemeProvider value={paperTheme}>
+          <Stack>
             <Stack.Screen
-            name="wallet/index"
-            options={{
-             title: 'Wallet',
-             headerTitleAlign:'center',
-             headerStyle:{backgroundColor:Colors.light.primary},
-             headerTintColor:'white'
-              
-            }}
-          />
-        </Stack>
-      </ThemeProvider>
-     
-    </PaperProvider>
+              name="(tabs)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="(public)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="(terms)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="admin/index"
+              options={{
+                title: "Admin Dashboard",
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="admin/jobs"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="products"
+              options={{
+                headerShown: false,
+              }}
+            />
+
+            <Stack.Screen
+              name="profile/edit"
+              options={{
+                title: "Edit Profile",
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="profile/index"
+              options={{
+                title: "My Profile",
+
+                headerRight: () => (
+                  <Feather
+                    name="edit"
+                    size={30}
+                    color={iconColor}
+                    onPress={() => router.push("profile/edit")}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="service/index"
+              options={{
+                title: "All Services",
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="service/[id]"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="service/requests"
+              options={{
+                title: "Service Requests",
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="image/index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="settings/index"
+              options={{
+                title: "Change Theme",
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="wallet/index"
+              options={{
+                title: "Wallet",
+                headerTitleAlign: "center",
+              }}
+            />
+          </Stack>
+        </ThemeProvider>
+      </PaperProvider>
+<StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
     </RootSiblingParent>
   );
 }

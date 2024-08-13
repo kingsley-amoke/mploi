@@ -3,13 +3,10 @@ import React, { useState } from "react";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
 import { useProductsStore, useShopsStore, useUserStore } from "@/src/state/store";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import useTheme from "@/src/hooks/useTheme";
-import { Colors } from "@/src/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { doc, setDoc } from "firebase/firestore";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
 import { ProductTypes } from "@/src/utils/types";
-import UserPhotos from "@/src/components/UserPhotos";
 import { useRouter } from "expo-router";
 
 const add = () => {
@@ -18,7 +15,6 @@ const add = () => {
   const { user } = useUserStore();
   const { shops } = useShopsStore();
   const {addProduct} = useProductsStore();
-  const { colorScheme } = useTheme();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -29,12 +25,6 @@ const add = () => {
 
   const [posting, setPosting] = useState(false);
 
-  const iconColor = colorScheme === "dark" ? "white" : "black";
-
-  const borderColor =
-    colorScheme === "dark"
-      ? Colors.dark.onSurfaceDisabled
-      : Colors.light.onSurfaceDisabled;
 
   const handleSubmitProduct = () => {
     
@@ -57,16 +47,14 @@ const add = () => {
 
     const productRef = doc(firestoreDB, "products", data._id);
     setDoc(productRef, data).then(() => {
-      console.log("Product updated successfully");
-      setPosting(false);
       addProduct(data)
       router.push(`/products/images?id=${data._id}`)
+      setPosting(false);
     });
-    setPosting(false);
   };
 
   return (
-    <ScrollView style={{ flex: 1, marginVertical: 30 }}>
+    <ScrollView style={{ flex: 1, paddingBottom: 30, marginVertical:20 }}>
       <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
         <TextInput
           label="Name"
@@ -117,7 +105,6 @@ const add = () => {
         <View
           style={{
             borderBottomWidth: 1,
-            borderColor: borderColor,
           }}
         >
           <SectionedMultiSelect
@@ -127,13 +114,12 @@ const add = () => {
             single
             subKey="subshops"
             selectText={category}
-            colors={{ selectToggleTextColor: iconColor }}
             onSelectedItemsChange={(item) => setCategory(item[0])}
           />
         </View>
       </View>
-      <Button icon="cart" mode="contained" disabled={posting} style={{marginTop:20, marginHorizontal:20}} onPress={handleSubmitProduct}>
-        {posting ? "Posting..." : "Post"}
+      <Button icon="cart" mode="contained" disabled={posting} style={{marginHorizontal:20, marginVertical:10}} onPress={handleSubmitProduct}>
+        {posting ? "Please wait..." : "Post"}
       </Button>
     </ScrollView>
   );

@@ -8,10 +8,14 @@ import { ref, remove } from 'firebase/database';
 import { realtimeDB } from '../utils/firebaseConfig';
 import { useRouter } from 'expo-router';
 import { Colors } from '../constants/Colors';
+import { useRequestStore } from '../state/store';
 
 const Map = ({user, requestID}: {user:DocumentData, requestID: string | string[] | undefined}) => {
 
   const router = useRouter();
+  const {requests, deleteRequest} = useRequestStore();
+
+  const request = requests.find(req => req._id === requestID);
   
     const coordinates = {
       latitude: parseFloat(user?.coordinates.latitude),
@@ -23,10 +27,9 @@ const Map = ({user, requestID}: {user:DocumentData, requestID: string | string[]
     const handleCancelService = async() => {
       const requestRef = ref(realtimeDB, `requests/${requestID}`);
 
-      remove(requestRef).then(()=>{
-        console.log('Request canceled')
-        router.replace('/')
-      })
+      deleteRequest(request!)
+      router.replace('/')
+      remove(requestRef)
     }
 
     return (
@@ -66,7 +69,7 @@ const Map = ({user, requestID}: {user:DocumentData, requestID: string | string[]
                 </View>
            <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Button mode='outlined' onPress={() => router.push(`profile/${user?._id}`)} textColor='white'>Profile</Button>
-            <Button mode='contained' onPress={handleCancelService}>Cancel Service</Button>
+            <Button mode='contained' onPress={()=>handleCancelService()}>Cancel Service</Button>
            </View>
           </View>
         </Fragment>

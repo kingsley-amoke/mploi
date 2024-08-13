@@ -24,10 +24,9 @@ const {user, decreaseUserBalance} = useUserStore();
 
       const requestRef = ref(realtimeDB, `requests/${item._id}`,);
 
-      remove(requestRef).then(() => {
-        deleteRequest(item);
-        router.push('/');
-      });
+      deleteRequest(item);
+      router.push('/');
+      remove(requestRef)
     };
 
     const handleAcceptRequest = () => {
@@ -36,11 +35,12 @@ const {user, decreaseUserBalance} = useUserStore();
 
       const requestRef = ref(realtimeDB, "requests/");
       createChat(item).then(() => {
+        router.push(`/rooms/${item._id}`)
+        setVisible(false);
         remove(requestRef).then(() => {
           deleteRequest(item);
           deduct(user, charge )
           decreaseUserBalance(charge)
-          router.push(`/rooms/${item._id}`)
         });
       });
     };
@@ -70,7 +70,7 @@ const {user, decreaseUserBalance} = useUserStore();
       >
         <View>
           <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-            {item.client.firstName} {item.client.lastName}{" "}
+            {item.client?.firstName} {item.client?.lastName}{" "}
           </Text>
           <Text>booked for your service</Text>
         </View>

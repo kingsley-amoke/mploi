@@ -30,13 +30,11 @@ const ProductDetails = () => {
 
   const navigation = useNavigation();
 
-  const { user } = useUserStore();
-  const { users } = useUsersStore();
   const { products } = useProductsStore();
   const { reviews} = useReviewsStore();
-
+  
   const { image, updateImage } = useImageStore();
-
+  
   const product = products.find((product) => product._id === productID);
 
   const productReviews = reviews.filter(

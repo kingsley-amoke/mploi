@@ -1,24 +1,25 @@
 import { StyleSheet, Platform } from "react-native";
 import { Tabs } from "expo-router";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import CustomHeader from "@/src/components/CustomHeader";
-import { useUserStore } from "@/src/state/store";
-import { Colors } from "@/src/constants/Colors";
+import { Feather,MaterialCommunityIcons, } from "@expo/vector-icons";
+import * as NavigationBar from 'expo-navigation-bar';
 import { StatusBar } from "expo-status-bar";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 const TabLayout = () => {
+
+
+
+
   return (
     <>
     <StatusBar style='light' />
     <Tabs
       screenOptions={{
         headerTitleAlign: "center",
-        tabBarStyle: Platform.OS === 'android' ? { height: 70  } : { height:100 },
-        tabBarLabelStyle: { marginBottom: 10, fontSize: 14 },
-        tabBarIconStyle: { fontSize: 40 },
-        headerTransparent: false,
-        headerStyle:{backgroundColor:Colors.light.primaryContainer},
-        headerTintColor: Colors.light.onPrimaryContainer
+        tabBarStyle: Platform.OS === 'android' ? { height: 50, padding:10  } : { height:100 },
+        tabBarLabelStyle: { fontSize: 10, marginBottom:5 },
+        
+        headerTransparent: false, 
 
       }}
         
@@ -27,10 +28,10 @@ const TabLayout = () => {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
-
+          title: "MPLOi Market",
+          tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" size={size} color={color} />
+            <MaterialCommunityIcons name="home" size={20} color={color} />
           ),
 
         }}
@@ -40,7 +41,7 @@ const TabLayout = () => {
         options={{
           title: "Messages",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="message" size={size} color={color} />
+            <MaterialCommunityIcons name="message" size={20} color={color} />
           ),
         }}
       />
@@ -51,7 +52,7 @@ const TabLayout = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="briefcase-clock"
-              size={size}
+              size={20}
               color={color}
             />
           ),
@@ -62,7 +63,7 @@ const TabLayout = () => {
         options={{
           title: "Shop",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="shopping" size={size} color={color} />
+            <MaterialCommunityIcons name="shopping" size={20} color={color} />
           ),
         }}
       />
@@ -71,7 +72,7 @@ const TabLayout = () => {
         options={{
           title: "Settings",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="settings" size={size} color={color} />
+            <Feather name="settings" size={20} color={color} />
           ),
         }}
         />

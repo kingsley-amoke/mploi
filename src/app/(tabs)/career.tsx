@@ -14,7 +14,7 @@ const career = () => {
   const { jobs } = useJobsStore();
 
   return (
-    <View style={{ flex: 1, width: "100%", marginHorizontal: 10 }}>
+    <View style={{ flex: 1, width: "100%"}}>
 
       {jobs ? jobs.map(job => (
 

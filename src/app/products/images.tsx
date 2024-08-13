@@ -19,7 +19,7 @@ const images = () => {
 
   const router = useRouter();
 
-  const { products } = useProductsStore();
+  const { products, updateProductImages } = useProductsStore();
 
   const [images, setImages] = useState<string[]>([]);
   const [product, setProduct] = useState<DocumentData | undefined>()
@@ -72,6 +72,7 @@ const images = () => {
       .then((snapshot) => {
         getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
           setImages([...images, url]);
+          updateProductImages(product!, url);
 
           const productRef = doc(firestoreDB, "products", id?.toString()!);
 

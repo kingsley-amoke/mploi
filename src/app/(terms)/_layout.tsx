@@ -10,8 +10,6 @@ const TermsLayout = () => {
         name="about"
         options={{
           headerTitle: "About MPLOi",
-          headerStyle: { backgroundColor: Colors.light.primary },
-          headerTintColor: "white",
         }}
       />
       <Stack.Screen
@@ -19,8 +17,6 @@ const TermsLayout = () => {
         options={{
           headerTitle: "Disclaimer",
           headerTitleAlign: "center",
-          headerStyle: { backgroundColor: Colors.light.primary },
-          headerTintColor: "white",
         }}
       />
       <Stack.Screen
@@ -28,8 +24,6 @@ const TermsLayout = () => {
         options={{
           headerTitle: "Privacy Policy",
           headerTitleAlign: "center",
-          headerStyle: { backgroundColor: Colors.light.primary },
-          headerTintColor: "white",
         }}
       />
       <Stack.Screen
@@ -37,8 +31,6 @@ const TermsLayout = () => {
         options={{
           headerTitle: "Terms & Conditions",
           headerTitleAlign: "center",
-          headerStyle: { backgroundColor: Colors.light.primary },
-          headerTintColor: "white",
         }}
       />
     </Stack>

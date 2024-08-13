@@ -2,14 +2,13 @@ import { StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { DocumentData } from "firebase/firestore";
 import { Button, Text } from "react-native-paper";
-import { Colors } from "../constants/Colors";
-import useTheme from "../hooks/useTheme";
 import { useChatStore, useUserStore } from "../state/store";
 import { useRouter } from "expo-router";
 
 import { onValue, ref } from "firebase/database";
 import { realtimeDB } from "../utils/firebaseConfig";
-import { handleRequestService } from "../utils/data";
+import { CustomToast, handleRequestService } from "../utils/data";
+import { Colors } from "../constants/Colors";
 
 const BookService = ({ user }: { user: DocumentData }) => {
 
@@ -41,7 +40,7 @@ const BookService = ({ user }: { user: DocumentData }) => {
       const existingRequest = myData.filter((data) => data.client._id === loggedUser?._id && data.serviceProvider._id === user._id);
 
       if (existingRequest.length > 0) {
-        console.log("There is a pending request");
+        CustomToast("There is a pending request", Colors.dark.errorContainer, Colors.dark.error);
         
         setApplying(false);
       } else {

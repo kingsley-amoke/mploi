@@ -65,7 +65,7 @@ export const verifyPaystackTransaction = async (reference: string) => {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer sk_test_f00d49b65c08bc9a3478a679118bdb1042c148e2`,
+            Authorization: `Bearer sk_test_a1c26ed17b48cb17ff04568ce8e3c3561d5466e1`,
           },
         }
       );

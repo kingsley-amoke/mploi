@@ -51,6 +51,7 @@ export interface ProductsStore{
   products: DocumentData[];
   storeProducts: (products: DocumentData[]) => void;  
   addProduct: (product: DocumentData) => void;
+  updateProductImages: (product: DocumentData, images: string) => void;
 }
 
 export interface ReviewsStore{
@@ -268,6 +269,22 @@ export const useProductsStore = create<ProductsStore>((set) => ({
         products: state.products,
       };
     });
+  },
+  updateProductImages: (product, images) => {
+    set((state) => {
+      const thisProduct = state.products.find(p => p._id === product._id)
+      if(!thisProduct) return {products: state.products}
+
+      const remainingProducts = state.products.filter(p => p._id !== product._id)
+
+      thisProduct.images.push(images)
+
+      const updatedProducts = [...remainingProducts, thisProduct]
+
+      return {
+        products: updatedProducts
+      }
+    })
   }
 }));
 

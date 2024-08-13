@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { ScrollView, View, Text as NativeText, useColorScheme } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text as NativeText,
+  useColorScheme,
+} from "react-native";
 import {
   Avatar,
   Button,
   Dialog,
   List,
-  Modal,
   Portal,
   Text,
   TextInput,
@@ -13,9 +17,15 @@ import {
 import { useCategoryStore, useUsersStore, useUserStore } from "../state/store";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { handleRequestService, latitudeDelta, longitudeDelta } from "../utils/data";
+import {
+  handleRequestService,
+  latitudeDelta,
+  longitudeDelta,
+} from "../utils/data";
 import { getDistance } from "geolib";
-
+import { DocumentData } from "firebase/firestore";
+import { realtimeDB } from "../utils/firebaseConfig";
+import { onValue, ref } from "firebase/database";
 
 const Categories = () => {
   const router = useRouter();
@@ -43,8 +53,38 @@ const Categories = () => {
       user._id !== loggedUser?._id && user.skills.includes(selectedService)
   );
 
-  const textColor = colorScheme === 'light' ? '#000': '#fff'
+  const textColor = colorScheme === "light" ? "#000" : "#fff";
 
+  const handleBookService = async (item: {
+    id: string;
+    client: DocumentData;
+    serviceProvider: DocumentData;
+  }) => {
+    const requestRef = ref(realtimeDB, "requests/");
+
+    onValue(requestRef, (snapshot) => {
+      let data = snapshot.val() || [];
+
+      const myData = Object.keys(data).map((key) => {
+        return data[key];
+      });
+
+      const existingRequest = myData.filter(
+        (data) =>
+          data.client._id === loggedUser?._id &&
+          data.serviceProvider._id === item.serviceProvider._id
+      );
+
+      if (existingRequest.length > 0) {
+        console.log("There is a pending request");
+      } else {
+        handleRequestService(item).then(() => {
+          router.push(`/service/${user._id}?request=${data.id}`);
+          hideModal();
+        });
+      }
+    });
+  };
 
   return (
     <View
@@ -70,9 +110,8 @@ const Categories = () => {
         <TextInput
           mode="outlined"
           placeholder="Search services"
-         style={{width:300, paddingLeft:10}}
+          style={{ width: 300, paddingLeft: 10 }}
           autoFocus
-          
           onChangeText={(value) => setSearch(value)}
         />
         <MaterialIcons
@@ -99,23 +138,21 @@ const Categories = () => {
                 <List.Accordion
                   title={category.name}
                   id={category.name}
-                  titleStyle={{color: textColor}}
+                  titleStyle={{ color: textColor }}
                   onLongPress={() => console.log(category.name)}
-                  
                 >
                   {category.subcategories &&
                     category.subcategories.map(
                       (subcategory: { name: string }, index: number) => (
                         <List.Item
                           title={subcategory.name}
-                          titleStyle={{color:textColor}}
+                          titleStyle={{ color: textColor }}
                           style={{ marginLeft: 20 }}
                           onPress={() => {
                             setSelectedService(subcategory.name);
                             showModal();
                           }}
                           key={subcategory.name}
-                          
                         />
                       )
                     )}
@@ -128,9 +165,13 @@ const Categories = () => {
           <Dialog
             visible={visible}
             onDismiss={hideModal}
-            style={{padding:5, justifyContent:'center', alignItems:'center'}}
+            style={{
+              padding: 5,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
-            <View style={{ alignItems: "center", marginBottom:20 }}>
+            <View style={{ alignItems: "center", marginBottom: 20 }}>
               {recommendedUsers.map((user) => {
                 const coordinates = {
                   latitude: parseFloat(user.coordinates.latitude),
@@ -158,7 +199,7 @@ const Categories = () => {
                   id: id,
                   client: loggedUser,
                   serviceProvider: user,
-                }
+                };
                 return (
                   <View
                     key={user._id}
@@ -205,12 +246,7 @@ const Categories = () => {
                       </Button>
                       <Button
                         mode="contained"
-                        onPress={() => {
-
-                          handleRequestService(data)
-                          router.push(`/service/${user._id}?request=${data.id}`);
-                          hideModal();
-                        }}
+                        onPress={() => handleBookService(data)}
                       >
                         Book Service
                       </Button>
