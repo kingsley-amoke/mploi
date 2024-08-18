@@ -1,11 +1,9 @@
 import {
   View,
   Pressable,
-  GestureResponderEvent,
   ScrollView,
-  useColorScheme,
 } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Checkbox from "expo-checkbox";
@@ -15,49 +13,73 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "expo-router";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import * as Location from "expo-location";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useUserStore } from "@/src/state/store";
-import { Colors } from "../constants/Colors";
 import { DBUser } from "../utils/types";
 import { firestoreDB } from "../utils/firebaseConfig";
+import { useForm } from "react-hook-form";
+import ValidatedInput from "./ValidatedInput";
 
 const Signup = () => {
   const auth = getAuth();
   const router = useRouter();
 
-  const  colorScheme  = useColorScheme();
-
-  const placeholderColor =
-    colorScheme === "dark"
-      ? Colors.dark.onSurfaceDisabled
-      : Colors.light.onSurfaceDisabled;
-
-  const borderColor =
-    colorScheme === "dark"
-      ? Colors.dark.onSurfaceDisabled
-      : Colors.light.onSurfaceDisabled;
-
-
   const { storeUser } = useUserStore();
 
-  const [isPasswordShown, setIsPasswordShown] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [countryCode, setCountryCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [referee, setReferee] = useState("");
+  const formSchema = z
+    .object({
+      firstname: z
+        .string()
+        .toLowerCase()
+        .min(3, "FirstName must be more than 3 letters"),
+      lastname: z
+        .string()
+        .toLowerCase()
+        .min(3, "LastName must be more than 3 letters"),
+      email: z.string().email("Please enter a valid email"),
+      phone: z.string().min(11, "Please enter a valid phone number"),
+      referee: z.string().optional(),
+      password: z.string().min(6, "Password must be at least 6 characters"),
+      passwordConfirm: z.string(),
+    })
+    .refine(
+      (data) => {
+        return data.password === data.passwordConfirm;
+      },
+      {
+        message: "Passwords do not match",
+        path: ["passwordConfirm"],
+      }
+    );
 
-  const handleSignup = async (e: GestureResponderEvent) => {
-    e.preventDefault();
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      email: "",
+      phone: "",
+      password: "",
+      passwordConfirm: "",
+  
+    },
+    resolver: zodResolver(formSchema),
+  });
+
+  const onSubmit = async (data:z.infer<typeof formSchema>) => {
+
     if (!isChecked) {
       setError(true);
       return;
     }
+
+    setLoading(true);
 
     let { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -66,6 +88,8 @@ const Signup = () => {
       return;
     }
 
+    console.log(status);
+
     let location = await Location.getCurrentPositionAsync({});
 
     const coords = {
@@ -73,52 +97,48 @@ const Signup = () => {
       longitude: location.coords.longitude,
     };
 
-    setLoading(true);
-    await createUserWithEmailAndPassword(auth, email, password).then(
-      async (userCredential) => {
-        // Signed up
+    let regionName = await Location.reverseGeocodeAsync(coords);
 
-        const user = userCredential.user;
+    createUserWithEmailAndPassword(auth, data.email, data.password).then(async({user})=>{
 
-        const userPhone = countryCode + phone;
+      const newUser = {
+        _id: user.uid,
+        email: user.email!,
+        firstName: data.firstname,
+        lastName: data.lastname,
+        image:
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+        address: regionName[0].formattedAddress,
+        nin: "",
+        status: { isVIP: false, isVerified: true },
+        referee: data.referee || "",
+        phone: data.phone,
+        phoneVerified: false,
+        createdAt: Date.now(),
+        bio: "",
+        location: regionName[0],
+        walletBalance: "0",
+        referralBalance: "0",
+        referral: [""],
+        bankDetails: { accountName: "", accountNumber: "", bank: "" },
+        isAdmin: false,
+        coordinates: coords,
+      };
 
-        const newUser: DBUser = {
-          _id: user.uid,
-          email: user.email!,
-          firstName: "",
-          lastName: "",
-          image:
-            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-          address: "",
-          nin: "",
-          status: { isVIP: false, isVerified: false },
-          referee: referee || "",
-          phone: userPhone,
-          phoneVerified: false,
-          createdAt: Date.now(),
-          bio: "",
-          location: { country: "", state: "", lga: "" },
-          walletBalance: "0",
-          referralBalance: "0",
-          referral: [""],
-          bankDetails: { accountName: "", accountNumber: "", bank: "" },
-          isAdmin: false,
-          coordinates: coords,
-        };
+      const userRef = doc(firestoreDB, "users", newUser._id);
 
-        const userRef = doc(firestoreDB, "users", newUser._id);
-
-        setDoc(userRef, newUser).then(async () => {
+       setDoc(userRef, newUser).then(async () => {
           const docSnap = await getDoc(userRef);
 
           storeUser(docSnap.data()!);
 
           setLoading(false);
           AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
-          router.push("profile/edit");
+          router.push("/profile/edit");
         });
-      }
-    );
+
+    })
+ 
   };
 
   return (
@@ -150,82 +170,52 @@ const Signup = () => {
           </Text>
         </View>
         <View style={{ marginBottom: 12 }}>
-          <TextInput
-            mode="outlined"
+          <ValidatedInput
+            control={control}
+            name="firstname"
             label="First Name"
-            placeholder="First Name"
-            placeholderTextColor={placeholderColor}
-            keyboardType="default"
-            onChangeText={(value) => setEmail(value)}
           />
         </View>
+
+        <View style={{ marginBottom: 12 }}>
+          <ValidatedInput control={control} name="lastname" label="Last Name" />
+        </View>
+
+        <View style={{ marginBottom: 12 }}>
+          <ValidatedInput
+            control={control}
+            name="email"
+            label="Email Address"
+            keyboardType="email-address"
+          />
+        </View>
+
+        <View style={{ marginBottom: 12 }}>
         
-        <View style={{ marginBottom: 12 }}>
-          <TextInput
-            mode="outlined"
-            label="Last Name"
-            placeholder="Last Name"
-            placeholderTextColor={placeholderColor}
-            keyboardType="default"
-            onChangeText={(value) => setEmail(value)}
-          />
-        </View>
-
-        <View style={{ marginBottom: 12 }}>
-          <TextInput
-            mode="outlined"
-            label="Email address"
-            placeholder="Enter your email address"
-            placeholderTextColor={placeholderColor}
-            keyboardType="email-address"
-            onChangeText={(value) => setEmail(value)}
-          />
-        </View>
-
-        <View style={{ marginBottom: 12, flexDirection: "row", gap: 10 }}>
-          <TextInput
-            mode="outlined"
-            label={countryCode ? countryCode : "+1"}
-            placeholder="+1"
-            placeholderTextColor={placeholderColor}
-            keyboardType="phone-pad"
-            style={{
-              width: 60,
-            }}
-            onChangeText={(value) => setCountryCode(value)}
-          />
-
-          <TextInput
-            mode="outlined"
+        <ValidatedInput
+            control={control}
+            name="phone"
             label="Phone Number"
-            placeholder="Enter your phone number"
-            placeholderTextColor={placeholderColor}
             keyboardType="numeric"
-            style={{
-              width: 300,
-            }}
-            onChangeText={(value) => setPhone(value)}
           />
         </View>
 
         <View style={{ marginBottom: 12 }}>
-          <TextInput
-            mode="outlined"
-            label="Password"
-            placeholder="Enter your password"
-            placeholderTextColor={placeholderColor}
-            onChangeText={(value) => setPassword(value)}
+          <ValidatedInput control={control} name="password" label="Password"/>
+        </View>
+        <View style={{ marginBottom: 12 }}>
+          <ValidatedInput
+            control={control}
+            name="passwordConfirm"
+            label="Confirm Password"
           />
         </View>
-
         <View style={{ marginBottom: 12 }}>
-          <TextInput
-            mode="outlined"
-            label="Referee (optional)"
-            placeholder="Your referee's email address"
-            placeholderTextColor={placeholderColor}
+          <ValidatedInput
+            control={control}
+            name="referee"
+            label="Referee (Optional)"
             keyboardType="email-address"
-            onChangeText={(value) => setReferee(value)}
           />
         </View>
         <View
@@ -245,18 +235,15 @@ const Signup = () => {
 
         <Button
           mode="contained"
-      
           style={{
             marginTop: 18,
             marginBottom: 4,
-           
           }}
           disabled={loading}
-          onPress={(e: GestureResponderEvent) => handleSignup(e)}
+          onPress={handleSubmit(onSubmit)}
         >
           {loading ? "Please wait..." : "Sign Up"}
         </Button>
-        
 
         <View
           style={{
@@ -264,10 +251,7 @@ const Signup = () => {
             alignItems: "center",
             marginVertical: 20,
           }}
-        >
-          
-          
-        </View>
+        ></View>
 
         <View
           style={{

@@ -27,10 +27,15 @@ export default function Shop() {
 
   const textColor = colorScheme === 'light' ? '#000': '#fff'
 
-  const ShopItem = ({ item }: { item: DocumentData }) => {
+  const filteredProducts = products.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const ShopItem = ({ item}: { item: DocumentData}) => {
+
     return (
     
-        <Card style={{ width:150, marginLeft:10 }} onPress={() => router.push(`products/${item._id}`)}>
+        <Card style={{ width:150, marginLeft:10 }}  onPress={() => router.push(`/products/${item._id}`)}>
           <Card.Cover
             source={{ uri: item.images[0] }}
             style={{ height:150 }}
@@ -43,16 +48,8 @@ export default function Shop() {
           </Card.Content>
        
         </Card>
- 
+  
     );
-  };
-
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const addShop = () => {
-    console.log("nothing");
   };
 
   return (
@@ -126,3 +123,6 @@ export default function Shop() {
     </SafeAreaView>
   );
 }
+
+
+

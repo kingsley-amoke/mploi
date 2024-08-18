@@ -39,7 +39,7 @@ const UserProfile = () => {
             color={iconColor}
             size={20}
               style={{ paddingRight: 10 }}
-              onPress={() => router.replace('/')}
+              onPress={() => router.replace('/home')}
            />
           )
         });

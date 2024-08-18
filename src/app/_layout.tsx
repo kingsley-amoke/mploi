@@ -1,4 +1,4 @@
-import { Stack} from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useColorScheme } from "react-native";
 import {
   MD3DarkTheme,
@@ -53,11 +53,13 @@ const CombinedDarkTheme = merge(DarkTheme, customDarkTheme);
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
+  const router = useRouter();
+
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
   const paperTheme =
     colorScheme === "dark" ? CombinedDarkTheme : CombinedDefaultTheme;
-    
+
   const { storeUsers } = useUsersStore();
   const { storeJobs } = useJobsStore();
   const { storeCategory } = useCategoryStore();
@@ -66,8 +68,6 @@ export default function RootLayout() {
   const { storeShops } = useShopsStore();
   const { storeProducts } = useProductsStore();
   const { storeReviews } = useReviewsStore();
-
-
 
   const fetchAllUsers = async () => {
     getUsers().then((users) => {
@@ -140,8 +140,8 @@ export default function RootLayout() {
   }, []);
 
   return (
-        <RootSiblingParent>
-    <PaperProvider theme={paperTheme}>
+    <RootSiblingParent>
+      <PaperProvider theme={paperTheme}>
         <ThemeProvider value={paperTheme}>
           <Stack>
             <Stack.Screen
@@ -161,6 +161,12 @@ export default function RootLayout() {
               options={{
                 headerShown: false,
               }}
+            />
+            <Stack.Screen 
+            name="index"
+            options={{
+              headerShown:false
+            }}
             />
             <Stack.Screen
               name="admin/index"
@@ -199,7 +205,7 @@ export default function RootLayout() {
                     name="edit"
                     size={30}
                     color={iconColor}
-                    onPress={() => router.push("profile/edit")}
+                    onPress={() => router.push("/profile/edit")}
                   />
                 ),
               }}
@@ -247,7 +253,7 @@ export default function RootLayout() {
           </Stack>
         </ThemeProvider>
       </PaperProvider>
-<StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
     </RootSiblingParent>
   );
 }

@@ -9,4 +9,3 @@ display search results only 10kms away from the user
 add toasts when needed
 autheorization
 cancel request
-add shop ads to homepage

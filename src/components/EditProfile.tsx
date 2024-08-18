@@ -160,12 +160,6 @@ const EditProfile = () => {
 
     setLoading(false);
 
-    // const data = {
-
-    //   guarantors: guarantors.length > 1 ? guarantors : user?.guarantors,
-
-    // };
-
   };
   
   const allStates = getStates();
@@ -301,117 +295,7 @@ const EditProfile = () => {
               />
             </View>
           </View>
-
-          <Text
-            style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
-          >
-            Contact Details
-          </Text>
-          <View>
-            <View>
-              <TextInput
-                mode="outlined"
-                label={user?.country !== "" ? user?.country : "Country"}
-                placeholder="Nigeria"
-                editable={false}
-              />
-            </View>
-            <View>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginVertical: 8,
-                }}
-              >
-                State
-              </Text>
-
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  borderColor: borderColor,
-                }}
-              >
-                <SectionedMultiSelect
-                  items={allStates}
-                  IconRenderer={Icon}
-                  selectText="Select State"
-                  defaultValue="Cross River"
-                  uniqueKey="name"
-                  searchPlaceholderText="Search State"
-                  showDropDowns={true}
-                  onSelectedItemsChange={setState}
-                  selectedItems={state}
-                  single
-                  colors={{ selectToggleTextColor: iconColor }}
-                />
-              </View>
-            </View>
-            <View>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginVertical: 8,
-                }}
-              >
-                Local Government Area
-              </Text>
-
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  borderColor: borderColor,
-                }}
-              >
-                <SectionedMultiSelect
-                  items={lgas}
-                  IconRenderer={Icon}
-                  selectText="Select LGA"
-                  defaultValue="Calabar Municipal"
-                  uniqueKey="name"
-                  searchPlaceholderText="Search LGA"
-                  showDropDowns={true}
-                  onSelectedItemsChange={setLga}
-                  selectedItems={lga}
-                  single
-                  colors={{ selectToggleTextColor: iconColor }}
-                />
-              </View>
-            </View>
-            <View
-              style={{
-                flexDirection: "column",
-                marginBottom: 6,
-              }}
-            >
-              <TextInput
-                mode="outlined"
-                label={user?.address !== "" ? user?.address : "Address"}
-                placeholder={user?.address}
-                onChangeText={(value) => setAddress(value)}
-                editable={true}
-              />
-            </View>
-
-            <View
-              style={{
-                flexDirection: "column",
-                marginBottom: 6,
-              }}
-            >
-              <TextInput
-                mode="outlined"
-                label={user?.nin !== "" ? user?.nin : "NIN"}
-                placeholder={user?.nin}
-                onChangeText={(value) => setNin(value)}
-                editable={true}
-              />
-            </View>
-          </View>
+         
           <Text
             style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
           >

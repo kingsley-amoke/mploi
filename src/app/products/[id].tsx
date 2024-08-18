@@ -163,7 +163,7 @@ const ProductDetails = () => {
         </View>
       </View>
 
-      <Reviews itemID={productID} />
+      <Reviews itemID={productID} item="product"/>
     </ScrollView>
   );
 };

@@ -2,8 +2,8 @@ import Carousel from "@/src/components/Carousel";
 import FloatingButton from "@/src/components/FloatingButton";
 import UserCard from "@/src/components/UserCard";
 import { Colors } from "@/src/constants/Colors";
-import { useJobsStore, useUsersStore } from "@/src/state/store";
-import { CustomToast } from "@/src/utils/data";
+import { useJobsStore, useProductsStore, useUsersStore } from "@/src/state/store";
+import { CustomToast, formatPrice } from "@/src/utils/data";
 import { Link, useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import React from "react";
@@ -16,11 +16,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Text, ActivityIndicator, MD2Colors, Button } from "react-native-paper";
+import { Text, ActivityIndicator, MD2Colors, Button, Card } from "react-native-paper";
+import { ShopItem } from "./shop";
 
 const Home = () => {
   const { users } = useUsersStore();
   const { jobs } = useJobsStore();
+  const { products } = useProductsStore();
   const router = useRouter();
 
   const BannerRenderItem = ({ item }: { item: DocumentData }) => {
@@ -87,6 +89,27 @@ const Home = () => {
     );
   };
 
+const ShopItem = ({ item}: { item: DocumentData}) => {
+
+    return (
+    
+        <Card style={{ width:150, marginLeft:10 }}  onPress={() => router.push(`/products/${item._id}`)}>
+          <Card.Cover
+            source={{ uri: item.images[0] }}
+            style={{ height:150 }}
+          />
+          <Card.Content style={{ marginVertical: 5,}}>
+            <Text style={{ fontWeight: "bold"}}>
+              {item.name.length > 20 ? item.name.substring(0, 14)+"..." : item.name}
+            </Text>
+            <Text style={{ fontSize: 10 }}>{formatPrice(item.price)}</Text>
+          </Card.Content>
+       
+        </Card>
+  
+    );
+  };
+
   const weekAgo = Date.now() * 7;
 
   const newJobs = jobs.filter((job) => parseInt(job._id) < weekAgo);
@@ -103,24 +126,24 @@ const Home = () => {
       </Button>
 
       <ScrollView style={{ width: "100%", paddingHorizontal: 20 }}>
-        <View>
-          <Text
-            style={{
-              textAlign: "left",
-              fontSize: 20,
-              fontWeight: "700",
-              marginVertical: 10,
-            }}
-          >
-            Latest Jobs
+      <View >
+        <Text
+          style={{
+            textAlign: "left",
+            fontSize: 18,
+            fontWeight: "700",
+            marginVertical: 10,
+          }}
+        >
+            Best Selling Deals
           </Text>
         </View>
         <FlatList
-          data={newJobs}
-          renderItem={(item) => BannerRenderItem(item)}
+          data={products}
+          renderItem={(item) => ShopItem(item)}
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ marginBottom: 10, maxHeight: 130 }}
+          style={{ marginBottom: 10, height:200 }}
         />
 
         <View>

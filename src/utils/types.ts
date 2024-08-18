@@ -77,7 +77,7 @@ export interface Coordinstes{
 
 export interface DBUser {
   _id: string;
-  address: string;
+  address: string | null;
   email: string;
   firstName: string;
   guarantors?: ContactType[];

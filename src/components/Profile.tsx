@@ -3,15 +3,13 @@ import {
   Avatar,
   SegmentedButtons,
   Text,
-  TextInput,
 } from "react-native-paper";
 import React, { useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import useTheme from "@/src/hooks/useTheme";
 import { Colors } from "@/src/constants/Colors";
-import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { doc, DocumentData, setDoc } from "firebase/firestore";
+import {Ionicons} from "@expo/vector-icons";
+import {DocumentData } from "firebase/firestore";
 import UserPhotos from "./UserPhotos";
 import AboutUser from "./AboutUser";
 import BookService from "./BookService";
@@ -85,7 +83,7 @@ const handleViewImage = () => {
           </View>
           <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
             <Ionicons name="location" color={iconColor} />
-            <Text>{user?.location?.lga}</Text>
+            <Text>{user?.location?.subregion}</Text>
           </View>
         </View>
         <View
@@ -133,7 +131,7 @@ const handleViewImage = () => {
           buttons={[
             {      
               value: "about",
-              label: "About",
+              label: "About ",
               
             },
             {
@@ -157,7 +155,7 @@ const handleViewImage = () => {
             <UserPhotos user={user} />
           </View>
         ) : (
-          <Reviews itemID={user._id} />
+          <Reviews itemID={user._id} item="user" />
         )}
       </ScrollView>
     </SafeAreaView>

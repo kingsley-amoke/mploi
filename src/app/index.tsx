@@ -16,7 +16,7 @@ const index = () => {
         if (loggedUser) {
           getUser(loggedUser._id).then((user) => {
             storeUser(user);
-            router.replace("/");
+            router.replace("/home");
           });
         } else {
           router.replace("/login");

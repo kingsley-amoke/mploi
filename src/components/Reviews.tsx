@@ -6,7 +6,7 @@ import { useReviewsStore, useUsersStore, useUserStore } from "../state/store";
 import { Avatar, Divider, Text, TextInput } from "react-native-paper";
 import { firestoreDB } from "../utils/firebaseConfig";
 
-const Reviews = ({ itemID }: { itemID: string | string[] | undefined }) => {
+const Reviews = ({ itemID, item }: { itemID: string | string[] | undefined, item:string }) => {
 
     const colorScheme = useColorScheme();
 
@@ -153,26 +153,31 @@ const Reviews = ({ itemID }: { itemID: string | string[] | undefined }) => {
 
   return (
     <View style={{marginVertical:10}} >
+      <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center' , marginHorizontal:20,   marginTop:10}}>
+
+      <Text >Rate this {item}.</Text>
       <View
         style={{
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
           gap: 5,
+       
         }}
       >
+      
         <View
           style={{
             borderWidth: 1,
             borderColor: "grey",
-            padding: 5,
+            padding: 3,
             borderRadius: 5,
           }}
         >
           <MaterialIcons
             name="star"
             color={star > 0 ? "green" : "grey"}
-            size={30}
+            size={20}
             onPress={() => setStar(1)}
           />
         </View>
@@ -180,14 +185,14 @@ const Reviews = ({ itemID }: { itemID: string | string[] | undefined }) => {
           style={{
             borderWidth: 1,
             borderColor: "grey",
-            padding: 5,
+            padding: 3,
             borderRadius: 5,
           }}
         >
           <MaterialIcons
             name="star"
             color={star > 1 ? "green" : "grey"}
-            size={30}
+            size={20}
             onPress={() => setStar(2)}
           />
         </View>
@@ -195,14 +200,14 @@ const Reviews = ({ itemID }: { itemID: string | string[] | undefined }) => {
           style={{
             borderWidth: 1,
             borderColor: "grey",
-            padding: 5,
+            padding: 3,
             borderRadius: 5,
           }}
         >
           <MaterialIcons
             name="star"
             color={star > 2 ? "green" : "grey"}
-            size={30}
+            size={20}
             onPress={() => setStar(3)}
           />
         </View>
@@ -210,14 +215,14 @@ const Reviews = ({ itemID }: { itemID: string | string[] | undefined }) => {
           style={{
             borderWidth: 1,
             borderColor: "grey",
-            padding: 5,
+            padding: 3,
             borderRadius: 5,
           }}
         >
           <MaterialIcons
             name="star"
             color={star > 3 ? "green" : "grey"}
-            size={30}
+            size={20}
             onPress={() => setStar(4)}
           />
         </View>
@@ -225,16 +230,17 @@ const Reviews = ({ itemID }: { itemID: string | string[] | undefined }) => {
           style={{
             borderWidth: 1,
             borderColor: "grey",
-            padding: 5,
+            padding: 3,
             borderRadius: 5,
           }}
         >
           <MaterialIcons
             name="star"
             color={star === 5 ? "green" : "grey"}
-            size={30}
+            size={20}
             onPress={() => setStar(5)}
           />
+        </View>
         </View>
       </View>
      { itemID !== user?._id && <View

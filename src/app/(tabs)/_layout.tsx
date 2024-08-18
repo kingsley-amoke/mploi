@@ -1,9 +1,6 @@
 import { StyleSheet, Platform } from "react-native";
 import { Tabs } from "expo-router";
 import { Feather,MaterialCommunityIcons, } from "@expo/vector-icons";
-import * as NavigationBar from 'expo-navigation-bar';
-import { StatusBar } from "expo-status-bar";
-import { RootSiblingParent } from "react-native-root-siblings";
 
 const TabLayout = () => {
 
@@ -11,8 +8,7 @@ const TabLayout = () => {
 
 
   return (
-    <>
-    <StatusBar style='light' />
+    
     <Tabs
       screenOptions={{
         headerTitleAlign: "center",
@@ -26,7 +22,7 @@ const TabLayout = () => {
     >
       
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "MPLOi Market",
           tabBarLabel: 'Home',
@@ -77,7 +73,7 @@ const TabLayout = () => {
         }}
         />
     </Tabs>
-        </>
+    
   );
 };
 
