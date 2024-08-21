@@ -143,7 +143,14 @@ export default function RootLayout() {
     <RootSiblingParent>
       <PaperProvider theme={paperTheme}>
         <ThemeProvider value={paperTheme}>
-          <Stack>
+          <Stack 
+           screenOptions={{
+            headerTitleAlign: "left",
+            headerTransparent: false,
+            headerTitleStyle: {fontSize:14},
+    
+          }}
+          >
             <Stack.Screen
               name="(tabs)"
               options={{
@@ -199,13 +206,14 @@ export default function RootLayout() {
               name="profile/index"
               options={{
                 title: "My Profile",
+                headerTitleStyle:{fontSize:14},
 
                 headerRight: () => (
                   <Feather
-                    name="edit"
-                    size={30}
+                    name="home"
+                    size={20}
                     color={iconColor}
-                    onPress={() => router.push("/profile/edit")}
+                    onPress={() => router.push("/home")}
                   />
                 ),
               }}

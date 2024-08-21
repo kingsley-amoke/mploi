@@ -5,32 +5,39 @@ import { Colors } from "@/src/constants/Colors";
 
 const TermsLayout = () => {
   return (
-    <Stack>
+    <Stack 
+    screenOptions={{
+      headerTitleAlign: "left",
+      headerTransparent: false,
+      headerTitleStyle: {fontSize:14},
+
+    }}
+    >
       <Stack.Screen
         name="about"
         options={{
-          headerTitle: "About MPLOi",
+          headerTitle: "About MyPlug",
         }}
       />
       <Stack.Screen
         name="disclaimer"
         options={{
           headerTitle: "Disclaimer",
-          headerTitleAlign: "center",
+      
         }}
       />
       <Stack.Screen
         name="privacy"
         options={{
           headerTitle: "Privacy Policy",
-          headerTitleAlign: "center",
+ 
         }}
       />
       <Stack.Screen
         name="terms-policy"
         options={{
           headerTitle: "Terms & Conditions",
-          headerTitleAlign: "center",
+
         }}
       />
     </Stack>

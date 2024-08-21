@@ -4,8 +4,8 @@
     "slug": "mploi",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "icon": "./assets/images/splash.png",
+    "scheme": "mploi",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -17,6 +17,11 @@
       "bundleIdentifier": "com.smoqdev.mploi"
     },
     "android": {
+      "config":{
+        "googleMaps":{
+          "apiKey": "AIzaSyDTb--1wSgmTGf8d0D3rq4fojbWFlrYe2E"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

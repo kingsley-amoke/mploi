@@ -10,7 +10,7 @@ import {
 import { Avatar, Button, Divider, Text, TextInput } from "react-native-paper";
 import React, { useLayoutEffect, useState } from "react";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import {
   useImageStore,
   useProductsStore,
@@ -19,23 +19,28 @@ import {
   useUserStore,
 } from "@/src/state/store";
 import { doc, DocumentData, setDoc } from "firebase/firestore";
-import { firestoreDB } from "@/src/utils/firebaseConfig";
+import { firestoreDB, realtimeDB } from "@/src/utils/firebaseConfig";
 import { ProductTypes, ReviewTypes } from "@/src/utils/types";
-import { averageRating, formatPrice } from "@/src/utils/data";
+import { averageRating, createChat, formatPrice } from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
 import Reviews from "@/src/components/Reviews";
+import { ref } from "firebase/database";
 
 const ProductDetails = () => {
   const { id: productID } = useLocalSearchParams();
 
   const navigation = useNavigation();
+  const router = useRouter();
 
   const { products } = useProductsStore();
   const { reviews} = useReviewsStore();
+  const {user: loggedUser} = useUserStore();
+  const {users} = useUsersStore();
   
   const { image, updateImage } = useImageStore();
   
   const product = products.find((product) => product._id === productID);
+  const seller = users.find((user) => user._id === product?.sellerID)
 
   const productReviews = reviews.filter(
     (review) => review.productID === productID
@@ -67,14 +72,25 @@ const ProductDetails = () => {
   };
 
   const contactSeller = () => {
-    console.log("contact seller");
-  };
+
+    const id = `${Date.now()}`;
+    //create chat
+    const item = {
+      _id: id,
+      client: loggedUser,
+      serviceProvider: seller,
+    }
+
+      createChat(item).then(() => {
+        router.push(`/rooms/${item._id}`)
+      });
+    };
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: product?.name.substring(0, 25),
-      headerStyle: { backgroundColor: Colors.light.primary },
-      headerTintColor: "white",
+      headerTitleAlign: "left",
+      headerTitleStyle: {fontSize:14}
     });
     updateImage(product?.images[0]);
   }, []);

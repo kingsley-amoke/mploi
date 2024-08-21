@@ -1,21 +1,26 @@
 import { StyleSheet, Platform } from "react-native";
-import { Tabs } from "expo-router";
-import { Feather,MaterialCommunityIcons, } from "@expo/vector-icons";
+import { Tabs, useRouter } from "expo-router";
+import { Feather,MaterialCommunityIcons, MaterialIcons, } from "@expo/vector-icons";
+import { useUserStore } from "@/src/state/store";
 
 const TabLayout = () => {
 
+const {user} = useUserStore();
+const router = useRouter();
 
-
+const location = user.location.subregion + ", " + user?.location.city
 
   return (
     
     <Tabs
       screenOptions={{
-        headerTitleAlign: "center",
+        headerTitleAlign: "left",
         tabBarStyle: Platform.OS === 'android' ? { height: 50, padding:10  } : { height:100 },
         tabBarLabelStyle: { fontSize: 10, marginBottom:5 },
         
-        headerTransparent: false, 
+        headerTransparent: false,
+        headerTitleStyle: {fontSize:14, marginTop:10},
+        headerStatusBarHeight: 14
 
       }}
         
@@ -24,8 +29,11 @@ const TabLayout = () => {
       <Tabs.Screen
         name="home"
         options={{
-          title: "MPLOi Market",
+          title: location,
+          headerTitleAlign: 'left',
+          headerTitleStyle: {fontSize: 14},
           tabBarLabel: 'Home',
+          headerRight: () => <MaterialIcons name="person" size={20} style={{marginRight:20}} onPress={()=>router.push('/profile')}/>,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" size={20} color={color} />
           ),

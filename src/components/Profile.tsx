@@ -14,7 +14,7 @@ import UserPhotos from "./UserPhotos";
 import AboutUser from "./AboutUser";
 import BookService from "./BookService";
 import { useRouter } from "expo-router";
-import { useImageStore, useReviewsStore } from "../state/store";
+import { useImageStore, useReviewsStore, useUserStore } from "../state/store";
 import Reviews from "./Reviews";
 import { averageRating } from "../utils/data";
 
@@ -25,6 +25,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
   const colorScheme = useColorScheme();
   const {updateImage} = useImageStore();
   const { reviews} = useReviewsStore();
+  const {user:loggedUser} = useUserStore();
 
   const [value, setValue] = useState("about");
 
@@ -95,7 +96,7 @@ const handleViewImage = () => {
           }}
         />
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Text style={{fontSize:12}}>{user?.skills[1]}</Text>
+          <Text style={{fontSize:12}}>{user?.skills[0]}</Text>
         </View>
       </View>
       <ScrollView showsHorizontalScrollIndicator={false}>
@@ -121,7 +122,7 @@ const handleViewImage = () => {
           <Text>{averageRating(userReviews)}/{userReviews.length}</Text>
         </View>
       </View>
-      <BookService user={user}/>
+       {loggedUser._id !== user._id && <BookService user={user}/>}
       
         <SegmentedButtons
         

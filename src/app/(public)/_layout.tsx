@@ -38,7 +38,7 @@ const PublicLayout = () => {
                 top: 0,
               }}
             >
-              <Text style={{fontSize: 30, fontWeight: "bold", marginTop:10, color:'white'}}> MPLOi</Text>
+              <Text style={{fontSize: 30, fontWeight: "bold", marginTop:10, color:'white'}}>MyPlug</Text>
             </View>
           ),
         }}
@@ -56,7 +56,7 @@ const PublicLayout = () => {
               left: 0,
               right: 0,
               top: 0,}}>
-              <Text style={{ fontSize: 30, fontWeight: "bold", marginTop:10, color:'white' }}> MPLOi</Text>
+              <Text style={{ fontSize: 30, fontWeight: "bold", marginTop:10, color:'white' }}> MyPlug</Text>
             </View>
           ),
         }}

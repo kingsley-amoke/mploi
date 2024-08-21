@@ -8,12 +8,14 @@ import { signOut } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '@/src/utils/firebaseConfig';
 import { ExternalLink } from '@/src/components/ExternalLink';
+import { useUserStore } from '@/src/state/store';
 
 const shop = () => {
     // const {user} = useUserStore()
 
   const router = useRouter()
   const colorScheme = useColorScheme();
+  const {user} = useUserStore();
 
   const color = colorScheme === "dark" ? "white" : "black";
 
@@ -42,19 +44,6 @@ const shop = () => {
    router.push('/terms-policy')
   };
 
-  const navigateToFreeSpace = () => {
-    console.log("Free Space function");
-  };
-
-  const navigateToGithub = () => {
-    console.log("Data saver");
-    
-  };
-
-  const navigateToReportProblem = () => {
-    console.log("Report a problem");
-  };
-
   const about = () => {
      router.push('/about')
 
@@ -67,6 +56,10 @@ const shop = () => {
       router.replace("/login");
 
   };
+
+  const admin = () => {
+    router.push('/admin')
+  }
 
   const accountItems = [
     {
@@ -114,8 +107,10 @@ const shop = () => {
   ];
 
   const actionsItems = [
+    
     { icon: "info-outline", text: "About", action: about },
     { icon: "logout", text: "Log out", action: logout },
+    !user.isAdmin && {icon: 'info', text: 'Admin', action: admin},
   ];
 
 interface settingsItemsProps{

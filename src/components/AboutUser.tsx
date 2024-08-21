@@ -37,8 +37,8 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
         <Text style={{ fontSize: 20 }}>Skills</Text>
         {user?.skills.length > 0 && (
           <View>
-            {user?.skills?.map((skill: string) => (
-              <Text key={skill}>{skill}</Text>
+            {user?.skills?.map((skill: string, index:number) => (
+              <Text key={index}>{skill}</Text>
             ))}
           </View>
         )}

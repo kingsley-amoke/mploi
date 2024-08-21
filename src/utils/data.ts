@@ -7,11 +7,11 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import NaijaStates from "naija-state-local-government";
 import { firestoreDB, realtimeDB } from "./firebaseConfig";
 import { ref, serverTimestamp, set } from "firebase/database";
 
 import Toast from 'react-native-root-toast'
+import { getDistance } from "geolib";
 
 //get image blog
 export const getBlobFroUri = async (uri: string) => {
@@ -40,48 +40,25 @@ export const longitudeDelta = 0.0079;
 
 export const socialLinks = {
   instagram: {
-    link: "https://www.instagram.com/mploi24?igsh=MWpudmJuZWJrM3BwZA==",
+    link: "https://www.instagram.com/myplug_app?igsh=amxidmd5aHM3anls",
     color: "#F560e4",
   },
   facebook: {
-    link: "https://www.facebook.com/profile.php?id=61560893493484&mibextid=ZbWKwL",
+    link: "https://www.facebook.com/profile.php?id=61564181987191&mibextid=ZbWKwL",
     color: "blue",
   },
   whatsapp: {
-    link: "https://whatsapp.com/channel/0029VadDAer5a23uDggtCK3d",
+    link: "https://whatsapp.com/channel/0029Valf08M5EjxxzAWPwk3D",
     color: "green",
   },
   twitter: {
-    link: "https://x.com/MPLOi_Global?t=4Ct7lflX8xb-LtK-lN0emg&s=09",
+    link: "https://x.com/Myplug_APP?t=XGgoVqkW--BZIVb3Fg-U4Q&s=09",
     color: "#000",
   },
   youtube: {
-    link: "https://youtube.com/@mploi_global?si=59YXxkVlqC75-LM3",
+    link: "https://youtube.com/@myplugapp?si=MC3GGLprCBuh6Pms",
     color: "red",
   },
-};
-
-//states and lgas
-
-export const getStates = () => {
-  const states = NaijaStates.all();
-
-  const data = states.map((state, index: number) => ({
-    id: index,
-    name: state.state,
-  }));
-
-  return data;
-};
-
-export const getLGAsByState = (state: string) => {
-  const stateLGAs = NaijaStates.lgas(state);
-
-  const data = stateLGAs.lgas.map((lga: string, index: number) => ({
-    id: index,
-    name: lga,
-  }));
-  return data;
 };
 
 //fetch user
@@ -203,9 +180,9 @@ const createRequest = async (
 export const createChat = async (
   data: DocumentData
 ) => {
-  const requestRef = ref(realtimeDB, "chats/" + data._id);
+  const chatRef = ref(realtimeDB, "chats/" + data._id);
 
-  set(requestRef, data)
+  set(chatRef, data)
 };
 
 //fetch all shops
@@ -321,4 +298,25 @@ export const setTransaction = (transaction: DocumentData) => {
   const transRef = doc(firestoreDB, "transactions", transaction.transactionId)
   
   setDoc(transRef, transaction)
+}
+
+
+//distance between user in km
+
+export const distanceToUser  =  (loggedUser:DocumentData, user:DocumentData) => {
+
+  const clientCoordinates = {
+    latitude: loggedUser?.coordinates.latitude,
+    longitude: loggedUser?.coordinates.longitude,
+  }
+
+  const serviceProviderCoordinates =  
+  {
+    latitude: user.coordinates.latitude,
+    longitude: user.coordinates.longitude,
+  }
+
+  const distance = getDistance(clientCoordinates, serviceProviderCoordinates)
+
+return distance;
 }

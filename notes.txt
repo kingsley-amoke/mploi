@@ -1,11 +1,11 @@
-contact seller
+
 cleanup the app
 admin
 maps
 transactions
-validate register
 paystack issues
-display search results only 10kms away from the user
 add toasts when needed
-autheorization
 cancel request
+splash screen and icon  *
+social tags
+manage promoted products

@@ -22,7 +22,7 @@ export const CustomModal = ({triggerText, mode, content, visible, setVisible, ic
             </Dialog>
         </Portal>
 
-        <Button mode={mode || "contained"} icon={icon} onPress={showModal}>{triggerText}</Button>
+        <Button mode={mode || "contained"} icon={icon} onPress={showModal} style={{marginHorizontal:10}}>{triggerText}</Button>
         </>
     )
 }

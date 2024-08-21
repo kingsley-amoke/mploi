@@ -65,23 +65,7 @@ const BookService = ({ user }: { user: DocumentData }) => {
   };
 
 
-  return loggedUser?._id === user?._id && !loggedUser?.isAdmin ? (
-    <Button
-    mode="contained"
-      style={{
-       
-        borderWidth: 1,
-        marginVertical: 10,
-        marginHorizontal:20,
-        paddingVertical:5,
-        marginBottom: 40,
-       
-      }}
-      onPress={() => router.push("/admin")}
-    >
-      <Text variant="labelLarge" style={{color:'white'}}>Admin Dashboard</Text>
-    </Button>
-  ) : (
+  return  (
     <Button
     mode="contained"
       style={{

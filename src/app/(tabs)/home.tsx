@@ -17,7 +17,6 @@ import {
   View,
 } from "react-native";
 import { Text, ActivityIndicator, MD2Colors, Button, Card } from "react-native-paper";
-import { ShopItem } from "./shop";
 
 const Home = () => {
   const { users } = useUsersStore();
@@ -121,7 +120,7 @@ const ShopItem = ({ item}: { item: DocumentData}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Button mode="contained" onPress={showToast}>
+      <Button mode="contained" onPress={() => router.push('/profile')}>
         click
       </Button>
 

@@ -18,11 +18,9 @@ import { useCategoryStore, useUsersStore, useUserStore } from "../state/store";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import {
+  distanceToUser,
   handleRequestService,
-  latitudeDelta,
-  longitudeDelta,
 } from "../utils/data";
-import { getDistance } from "geolib";
 import { DocumentData } from "firebase/firestore";
 import { realtimeDB } from "../utils/firebaseConfig";
 import { onValue, ref } from "firebase/database";
@@ -49,9 +47,15 @@ const Categories = () => {
   );
 
   const recommendedUsers = users.filter(
-    (user) =>
-      user._id !== loggedUser?._id && user.skills.includes(selectedService)
+    (user) => {
+      
+      const distance = distanceToUser(loggedUser, user);
+
+      return user._id !== loggedUser?._id && user.skills.includes(selectedService) && distance <= 0;
+    }
   );
+
+  console.log(recommendedUsers)
 
   const textColor = colorScheme === "light" ? "#000" : "#fff";
 
@@ -79,7 +83,7 @@ const Categories = () => {
         console.log("There is a pending request");
       } else {
         handleRequestService(item).then(() => {
-          router.push(`/service/${user._id}?request=${data.id}`);
+          router.push(`service/${user._id}?request=${data.id}`);
           hideModal();
         });
       }
@@ -171,27 +175,12 @@ const Categories = () => {
               alignItems: "center",
             }}
           >
+            {recommendedUsers.length > 0 ? 
+            (
             <View style={{ alignItems: "center", marginBottom: 20 }}>
               {recommendedUsers.map((user) => {
-                const coordinates = {
-                  latitude: parseFloat(user.coordinates.latitude),
-                  longitude: parseFloat(user.coordinates.longitude),
-                  latitudeDelta: latitudeDelta,
-                  longitudeDelta: longitudeDelta,
-                };
 
-                const distanceToUser = getDistance(
-                  {
-                    latitude: loggedUser?.coordinates.latitude,
-                    longitude: loggedUser?.coordinates.longitude,
-                  },
-                  {
-                    latitude: coordinates.latitude,
-                    longitude: coordinates.longitude,
-                  }
-                );
-
-                const distanceInKm = Math.floor(distanceToUser / 1000);
+                const distanceInKm = Math.floor(distanceToUser(loggedUser, user) / 1000);
 
                 const id = `${Date.now()}`;
 
@@ -255,6 +244,13 @@ const Categories = () => {
                 );
               })}
             </View>
+            ) : (
+              <View style={{marginBottom:40, justifyContent:'center', alignItems:'center', gap:10}}>
+                <MaterialIcons name='info' size={50}/>
+
+              <Text>No service provider around you</Text>
+              </View>
+            ) }
           </Dialog>
         </Portal>
       </ScrollView>

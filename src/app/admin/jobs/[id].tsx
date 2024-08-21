@@ -33,8 +33,6 @@ import { useJobsStore, useUserStore } from "@/src/state/store";
 import { ExternalLink } from "@/src/components/ExternalLink";
 import { deduct, getBlobFroUri, socialLinks } from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
-import { storage } from "@/src/utils/firebaseConfig";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { DocumentData } from "firebase/firestore";
 import { CustomModal } from "@/src/components/CustomModal";
 
@@ -85,27 +83,6 @@ const JobPage = () => {
           } else {
             setCoverLetter(file);
           }
-
-          //     const fileBlob = await getBlobFroUri(file);
-
-          //     if (!fileBlob) return;
-
-          // const filename = document.assets[0].uri.split("/").pop();
-
-          // const storageRef = ref(storage, `documents/${filename}`);
-
-          // uploadBytes(storageRef, fileBlob)
-          //   .then((snapshot) => {
-          //     getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then(
-          //       (url) => {
-          //         console.log(url);
-          //       }
-          //     );
-          //   })
-          //   .catch((error) => {
-          //     console.log("Upload failed!", error);
-          //     setLoading(false);
-          //   });
         }
       });
     };
@@ -298,8 +275,7 @@ const JobPage = () => {
     navigation.setOptions({
       title: job.title + " " + "at" + " " + job.company,
       headerTitleAlign: "center",
-      headerStyle: { backgroundColor: Colors.light.primary },
-      headerTintColor: "white",
+      headerTitleStyle: {fontSize:14}
     });
   }, [id]);
 

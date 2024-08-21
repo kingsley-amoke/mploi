@@ -86,9 +86,9 @@ const Room = () => {
     return (
       <View
         style={{
-          backgroundColor: Colors.light.primary,
+          
           flexDirection: "row",
-          height: 100,
+          height: 80,
           alignItems: "flex-end",
           gap: 40,
           paddingBottom: 15,
@@ -97,13 +97,13 @@ const Room = () => {
       >
         <Ionicons
           name="chevron-back"
-          size={30}
-          color='white'
+          size={20}
+       
           onPress={() => navigation.goBack()}
         />
         <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-          <Avatar.Image source={{ uri: chatImage }} size={35} />
-          <Text style={{ fontSize: 20, fontWeight: "bold", color:'white' }}>{chatName}</Text>
+          <Avatar.Image source={{ uri: chatImage }} size={20} />
+          <Text style={{ fontSize: 14, fontWeight: "bold", }}>{chatName}</Text>
         </View>
       </View>
     );

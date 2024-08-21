@@ -22,8 +22,6 @@ import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 import {
   getBlobFroUri,
-  getLGAsByState,
-  getStates,
 } from "../utils/data";
 import { firestoreDB, storage } from "../utils/firebaseConfig";
 import { ref } from "firebase/storage";
@@ -47,24 +45,14 @@ const EditProfile = () => {
   const {categories} = useCategoryStore();
 
   const [selectedItems, setSelectedItems] = useState([""]);
-  const [items, setItems] = useState<serviceTypes[]>();
   const [loading, setLoading] = useState(false);
 
   const [profileImage, setProfileImage] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
-  const [country, setCountry] = useState("Nigeria");
-  const [state, setState] = useState(["Cross River"]);
-  const [lga, setLga] = useState([""]);
   const [bio, setBio] = useState("");
-  const [nin, setNin] = useState("");
-  const [address, setAddress] = useState("");
-  const [userBankName, setUserBankName] = useState([""]);
-  const [userAccountName, setUserAccountName] = useState("");
-  const [userAccountNumber, setUserAccountNumber] = useState("");
 
-  const [banks, setBanks] = useState();
 
 
   const handleProfileImageSelection = async () => {
@@ -99,36 +87,28 @@ const EditProfile = () => {
     }
   };
 
-  const validateUserBank = async () => {
-    if (userBankName[0] === " " || userAccountNumber.length !== 10) {
-      return;
-    }
-    const res = await validateAccountNumber(userAccountNumber, userBankName[0]);
+  // const validateUserBank = async () => {
+  //   if (userBankName[0] === " " || userAccountNumber.length !== 10) {
+  //     return;
+  //   }
+  //   const res = await validateAccountNumber(userAccountNumber, userBankName[0]);
 
-    if (res.code) {
-      setUserAccountName("Invalid Account Number");
-      return;
-    }
+  //   if (res.code) {
+  //     setUserAccountName("Invalid Account Number");
+  //     return;
+  //   }
 
-    setUserAccountName(res.data.account_name);
-  };
+  //   setUserAccountName(res.data.account_name);
+  // };
+
 
   const updateProfile = async () => {
+
+    selectedItems.shift();
     const updatedSkills = [...selectedItems];
 
     user?.skills?.map((skill: string) => updatedSkills.push(skill));
 
-    const location = {
-      country: country,
-      state: state[0],
-      lga: lga[0],
-    };
-
-    const bankDetails = {
-      bank: userBankName[0],
-      accountName: userAccountName,
-      accountNumber: userAccountNumber,
-    };
 
     setLoading(true);
     const loggedUser = await getLoggedUser();
@@ -141,11 +121,6 @@ const EditProfile = () => {
       phone: phone !== "" ? phone : user?.phone,
       image: profileImage !== "" ? profileImage : user?.image,
       bio: bio !== "" ? bio : user?.bio,
-      address: address !== "" ? address : user?.address,
-      nin: nin !== "" ? nin : user?.nin,
-      location: location.lga !== "" ? location : user?.location,
-      bankDetails:
-        bankDetails.accountName !== "" ? bankDetails : user?.bankDetails,
       skills: updatedSkills,
     };
 
@@ -162,18 +137,6 @@ const EditProfile = () => {
 
   };
   
-  const allStates = getStates();
-
-  const lgas = getLGAsByState(state[0]);
-
-  useLayoutEffect(() => {
-    async function getBanks() {
-      const res = await fetchAllBanks();
-      setBanks(res);
-    }
-
-    getBanks();
-  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -324,12 +287,12 @@ const EditProfile = () => {
               />
             </View>
           </View>
-          <Text
+          {/* <Text
             style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
           >
             Bank Details
-          </Text>
-          <View>
+          </Text> */}
+          {/* <View>
             <View>
               <Text
                 style={{
@@ -389,7 +352,7 @@ const EditProfile = () => {
                 }}
               />
             </View>
-          </View>
+          </View> */}
          
           <Button mode="contained" style={{marginTop:10}} onPress={() => updateProfile()}>{!loading ? "Save Change" : "Saving"}</Button>
 

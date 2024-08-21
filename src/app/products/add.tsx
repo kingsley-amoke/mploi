@@ -1,20 +1,26 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
-import { useProductsStore, useShopsStore, useUserStore } from "@/src/state/store";
+import {
+  useProductsStore,
+  useShopsStore,
+  useUserStore,
+} from "@/src/state/store";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { MaterialIcons } from "@expo/vector-icons";
 import { doc, setDoc } from "firebase/firestore";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
 import { ProductTypes } from "@/src/utils/types";
 import { useRouter } from "expo-router";
+import { CustomModal } from "@/src/components/CustomModal";
+import { Colors } from "@/src/constants/Colors";
+import { deduct } from "@/src/utils/data";
 
 const add = () => {
-
   const router = useRouter();
-  const { user } = useUserStore();
+  const { user, decreaseUserBalance } = useUserStore();
   const { shops } = useShopsStore();
-  const {addProduct} = useProductsStore();
+  const { addProduct } = useProductsStore();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -24,10 +30,10 @@ const add = () => {
   const [category, setCategory] = useState("Select category");
 
   const [posting, setPosting] = useState(false);
-
+  const [visible, setVisible] = useState(false);
+  const [active, setActive] = useState(1);
 
   const handleSubmitProduct = () => {
-    
     setPosting(true);
 
     const id = `${Date.now()}`;
@@ -44,17 +50,193 @@ const add = () => {
       sellerID: user?._id!,
     };
 
-
     const productRef = doc(firestoreDB, "products", data._id);
     setDoc(productRef, data).then(() => {
-      addProduct(data)
-      router.push(`/products/images?id=${data._id}`)
+      addProduct(data);
+      router.push(`/products/images?id=${data._id}`);
       setPosting(false);
     });
   };
 
+  const handleProcessPayment = (active: number) => {
+    const amount = parseFloat(user?.walletBalance) - active;
+    decreaseUserBalance(amount);
+    setPosting(true);
+    deduct(user, amount).then(() => {
+      handleSubmitProduct();
+      setPosting(false);
+    });
+  };
+
+  const payment = () => {
+    switch (active) {
+      case 1:
+        handleSubmitProduct();
+        break;
+      case 2:
+        handleProcessPayment(600);
+        break;
+      case 3:
+        handleProcessPayment(5000);
+        break;
+      case 4:
+        handleProcessPayment(10000);
+        break;
+      default:
+        handleSubmitProduct();
+        break;
+    }
+  };
+
+  const modalContent = (
+    <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <Text style={{ fontWeight: "bold" }}>
+        How would you like to post this product?
+      </Text>
+      <View style={{ width: 300, marginVertical: 20, gap: 10 }}>
+        <Pressable
+          style={{
+            flexDirection: "row",
+            padding: 10,
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: Colors.dark.primary,
+            borderRadius: 10,
+            backgroundColor: active === 1 ? Colors.light.primary : "white",
+          }}
+          onPress={() => setActive(1)}
+        >
+          <Text
+            style={{
+              color: active === 1 ? "white" : "black",
+              fontWeight: "bold",
+            }}
+          >
+            No Promo
+          </Text>
+          <Text style={{ color: active === 1 ? "white" : "black" }}>Free</Text>
+        </Pressable>
+        <Pressable
+          style={{
+            flexDirection: "row",
+            padding: 10,
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: Colors.dark.primary,
+            borderRadius: 10,
+            backgroundColor: active === 2 ? Colors.light.primary : "white",
+          }}
+          onPress={() => setActive(2)}
+        >
+          <View>
+            <Text
+              style={{
+                color: active === 2 ? "white" : "black",
+                fontWeight: "bold",
+              }}
+            >
+              Promo Lite
+            </Text>
+            <Text
+              style={{
+                color: active === 2 ? "white" : "black",
+              }}
+            >
+              7 days
+            </Text>
+          </View>
+          <Text style={{ color: active === 2 ? "white" : "black" }}>#600</Text>
+        </Pressable>
+        <Pressable
+          style={{
+            flexDirection: "row",
+            padding: 10,
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: Colors.dark.primary,
+            borderRadius: 10,
+            backgroundColor: active === 3 ? Colors.light.primary : "white",
+          }}
+          onPress={() => setActive(3)}
+        >
+          <View>
+            <Text
+              style={{
+                color: active === 3 ? "white" : "black",
+                fontWeight: "bold",
+              }}
+            >
+              Top Promo
+            </Text>
+            <Text
+              style={{
+                color: active === 3 ? "white" : "black",
+              }}
+            >
+              30 days
+            </Text>
+          </View>
+          <Text style={{ color: active === 3 ? "white" : "black" }}>#5000</Text>
+        </Pressable>
+        <Pressable
+          style={{
+            flexDirection: "row",
+            padding: 10,
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            borderWidth: 1,
+            borderColor: Colors.dark.primary,
+            borderRadius: 10,
+            backgroundColor: active === 4 ? Colors.light.primary : "white",
+          }}
+          onPress={() => setActive(4)}
+        >
+          <View>
+            <Text
+              style={{
+                color: active === 4 ? "white" : "black",
+                fontWeight: "bold",
+              }}
+            >
+              Boost Premium Promo
+            </Text>
+            <Text
+              style={{
+                color: active === 4 ? "white" : "black",
+              }}
+            >
+              3 months
+            </Text>
+          </View>
+          <Text style={{ color: active === 4 ? "white" : "black" }}>
+            #10000
+          </Text>
+        </Pressable>
+      </View>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 20,
+          marginBottom: 10,
+        }}
+      >
+        <Button mode="outlined" onPress={() => setVisible(false)}>
+          Cancel
+        </Button>
+        <Button mode="contained" onPress={payment}>
+          {posting ? "Please wait..." : "Proceed"}
+        </Button>
+      </View>
+    </View>
+  );
+
   return (
-    <ScrollView style={{ flex: 1, paddingBottom: 30, marginVertical:20 }}>
+    <ScrollView style={{ flex: 1, paddingBottom: 30, marginVertical: 20 }}>
       <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
         <TextInput
           label="Name"
@@ -80,27 +262,25 @@ const add = () => {
           onChangeText={(value) => setPrice(value)}
         />
         <View>
-
-        <Text style={{marginBottom:10, marginLeft:10}}>Negotiable?</Text>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <RadioButton
-              value="Yes"
-              status={negotiable ? "checked" : "unchecked"}
-              onPress={() => setNegotiable(true)}
-            />
-            <Text>Yes</Text>
+          <Text style={{ marginBottom: 10, marginLeft: 10 }}>Negotiable?</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <RadioButton
+                value="Yes"
+                status={negotiable ? "checked" : "unchecked"}
+                onPress={() => setNegotiable(true)}
+              />
+              <Text>Yes</Text>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <RadioButton
+                value="No"
+                status={!negotiable ? "checked" : "unchecked"}
+                onPress={() => setNegotiable(false)}
+              />
+              <Text>No</Text>
+            </View>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <RadioButton
-              value="No"
-              status={!negotiable ? "checked" : "unchecked"}
-              onPress={() => setNegotiable(false)}
-            />
-            <Text>No</Text>
-          </View>
-        </View>
-
         </View>
         <View
           style={{
@@ -118,9 +298,16 @@ const add = () => {
           />
         </View>
       </View>
-      <Button icon="cart" mode="contained" disabled={posting} style={{marginHorizontal:20, marginVertical:10}} onPress={handleSubmitProduct}>
-        {posting ? "Please wait..." : "Post"}
-      </Button>
+
+      <View style={{ marginVertical: 10 }}>
+        <CustomModal
+          content={modalContent}
+          triggerText="Post"
+          visible={visible}
+          setVisible={setVisible}
+          icon="cart"
+        />
+      </View>
     </ScrollView>
   );
 };
