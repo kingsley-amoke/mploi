@@ -31,7 +31,7 @@ import * as MailComposer from "expo-mail-composer";
 
 import { useJobsStore, useUserStore } from "@/src/state/store";
 import { ExternalLink } from "@/src/components/ExternalLink";
-import { deduct, getBlobFroUri, getJobs, socialLinks } from "@/src/utils/data";
+import { CustomToast, deduct, getBlobFroUri, getJobs, socialLinks } from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
 import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import { CustomModal } from "@/src/components/CustomModal";
@@ -81,6 +81,7 @@ const JobPage = () => {
       updateDoc(JobRef, {taken:!job.taken}).then(async() => {
        const jobs = await getJobs()
        storeJobs(jobs);
+       CustomToast('Successful')
        navigation.goBack();
        setLoading(false)
       });
@@ -340,7 +341,7 @@ const JobPage = () => {
           </View>
           <View style={{ marginVertical: 10 }}>
             {
-              user.isAdmin ?
+              !user.isAdmin ?
               <CustomModal content={modalContent} triggerText="Apply" visible={visible} setVisible={setVisible} /> 
               : 
               <Button mode="contained" onPress={handleJobStatus}>{loading ? 'Please wait...' : job.taken ? 'Mark as open' :  'Mark as taken'}</Button>

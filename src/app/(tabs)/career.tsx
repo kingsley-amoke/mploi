@@ -6,9 +6,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { Colors } from "@/src/constants/Colors";
 
 const career = () => {
-  const colorScheme = useColorScheme();
 
-  const textColor = colorScheme === "dark" ? "white" : "black";
 
   const { jobs } = useJobsStore();
 

@@ -1,14 +1,15 @@
 
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
-import { StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
+import {  useColorScheme, View } from "react-native";
 
 import { Button, Divider, Text, useTheme } from "react-native-paper";
 
 export const JobRenderItem = ({ item,}: { item: DocumentData}) => {
 
   const colorScheme = useColorScheme();
+  const router = useRouter();
  
 const iconColor = colorScheme === "dark" ? "#ffffff" : "#000000";
 
@@ -62,7 +63,7 @@ const iconColor = colorScheme === "dark" ? "#ffffff" : "#000000";
           </View>
           <View style={{justifyContent:'flex-end', alignItems:'flex-end'}}>
             
-            <Button mode="outlined" >See Details</Button>
+            <Button mode="outlined" onPress={() => router.push(`admin/jobs/${item._id}`)}>See Details</Button>
           </View>
 
       <Divider bold horizontalInset style={{ marginTop: 14 }} />

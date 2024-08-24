@@ -20,13 +20,7 @@ const CareerPage = () => {
   const iconColor = colorScheme === "dark" ? "#ffffff" : "#000000";
 
   const JobRenderItem = ({ item }: { item: DocumentData }) => {
-    const date = parseInt(item._id);
-
-    const jobDate = new Date(date).getTime();
-
-    const today = new Date(Date.now()).getTime();
-
-    const daysAgo = Math.floor((today - jobDate) / (1000 * 60 * 60 * 24));
+ 
 
     const salary = new Intl.NumberFormat("en-UK", {
       style: "currency",
@@ -70,11 +64,11 @@ const CareerPage = () => {
           </View>
           <View style={{ gap: 20, alignItems: "center", flexDirection: "row" }}>
             <TouchableOpacity onPress={handleViewJob}>
-              <MaterialCommunityIcons name="eye" size={20} />
+              <MaterialCommunityIcons name="eye" size={20}  color={iconColor}/>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handleDeleteJob}>
-              <MaterialCommunityIcons name="trash-can-outline" size={20} />
+              <MaterialCommunityIcons name="trash-can-outline" size={20}  color={iconColor}/>
             </TouchableOpacity>
           </View>
         </View>
