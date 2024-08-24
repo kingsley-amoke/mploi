@@ -23,6 +23,12 @@ export interface UsersStore {
   updateUsers: (user: DBUser) => void;
 }
 
+export interface TransactionStore{
+  transactions: DocumentData[];
+  storeTransactions: (transactions: DocumentData[]) => void;
+  addTransaction: (transaction: DocumentData) => void;
+}
+
 export interface JobStore {
   jobs: DocumentData[];
   storeJobs: (jobs: DocumentData[]) => void;
@@ -30,13 +36,6 @@ export interface JobStore {
   deleteJob: (job: DocumentData) => void;
 }
 
-// export interface CareerStore {
-//   careers: RecruitmentTypes[];
-//   storeCareers: (careers: RecruitmentTypes[]) => void;
-//   addCareer: (career: RecruitmentTypes) => void;
-//   updateCareer: (career: RecruitmentTypes) => void;
-//   deleteCareer: (career: RecruitmentTypes) => void;
-// }
 
 export interface categoryStore {
   categories: DocumentData[];
@@ -80,15 +79,12 @@ export interface requestStore {
   deleteRequest: (request: DocumentData) => void;
 }
 
-export interface notificationStore {
-  notifications: NotificationTypes[];
-  storeNotifications: (notifications: NotificationTypes[]) => void;
-}
 
 export interface imageStore {
   image: string | null;
   updateImage: (image: string) => void;
 }
+
 
 // global states
 
@@ -158,6 +154,31 @@ export const useUsersStore = create<UsersStore>((set) => ({
   },
 }));
 
+export const useTransactionsStore = create<TransactionStore>((set) => ({
+  transactions: [],
+  storeTransactions: (transactions) => {
+    set((state) => {
+
+      state.transactions = transactions;
+
+      return {
+        transactions: state.transactions
+      }
+    })
+  },
+  addTransaction: (transaction) => {
+
+    set((state) => {
+
+      state.transactions.push(transaction);
+
+      return {
+        transactions: state.transactions
+      }
+    })
+  }
+}))
+
 export const useJobsStore = create<JobStore>((set) => ({
   jobs: [],
   storeJobs: (jobs) => {
@@ -189,55 +210,6 @@ export const useJobsStore = create<JobStore>((set) => ({
   },
 }));
 
-// export const useCareerStore = create<CareerStore>((set) => ({
-//   careers: [],
-//   storeCareers: (careers) => {
-//     set((state) => {
-//       state.careers = careers;
-
-//       return {
-//         careers: state.careers,
-//       };
-//     });
-//   },
-//   addCareer: (career) => {
-//     set((state) => {
-//       state.careers.push(career);
-
-//       return {
-//         careers: state.careers,
-//       };
-//     });
-//   },
-
-//   updateCareer: (career) => {
-//     set((state) => {
-//       const updatedCareers = state.careers.filter(
-//         (storedCareer) => storedCareer._id !== career._id
-//       );
-
-//       updatedCareers.push(career);
-
-//       return {
-//         careers: state.careers,
-//       };
-//     });
-//   },
-
-//   deleteCareer: (career) => {
-//     set((state) => {
-//       const updatedCareers = state.careers.filter(
-//         (storedCareer) => storedCareer._id !== career._id
-//       );
-
-//       state.careers = updatedCareers;
-
-//       return {
-//         careers: state.careers,
-//       };
-//     });
-//   },
-// }));
 
 export const useCategoryStore = create<categoryStore>((set) => ({
   categories: [],
@@ -433,18 +405,6 @@ export const useRequestStore = create<requestStore>((set) => ({
   },
 }));
 
-export const useNotificationStore = create<notificationStore>((set) => ({
-  notifications: [],
-  storeNotifications: (notifications) => {
-    set((state) => {
-      state.notifications = notifications;
-
-      return {
-        notifications: state.notifications,
-      };
-    });
-  },
-}));
 
 export const useImageStore = create<imageStore>((set) => ({
   image: null,

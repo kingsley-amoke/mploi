@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { deleteDoc, doc, DocumentData } from "firebase/firestore";
 
 import { firestoreDB } from "@/src/utils/firebaseConfig";
-import { ActivityIndicator, Text } from "react-native-paper";
+import { ActivityIndicator, Divider, Text } from "react-native-paper";
 import { CustomToast } from "@/src/utils/data";
 
 const CareerPage = () => {
@@ -49,7 +49,8 @@ const CareerPage = () => {
     };
 
     return (
-      <View style={{ borderBottomWidth: 1, paddingBottom: 5, marginBottom: 5 }}>
+      <>
+      <View style={{ marginVertical:10 }}>
         <Text style={{ fontSize: 12, fontWeight: "bold" }}>
           Company: {item.company}
         </Text>
@@ -78,6 +79,8 @@ const CareerPage = () => {
           </View>
         </View>
       </View>
+        <Divider bold horizontalInset/>
+            </>
     );
   };
 

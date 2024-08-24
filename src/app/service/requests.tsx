@@ -8,7 +8,7 @@ import { realtimeDB } from "@/src/utils/firebaseConfig";
 import { createChat, deduct } from "@/src/utils/data";
 import { useRouter } from "expo-router";
 import { CustomModal } from "@/src/components/CustomModal";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const requests = () => {
 
@@ -25,7 +25,7 @@ const {user, decreaseUserBalance} = useUserStore();
       const requestRef = ref(realtimeDB, `requests/${item._id}`,);
 
       deleteRequest(item);
-      router.push('/');
+      router.push('/home');
       remove(requestRef)
     };
 
@@ -84,9 +84,7 @@ const {user, decreaseUserBalance} = useUserStore();
           <Button mode="outlined" onPress={handleDecline}>
             Decline
           </Button>
-          {/* <Button mode="contained" onPress={handleAcceptRequest}>
-            Accept
-          </Button> */}
+
           <CustomModal triggerText="Accept" content={modalContent} visible={visible} setVisible={setVisible}/>
         </View>
       </View>
@@ -105,4 +103,3 @@ const {user, decreaseUserBalance} = useUserStore();
 
 export default requests;
 
-const styles = StyleSheet.create({});

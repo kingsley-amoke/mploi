@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, useColorScheme, View } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import React, { useRef, useState } from "react";
 import {
   Button,
@@ -9,23 +9,21 @@ import {
   Surface,
   Text,
   TextInput,
-  useTheme,
 } from "react-native-paper";
-import { useUserStore } from "@/src/state/store";
-import { useRouter } from "expo-router";
-import { Colors } from "@/src/constants/Colors";
+import { useTransactionsStore, useUserStore } from "@/src/state/store";
 import { CustomToast } from "@/src/utils/data";
 import { verifyPayment } from "@/src/utils/paystack";
 import { Paystack, paystackProps } from "react-native-paystack-webview";
+import TransactionsPage from "@/src/components/TransactionsPage";
+
 
 const index = () => {
-  const [value, setValue] = useState("all");
-
+  const [value, setValue] = useState("completed");
 
   const paystackKey = process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY as string;
 
   const { user, increaseUserBalance } = useUserStore();
-  const colorScheme = useColorScheme();
+  const {transactions, addTransaction} = useTransactionsStore();
 
   const paystackWebViewRef = useRef<paystackProps.PayStackRef>();
 
@@ -36,10 +34,9 @@ const index = () => {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  const errorBgColor =
-    colorScheme === "dark" ? Colors.dark.error : Colors.light.error;
-  const errorTextColor =
-    colorScheme === "dark" ? Colors.dark.onError : Colors.light.onError;
+  const completedTransaction = transactions.filter(trans => trans.status === 'success')
+  const pendingTransaction = transactions.filter(trans => trans.status === 'pending')
+  const failedTransaction = transactions.filter(trans => trans.status === 'failed')
 
   const balance = new Intl.NumberFormat("en-UK", {
     style: "currency",
@@ -56,14 +53,18 @@ const index = () => {
       const reference = data.transactionRef.trxref;
       const rechargeAmount = amount - 50;
 
-      verifyPayment(user!, reference).then(() => {
-        CustomToast("Successfull", "green", "white");
+      verifyPayment(user!, reference).then((trans) => {
+      if(trans){
+        CustomToast("Successfull");
+        addTransaction(trans)
         increaseUserBalance(rechargeAmount);
         setPaying(false);
+      }else{
+        CustomToast("Failed");
+        addTransaction(trans)
+      }
       });
     };
-
-    console.log(user)
 
     return (
       <Dialog
@@ -85,7 +86,7 @@ const index = () => {
           billingEmail={user?.email!}
           activityIndicatorColor="teal"
           onCancel={(e) => {
-            CustomToast("Payment cancelled", errorBgColor, errorTextColor);
+            CustomToast("Payment cancelled");
           }}
           onSuccess={(res) => {
             makePayment(res);
@@ -129,8 +130,10 @@ const index = () => {
     );
   };
 
+
+
   return (
-    <SafeAreaView>
+    <SafeAreaView > 
       <View
         style={{
           width: "100%",
@@ -172,20 +175,34 @@ const index = () => {
           onValueChange={setValue}
           buttons={[
             {
-              label: "All",
-              value: "all",
+              label: "Completed",
+              value: "completed",
             },
             {
               label: "Pending",
               value: "pending",
             },
             {
-              label: "Completed",
-              value: "completed",
+              label: "Failed",
+              value: "failed",
             },
           ]}
         />
-      </View>
+              </View>
+            <ScrollView scrollEnabled showsVerticalScrollIndicator={false} >
+      {value === "completed" ? (
+        
+        <TransactionsPage transactions={completedTransaction}/>
+        
+      ) : value === "pending" ? (
+        
+        <TransactionsPage transactions={pendingTransaction}/>
+      ) : (
+        
+        <TransactionsPage transactions={failedTransaction}/>
+      )}
+      
+      </ScrollView>
     </SafeAreaView>
   );
 };

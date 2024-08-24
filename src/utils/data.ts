@@ -287,13 +287,30 @@ export const deduct = async(user:DocumentData, charge: number) => {
   });
 }
 
+//upload transactions to firebase
 export const setTransaction = (transaction: DocumentData) => {
 
-
-  const transRef = doc(firestoreDB, "transactions", transaction.transactionId)
+  const transRef = doc(firestoreDB, "transactions", transaction._id)
   
-  setDoc(transRef, transaction)
+  setDoc(transRef, transaction).then(() => {
+
+  })
 }
+
+//fetch all transactions
+
+
+export const getTransactions = async () => {
+  const transactionsRef = collection(firestoreDB, "transactions");
+
+  const transactions: DocumentData[] = [];
+
+  const querySnapshot = await getDocs(transactionsRef);
+  querySnapshot.forEach((doc) => {
+    transactions.push(doc.data());
+  });
+  return transactions;
+};
 
 
 //distance between user in km

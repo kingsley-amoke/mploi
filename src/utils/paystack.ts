@@ -1,7 +1,6 @@
 //env variables
 
-import { doc, DocumentData, setDoc, updateDoc } from "firebase/firestore"
-import { firestoreDB } from "./firebaseConfig"
+import { doc, DocumentData } from "firebase/firestore"
 import { recharge, setTransaction } from "./data"
 
 const url = process.env.EXPO_PUBLIC_PAYSTACK_URL!
@@ -78,19 +77,24 @@ export const verifyPaystackTransaction = async (reference: string) => {
 
 
 export const verifyPayment = async (user: DocumentData, reference: string) => {
+
     const response = await verifyPaystackTransaction(reference);
     if (response.data.status === "success") {
+
+      const id = `${Date.now()}`;
+
       const trans: DocumentData = {
+        _id: id,
         email: user.email,
         purpose: "wallet",
         amount: (response.data.amount / 100).toString(),
         status: response.data.status,
         channel: response.data.channel,
         currency: response.data.currency,
-        previousBalance: user?.balance,
+        previousBalance: user?.walletBalance,
         newBalance: (
           response.data.amount / 100 +
-          parseInt(user?.balance)
+          parseInt(user?.walletBalance)
         ).toString(),
         reference: reference,
         transactionId: response.data.id,
@@ -101,8 +105,30 @@ export const verifyPayment = async (user: DocumentData, reference: string) => {
       recharge(user?._id, rechargeAmount);
   
       setTransaction(trans);
+
+      return trans;
+    } else{
+
+      const id = `${Date.now()}`;
+
+      const trans: DocumentData = {
+        _id: id,
+        email: user.email,
+        purpose: "wallet",
+        amount: (response.data.amount / 100).toString(),
+        status: response.data.status,
+        channel: response.data.channel,
+        currency: response.data.currency,
+        previousBalance: user?.walletBalance,
+        newBalance: user?.walletBalance,
+        reference: reference,
+        transactionId: response.data.id,
+      };
+  
+      setTransaction(trans);
+
+      return trans;
     }
   
-    return "finished";
   };
 

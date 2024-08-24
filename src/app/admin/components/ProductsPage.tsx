@@ -10,18 +10,16 @@ import { Link, useRouter } from "expo-router";
 import {
   useProductsStore,
   useUsersStore,
-  useUserStore,
 } from "@/src/state/store";
-import { ActivityIndicator, Text } from "react-native-paper";
+import { ActivityIndicator, Divider, Text } from "react-native-paper";
 import { deleteDoc, doc, DocumentData, updateDoc } from "firebase/firestore";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
 import { CustomToast } from "@/src/utils/data";
 
 const ProductsPage = () => {
-
   const { users } = useUsersStore();
-  const { products, deleteProduct,deletePromoted } = useProductsStore();
+  const { products, deleteProduct, deletePromoted } = useProductsStore();
   const [loading, setLoading] = useState(false);
 
   const ProductRenderItem = ({ item }: DocumentData) => {
@@ -33,7 +31,7 @@ const ProductsPage = () => {
 
       deleteDoc(productRef).then(() => {
         deleteProduct(item);
-        deletePromoted(item)
+        deletePromoted(item);
         setLoading(false);
         CustomToast("Product deleted Successfully");
       });
@@ -42,14 +40,15 @@ const ProductsPage = () => {
     const cancelPromo = () => {
       const productRef = doc(firestoreDB, "products", item._id);
 
-      updateDoc(productRef, {promo: 'free'}).then(() => {
+      updateDoc(productRef, { promo: "free" }).then(() => {
         deletePromoted(item);
         CustomToast("Successful");
-      })
+      });
     };
 
     return (
-      <View style={{ borderBottomWidth: 1, paddingBottom: 5, marginBottom: 5 }}>
+      <>
+      <View style={{ marginVertical: 10 }}>
         <Text style={{ fontSize: 12, fontWeight: "bold" }}>
           Title: {item.name}
         </Text>
@@ -79,6 +78,8 @@ const ProductsPage = () => {
           </View>
         </View>
       </View>
+       <Divider bold horizontalInset />
+       </>
     );
   };
 

@@ -6,7 +6,7 @@ import {
   useUsersStore,
   useUserStore,
 } from "@/src/state/store";
-import { CustomToast, formatPrice, shopAvatar } from "@/src/utils/data";
+import { CustomToast, formatPrice, shopAvatar, transactions } from "@/src/utils/data";
 import { Link, useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import React, { useEffect } from "react";

@@ -7,15 +7,12 @@ import useTheme from "@/src/hooks/useTheme";
 import { StatusBar } from "expo-status-bar";
 
 const PublicLayout = () => {
-  // const imageUrl = user?.user?.externalAccounts[0].imageUrl!;
-
-  // const router = useRouter();
 
   const colorScheme = useColorScheme()
 
 
   const bgColor =
-    colorScheme === "dark" ? Colors.dark.shadow : Colors.light.primary;
+    colorScheme === "dark" ? Colors.dark.primary: Colors.light.primary;
 
   return (
     <>

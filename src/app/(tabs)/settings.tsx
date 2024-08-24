@@ -103,6 +103,7 @@ const shop = () => {
     },
     { icon: "github", text: "GitHub", action: 'https://github.com/kingsley-amoke' },
     {icon: 'linkedin', text: "LinkedIn", action: 'https://linkedin.com/in/kingsley-amoke' },
+    
   ];
 
   const actionsItems = [
@@ -240,5 +241,3 @@ interface settingsItemsProps{
 };
 
 export default shop
-
-const styles = StyleSheet.create({})

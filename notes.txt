@@ -1,4 +1,3 @@
 
 cleanup the app
-transactions
-paystack issues
+authoriza messages

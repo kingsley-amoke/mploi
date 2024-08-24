@@ -69,7 +69,7 @@ const UsersPage = () => {
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>
                {item.firstName} {item.lastName}
               </Text>
-              <Text style={{ fontSize: 10 }}>{item.skills[1]}</Text>
+              <Text style={{ fontSize: 10 }}>{item.skills[0]}</Text>
             </View>
           </View>
 

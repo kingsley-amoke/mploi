@@ -26,7 +26,7 @@ const Room = () => {
 
   const colorScheme = useColorScheme();
 
-  const textColor = colorScheme === "dark" ? "white" : "black";
+  const textColor = colorScheme === "dark" ? "#fff" : "#000";
 
 
   const userChatBg = Colors.light.primary;
@@ -93,17 +93,18 @@ const Room = () => {
           gap: 40,
           paddingBottom: 15,
           paddingLeft: 10,
+          backgroundColor: colorScheme=== 'dark' ? Colors.dark.background : Colors.light.background
         }}
       >
         <Ionicons
           name="chevron-back"
           size={20}
-       
+       color={textColor}
           onPress={() => navigation.goBack()}
         />
         <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
           <Avatar.Image source={{ uri: chatImage }} size={20} />
-          <Text style={{ fontSize: 14, fontWeight: "bold", }}>{chatName}</Text>
+          <Text style={{ fontSize: 14, fontWeight: "bold",color: textColor}}>{chatName}</Text>
         </View>
       </View>
     );

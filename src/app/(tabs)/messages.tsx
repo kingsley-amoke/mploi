@@ -7,14 +7,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { DocumentData } from "firebase/firestore";
 
 const index = () => {
-  const router = useRouter();
 
   const { chats } = useChatStore();
   const { requests } = useRequestStore();
   const {user} = useUserStore();
 
-  // console.log(requests)
   const myRequests = requests.filter(req => req.serviceProvider?._id === user?._id)
+  const myChats = chats.filter(c => c.serviceProvider._id === user?._id || c.client._id === user?._id);
+
 
 
   return (
@@ -58,7 +58,7 @@ const index = () => {
               </TouchableOpacity>
             </View>
 
-            {chats.length === 0 ? (
+            {myChats.length === 0 ? (
               <>
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
@@ -68,7 +68,7 @@ const index = () => {
               </>
             ) : (
               <>
-                {chats && chats?.length > 0 ? (
+                {chats && myChats?.length > 0 ? (
                   <>
                     {chats?.map((room) => (
                       <View key={room._id}>

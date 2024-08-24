@@ -24,6 +24,7 @@ import {
   useRequestStore,
   useReviewsStore,
   useShopsStore,
+  useTransactionsStore,
   useUsersStore,
 } from "../state/store";
 import { Feather } from "@expo/vector-icons";
@@ -34,7 +35,9 @@ import {
   getReviews,
   getServices,
   getShops,
+  getTransactions,
   getUsers,
+  transactions,
 } from "../utils/data";
 import { onValue, ref } from "firebase/database";
 import { RootSiblingParent } from "react-native-root-siblings";
@@ -68,11 +71,15 @@ export default function RootLayout() {
   const { storeShops } = useShopsStore();
   const { storeProducts, storePromoted } = useProductsStore();
   const { storeReviews } = useReviewsStore();
+  const {storeTransactions} = useTransactionsStore();
 
   const fetchAllUsers = async () => {
     getUsers().then((users) => {
       storeUsers(users);
     });
+    getTransactions().then(transactions => {
+      storeTransactions(transactions)
+    })
   };
 
   const fetchServices = async () => {
@@ -264,6 +271,10 @@ export default function RootLayout() {
               options={{
                 headerShown:false
               }}
+            />
+            <Stack.Screen
+              name="rooms/[roomId]"
+              
             />
           </Stack>
         </ThemeProvider>
