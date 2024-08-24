@@ -160,13 +160,14 @@ const JobPage = () => {
             flexDirection: "row",
             alignItems: "center",
      borderWidth:1,
+     borderColor: textColor,
             padding: 5,
             marginVertical: 10,
             borderRadius: 10,
           }}
         >
           <Text>Resume</Text>
-          <MaterialCommunityIcons name="plus" size={20} />
+          <MaterialCommunityIcons name="plus" size={20} color={textColor}/>
         </Pressable>
         <Text>{resume.split("/").pop()}</Text>
       </View>
@@ -185,13 +186,14 @@ const JobPage = () => {
             flexDirection: "row",
             alignItems: "center",
          borderWidth:1,
+         borderColor: textColor,
             padding: 5,
             marginVertical: 10,
             borderRadius: 10,
           }}
         >
           <Text>Cover letter</Text>
-          <MaterialCommunityIcons name="plus" size={20} />
+          <MaterialCommunityIcons name="plus" size={20} color={textColor} />
         </Pressable>
         <Text style={{ overflow: "hidden", flexWrap: "nowrap" }}>
           {coverLetter.split("/").pop()}
@@ -312,7 +314,7 @@ const JobPage = () => {
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              MPLOi Global Resources
+              My Plug Global Resources
             </Text>
           </View>
           <Divider bold horizontalInset style={{ marginBottom: 10 }} />

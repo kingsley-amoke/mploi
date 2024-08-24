@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "mploi",
-    "slug": "mploi",
+    "name": "My Plug",
+    "slug": "myplug",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mploi",
+    "scheme": "myplug",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.smoqdev.mploi"
+      "bundleIdentifier": "com.smoqdev.myplug"
     },
     "android": {
       "config":{
@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.smoqdev.mploi",
+      "package": "com.smoqdev.myplug",
       "versionCode": 1
     },
     "web": {
