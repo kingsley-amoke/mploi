@@ -26,13 +26,8 @@ const images = () => {
   const [loading, setLoading] = useState(false);
 
 
-  const loadImages = async () => {
+  const loadProduct = async () => {
     const product = products.find(product => product._id === id);
-    const files: string[] = product?.images;
-
-    if (files?.length > 0) {
-      setImages(files);
-    }
 
     setProduct(product);
   };
@@ -72,6 +67,7 @@ const images = () => {
       .then((snapshot) => {
         getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
           setImages([...images, url]);
+          console.log(images)
           updateProductImages(product!, url);
 
           const productRef = doc(firestoreDB, "products", id?.toString()!);
@@ -96,7 +92,7 @@ const images = () => {
 
   useEffect(() => {
 
-    loadImages();
+    loadProduct();
   },[id])
 
 

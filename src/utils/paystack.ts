@@ -85,7 +85,7 @@ export const verifyPayment = async (user: DocumentData, reference: string) => {
 
       const trans: DocumentData = {
         _id: id,
-        email: user.email,
+        userId: user._id,
         purpose: "wallet",
         amount: (response.data.amount / 100).toString(),
         status: response.data.status,
@@ -113,7 +113,7 @@ export const verifyPayment = async (user: DocumentData, reference: string) => {
 
       const trans: DocumentData = {
         _id: id,
-        email: user.email,
+        userId: user._id,
         purpose: "wallet",
         amount: (response.data.amount / 100).toString(),
         status: response.data.status,

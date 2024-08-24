@@ -1,4 +1,10 @@
-import { SafeAreaView, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from "react-native";
 import React, { useRef, useState } from "react";
 import {
   Button,
@@ -16,14 +22,13 @@ import { verifyPayment } from "@/src/utils/paystack";
 import { Paystack, paystackProps } from "react-native-paystack-webview";
 import TransactionsPage from "@/src/components/TransactionsPage";
 
-
 const index = () => {
   const [value, setValue] = useState("completed");
 
   const paystackKey = process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY as string;
 
   const { user, increaseUserBalance } = useUserStore();
-  const {transactions, addTransaction} = useTransactionsStore();
+  const { transactions, addTransaction } = useTransactionsStore();
 
   const paystackWebViewRef = useRef<paystackProps.PayStackRef>();
 
@@ -34,9 +39,15 @@ const index = () => {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  const completedTransaction = transactions.filter(trans => trans.status === 'success')
-  const pendingTransaction = transactions.filter(trans => trans.status === 'pending')
-  const failedTransaction = transactions.filter(trans => trans.status === 'failed')
+  const completedTransaction = transactions.filter(
+    (trans) => trans.status === "success" && trans.userId === user._id
+  );
+  const pendingTransaction = transactions.filter(
+    (trans) => trans.status === "pending" && trans.userId === user._id
+  );
+  const failedTransaction = transactions.filter(
+    (trans) => trans.status === "failed" && trans.userId === user._id
+  );
 
   const balance = new Intl.NumberFormat("en-UK", {
     style: "currency",
@@ -54,15 +65,15 @@ const index = () => {
       const rechargeAmount = amount - 50;
 
       verifyPayment(user!, reference).then((trans) => {
-      if(trans){
-        CustomToast("Successfull");
-        addTransaction(trans)
-        increaseUserBalance(rechargeAmount);
-        setPaying(false);
-      }else{
-        CustomToast("Failed");
-        addTransaction(trans)
-      }
+        if (trans) {
+          CustomToast("Successfull");
+          addTransaction(trans);
+          increaseUserBalance(rechargeAmount);
+          setPaying(false);
+        } else {
+          CustomToast("Failed");
+          addTransaction(trans);
+        }
       });
     };
 
@@ -130,10 +141,8 @@ const index = () => {
     );
   };
 
-
-
   return (
-    <SafeAreaView > 
+    <SafeAreaView>
       <View
         style={{
           width: "100%",
@@ -188,20 +197,15 @@ const index = () => {
             },
           ]}
         />
-              </View>
-            <ScrollView scrollEnabled showsVerticalScrollIndicator={false} >
-      {value === "completed" ? (
-        
-        <TransactionsPage transactions={completedTransaction}/>
-        
-      ) : value === "pending" ? (
-        
-        <TransactionsPage transactions={pendingTransaction}/>
-      ) : (
-        
-        <TransactionsPage transactions={failedTransaction}/>
-      )}
-      
+      </View>
+      <ScrollView scrollEnabled showsVerticalScrollIndicator={false}>
+        {value === "completed" ? (
+          <TransactionsPage transactions={completedTransaction} />
+        ) : value === "pending" ? (
+          <TransactionsPage transactions={pendingTransaction} />
+        ) : (
+          <TransactionsPage transactions={failedTransaction} />
+        )}
       </ScrollView>
     </SafeAreaView>
   );

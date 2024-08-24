@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import React, { useState } from "react";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
 import {
@@ -18,6 +18,7 @@ import { CustomToast, deduct } from "@/src/utils/data";
 
 const add = () => {
   const router = useRouter();
+  const colorScheme = useColorScheme();
   const { user, decreaseUserBalance } = useUserStore();
   const { shops } = useShopsStore();
   const { addProduct, addPromoted } = useProductsStore();
@@ -33,8 +34,9 @@ const add = () => {
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState(1);
 
+  const textColor = colorScheme === 'dark' ? '#fff' : '#000';
+
   const handleSubmitProduct = () => {
-    setPosting(true);
 
     const promo = active === 2 ?  '7 days' : active === 3 ? '30 days' : active === 4 ? '3 months' : 'free';
 
@@ -74,13 +76,18 @@ const add = () => {
   };
 
   const handleProcessPayment = (active: number) => {
-    if(active > parseInt(user?.walletBalance)) return
-   
-    decreaseUserBalance(active);
+    console.log('here')
     setPosting(true);
-    deduct(user, active).then(() => {
-      handleSubmitProduct();
-    });
+    if(active > parseInt(user?.walletBalance)) {
+      console.log('yes')
+      CustomToast('Insufficiant balance');
+      setPosting(false)
+    }else{
+      decreaseUserBalance(active);
+      deduct(user, active).then(() => {
+        handleSubmitProduct();
+      });
+    }
   };
 
   const payment = () => {
@@ -90,9 +97,9 @@ const add = () => {
 
         break;
       case 2:
-        () => {
+        
         handleProcessPayment(600);
-        }
+        
         break;
       case 3:
         handleProcessPayment(5000);
@@ -287,6 +294,7 @@ const add = () => {
                 value="Yes"
                 status={negotiable ? "checked" : "unchecked"}
                 onPress={() => setNegotiable(true)}
+                
               />
               <Text>Yes</Text>
             </View>
@@ -295,6 +303,7 @@ const add = () => {
                 value="No"
                 status={!negotiable ? "checked" : "unchecked"}
                 onPress={() => setNegotiable(false)}
+                
               />
               <Text>No</Text>
             </View>
@@ -303,6 +312,7 @@ const add = () => {
         <View
           style={{
             borderBottomWidth: 1,
+            borderColor: textColor,
           }}
         >
           <SectionedMultiSelect
@@ -312,6 +322,7 @@ const add = () => {
             single
             subKey="subshops"
             selectText={category}
+            colors={{selectToggleTextColor: textColor}}
             onSelectedItemsChange={(item) => setCategory(item[0])}
           />
         </View>

@@ -17,8 +17,8 @@
       "bundleIdentifier": "com.smoqdev.myplug"
     },
     "android": {
-      "config":{
-        "googleMaps":{
+      "config": {
+        "googleMaps": {
           "apiKey": "AIzaSyDTb--1wSgmTGf8d0D3rq4fojbWFlrYe2E"
         }
       },
@@ -27,7 +27,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.smoqdev.myplug",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -57,7 +61,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "92a5aff0-b22e-43ad-a5c7-2822a81e3e4b"
+        "projectId": "7b528871-ba77-4ed3-8419-a39519694b9c"
       }
     }
   }
