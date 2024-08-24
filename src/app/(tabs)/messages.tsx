@@ -89,6 +89,7 @@ const index = () => {
 const MessageCard = ({ room }: { room: DocumentData }) => {
   const { user } = useUserStore();
 
+
   const chatName =
     user?._id === room.client._id
       ? room.serviceProvider.firstName + " " + room.serviceProvider.lastName
@@ -99,7 +100,10 @@ const MessageCard = ({ room }: { room: DocumentData }) => {
       ? room.serviceProvider.image
       : room.client.image;
 
-  const lastMessageId = Object.keys(room?.messages).pop()!;
+      if(!room.messages) return
+
+
+  const lastMessageId = Object.keys(room.messages).pop()!;
 
   const lastMessage = room?.messages[lastMessageId];
 

@@ -21,6 +21,7 @@ import { DBUser } from "../utils/types";
 import { firestoreDB } from "../utils/firebaseConfig";
 import { useForm } from "react-hook-form";
 import ValidatedInput from "./ValidatedInput";
+import { CustomToast, noAvatar } from "../utils/data";
 
 const Signup = () => {
   const auth = getAuth();
@@ -106,8 +107,7 @@ const Signup = () => {
         email: user.email!,
         firstName: data.firstname,
         lastName: data.lastname,
-        image:
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+        image: noAvatar,
         address: regionName[0].formattedAddress,
         nin: "",
         status: { isVIP: false, isVerified: true },
@@ -123,6 +123,7 @@ const Signup = () => {
         bankDetails: { accountName: "", accountNumber: "", bank: "" },
         isAdmin: false,
         coordinates: coords,
+        suspended: false
       };
 
       const userRef = doc(firestoreDB, "users", newUser._id);
@@ -132,9 +133,10 @@ const Signup = () => {
 
           storeUser(docSnap.data()!);
 
+          router.push("/profile/edit");
+          CustomToast("Please update profile to continue");
           setLoading(false);
           AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
-          router.push("/profile/edit");
         });
 
     })

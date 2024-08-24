@@ -21,7 +21,6 @@ import { Paystack, paystackProps } from "react-native-paystack-webview";
 const index = () => {
   const [value, setValue] = useState("all");
 
-  const router = useRouter();
 
   const paystackKey = process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY as string;
 
@@ -63,6 +62,8 @@ const index = () => {
         setPaying(false);
       });
     };
+
+    console.log(user)
 
     return (
       <Dialog

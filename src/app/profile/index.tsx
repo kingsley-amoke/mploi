@@ -7,9 +7,8 @@ const UserProfile = () => {
 
   const {user} = useUserStore()
 
-  // return <Profile user={user}/>;
+  return <Profile user={user}/>;
 
-  return <Map user={user} requestID='1' />
 };
 
 export default UserProfile;

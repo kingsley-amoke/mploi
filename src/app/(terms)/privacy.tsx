@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import React from "react";
 import {Text } from 'react-native-paper'
+import { socialLinks } from "@/src/utils/data";
 
 const personalInformation = [
   "Full name",
@@ -20,20 +21,20 @@ const privacy = () => {
       showsVerticalScrollIndicator={false}
     >
       <Text style={{ marginVertical: 10 }}>
-        MPLOi Africa Initiative and companies are totally committed to
+        MyPlug Africa Initiative and companies are totally committed to
         protecting your privacy.
       </Text>
       <Text style={{ marginVertical: 10 }}>
-        MPLOi APP is designed solely to satisfy the desires of numerous job
-        seekers in our global space. When you visit our website and MPLOi APP,
+        MyPlug APP is designed solely to satisfy the desires of numerous job
+        seekers in our global space. When you visit our website and MyPlug APP,
         when you sign up, you accept the terms as it is in this Privacy policy.
         Your personal information will not be shared or transferred. It remains
-        confidencial within our website and MPLOi APP except as described in
+        confidencial within our website and MyPlug APP except as described in
         this Privacy policy. It is important to know your rights relating to
         your personal data at our disposal. As a valued customer, subscriber,
         Service Provider and Client, you can have access to your personal data
         to see the information that we have about you and how same information
-        are being processed by MPLOi. You have the rights under our privacy
+        are being processed by MyPlug. You have the rights under our privacy
         policy to object to processing of your personal data, if it exposes
         certain situations you may not want to bring to the public. It is your
         right to demand for corrections of information if your personal data was
@@ -42,13 +43,13 @@ const privacy = () => {
         right to request the transfer or sharing of your personal data, example,
         transferring or sharing personal information between our Service
         Providers and our Clients. You have the right to withdraw consent. If
-        you withdraw your consent, MPLOi may not allow you to access most
+        you withdraw your consent, MyPlug may not allow you to access most
         functionalities of our website and app.
       </Text>
 
       <Text style={{ marginVertical: 10 }}>
         To exercise any of the above mentioned rights, you can reach out to
-        MPLOi Africa Initiative through our phone lines............., Our
+        MyPlug Africa Initiative through our phone lines............., Our
         email................ When you contact us, we may demand to specific
         information from you to confirm your identity.
       </Text>
@@ -60,7 +61,7 @@ const privacy = () => {
         CUSTOMER INFORMATION
       </Text>
       <Text style={{ marginVertical: 10 }}>
-        Subscribers of MPLOi APP must provide customer information during
+        Subscribers of MyPlug APP must provide customer information during
         registration/subscription, entering details on the profile form and
         upgrades. These information include:
       </Text>
@@ -78,10 +79,10 @@ const privacy = () => {
       </Text>
       <Text style={{ marginVertical: 10 }}>
         We collect this information when you sync your contact list on your
-        device with MPLOi APP. You are expected to select two guarantors in
+        device with MyPlug APP. You are expected to select two guarantors in
         order to proceed. These guarantors must be immediate family members,
         close friends or colleagues. We use these information to track, solve
-        crimes and resolve conflicts within our website and MPLOi APP. MPLOi APP
+        crimes and resolve conflicts within our website and MyPlug APP. MyPlug APP
         automatically notifies your selected guarantors through phone calls or
         messages.
       </Text>
@@ -96,7 +97,7 @@ const privacy = () => {
       <Text style={{ marginVertical: 10 }}>
         Your device's GPS provides us with your location information. You will
         have to grant consent. In turning off your location, you may be
-        restricted from enjoying certain functionalities of MPLOi APP.
+        restricted from enjoying certain functionalities of MyPlug APP.
       </Text>
       <Text style={{ marginVertical: 10 }}>
         For your awareness and consciousness, we outline user's personal
@@ -110,14 +111,14 @@ const privacy = () => {
         address, utility bills, email address and phone numbers.
       </Text>
       <Text style={{ marginVertical: 10 }}>
-        Online/Social Media Data: under this category, MPLOi APP are linked to
+        Online/Social Media Data: under this category, MyPlug APP are linked to
         user's social media profile and pages, website and other online
         platforms related to you.
       </Text>
       <Text style={{ marginVertical: 10 }}>
         Financial Data: user's personal bank details, card details, statement of
         account and user's financial situation can be linked with our wallet or
-        during subscription. During these processes, MPLOi APP gets access to
+        during subscription. During these processes, MyPlug APP gets access to
         user's financial Data.
       </Text>
       <Text style={{ marginVertical: 10 }}>
@@ -147,11 +148,11 @@ const privacy = () => {
       </Text>
       <Text style={{ marginVertical: 10 }}>
         Personal information is considered as a vital part of our relationship
-        with users of MPLOi APP. We may share your personal information with
+        with users of MyPlug APP. We may share your personal information with
         third parties on the following instances:
       </Text>
       <Text style={{ marginVertical: 10 }}>
-        MPLOi shares personal information between a CLIENT or employer and
+        MyPlug shares personal information between a CLIENT or employer and
         SERVICE PROVIDER or employee. Sharing of these personal information
         enhance interactions, negotiations and transactions among our users and
         subscribers. During this process, details like name, phone numbers, home
@@ -196,9 +197,9 @@ const privacy = () => {
         PIN. User must not disclose their Password or PIN to anyone.
       </Text>
       <Text style={{ marginVertical: 10 }}>
-        MPLOi will never request for user's Password or PIN via any means of
+        MyPlug will never request for user's Password or PIN via any means of
         communication. Please disregard any request for user's Password or PIN
-        or contact us on info@mploiglobal.com or call 07017663503
+        or contact us on info@MyPlugglobal.com or call 07017663503
       </Text>
       <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
         Consent
@@ -214,15 +215,15 @@ const privacy = () => {
       </Text>
       <Text style={{ marginVertical: 10 }}>
         Our Privacy Policy may be amended or changed with time at the discretion
-        of MPLOi.
+        of MyPlug.
       </Text>
       <Text style={{ marginVertical: 10 }}>
-        By continuing to use our website and MPLOi APP after the change, you
+        By continuing to use our website and MyPlug APP after the change, you
         consent to the new policy.
       </Text>
       <Text style={{ marginVertical: 10 }}>Our contact</Text>
       <Text style={{ marginVertical: 10, marginBottom:20 }}>
-        For any enquiry, please contact us on info@mploiglobal.com or call
+        For any enquiry, please contact us on {socialLinks.email} or call
         07017663503
       </Text>
     </ScrollView>

@@ -21,6 +21,7 @@ import { useCategoryStore, useUserStore } from "@/src/state/store";
 import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 import {
+  CustomToast,
   getBlobFroUri,
 } from "../utils/data";
 import { firestoreDB, storage } from "../utils/firebaseConfig";
@@ -87,20 +88,6 @@ const EditProfile = () => {
     }
   };
 
-  // const validateUserBank = async () => {
-  //   if (userBankName[0] === " " || userAccountNumber.length !== 10) {
-  //     return;
-  //   }
-  //   const res = await validateAccountNumber(userAccountNumber, userBankName[0]);
-
-  //   if (res.code) {
-  //     setUserAccountName("Invalid Account Number");
-  //     return;
-  //   }
-
-  //   setUserAccountName(res.data.account_name);
-  // };
-
 
   const updateProfile = async () => {
 
@@ -130,6 +117,7 @@ const EditProfile = () => {
 
       storeUser(user.data()!);
       router.push("/profile");
+      CustomToast("Profile updated Successfully");
       setLoading(false);
     });
 
@@ -287,76 +275,11 @@ const EditProfile = () => {
               />
             </View>
           </View>
-          {/* <Text
-            style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
-          >
-            Bank Details
-          </Text> */}
-          {/* <View>
-            <View>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginVertical: 8,
-                }}
-              >
-                Bank Name
-              </Text>
-              <View
-                style={{
-                  flexDirection: "column",
-                  marginBottom: 6,
-                  borderColor: borderColor,
-                  borderWidth: 1,
-                  borderRadius: 10,
-                }}
-              >
-                <SectionedMultiSelect
-                  items={banks}
-                  IconRenderer={Icon}
-                  uniqueKey="code"
-                  onSelectedItemsChange={setUserBankName}
-                  selectedItems={userBankName}
-                  selectText="Select Bank"
-                  single
-                  searchPlaceholderText="Search Bank"
-                  colors={{ selectToggleTextColor: iconColor }}
-                />
-              </View>
-            </View>
-            <View>
-              <TextInput
-                mode="outlined"
-                label={
-                  userAccountName !== "" ? userAccountName : "Account Name"
-                }
-                editable={false}
-              />
-            </View>
-            <View style={{ marginVertical: 10 }}>
-              <TextInput
-                mode="outlined"
-                label={
-                  user?.bankDetails.accountNumber !== ""
-                    ? user?.bankDetails.accountNumber
-                    : "Account Number"
-                }
-                placeholder="Enter your account number"
-                onChangeText={(text) => {
-                  setUserAccountNumber(text);
-                }}
-                onBlur={() => validateUserBank()}
-                style={{
-                  width: "100%",
-                }}
-              />
-            </View>
-          </View> */}
+         
          
           <Button mode="contained" style={{marginTop:10}} onPress={() => updateProfile()}>{!loading ? "Save Change" : "Saving"}</Button>
 
-          {/* {renderDatePicker()} */}
+
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>

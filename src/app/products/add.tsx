@@ -14,13 +14,13 @@ import { ProductTypes } from "@/src/utils/types";
 import { useRouter } from "expo-router";
 import { CustomModal } from "@/src/components/CustomModal";
 import { Colors } from "@/src/constants/Colors";
-import { deduct } from "@/src/utils/data";
+import { CustomToast, deduct } from "@/src/utils/data";
 
 const add = () => {
   const router = useRouter();
   const { user, decreaseUserBalance } = useUserStore();
   const { shops } = useShopsStore();
-  const { addProduct } = useProductsStore();
+  const { addProduct, addPromoted } = useProductsStore();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -36,6 +36,8 @@ const add = () => {
   const handleSubmitProduct = () => {
     setPosting(true);
 
+    const promo = active === 2 ?  '7 days' : active === 3 ? '30 days' : active === 4 ? '3 months' : 'free';
+
     const id = `${Date.now()}`;
 
     const data: ProductTypes = {
@@ -48,23 +50,36 @@ const add = () => {
       category,
       images: [],
       sellerID: user?._id!,
+      promo: promo,
     };
 
     const productRef = doc(firestoreDB, "products", data._id);
     setDoc(productRef, data).then(() => {
       addProduct(data);
+      if (active !== 1) {
+
+      addPromoted(data);
+
       router.push(`/products/images?id=${data._id}`);
+      CustomToast("Please upload images and continue");
+      setVisible(false);
       setPosting(false);
+      }else{
+        router.push(`/products/images?id=${data._id}`);
+        CustomToast("Please upload images and continue");
+        setVisible(false);
+        setPosting(false);
+      }
     });
   };
 
   const handleProcessPayment = (active: number) => {
-    const amount = parseFloat(user?.walletBalance) - active;
-    decreaseUserBalance(amount);
+    if(active > parseInt(user?.walletBalance)) return
+   
+    decreaseUserBalance(active);
     setPosting(true);
-    deduct(user, amount).then(() => {
+    deduct(user, active).then(() => {
       handleSubmitProduct();
-      setPosting(false);
     });
   };
 
@@ -72,9 +87,12 @@ const add = () => {
     switch (active) {
       case 1:
         handleSubmitProduct();
+
         break;
       case 2:
+        () => {
         handleProcessPayment(600);
+        }
         break;
       case 3:
         handleProcessPayment(5000);

@@ -2,11 +2,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { DocumentData } from "firebase/firestore";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
 
-import { Button, Divider, Text } from "react-native-paper";
+import { Button, Divider, Text, useTheme } from "react-native-paper";
 
-export const JobRenderItem = ({ item, iconColor }: { item: DocumentData, iconColor: string }) => {
+export const JobRenderItem = ({ item,}: { item: DocumentData}) => {
+
+  const colorScheme = useColorScheme();
+ 
+const iconColor = colorScheme === "dark" ? "#ffffff" : "#000000";
+
   const date = parseInt(item._id);
 
   const jobDate = new Date(date).getTime();
@@ -20,14 +25,7 @@ export const JobRenderItem = ({ item, iconColor }: { item: DocumentData, iconCol
 
   return (
     <View style={{ marginVertical: 10, marginHorizontal:10 }}>
-      <Link
-        href={{
-          pathname: `admin/jobs/${item._id}`,
-          
-        }}
-        asChild
-      >
-        <TouchableOpacity>
+ 
           <View style={{ flexDirection: "row-reverse", justifyContent:'space-between', alignItems:'center' }}>
             <Text style={{color:'grey', fontSize:10, fontWeight:'bold', fontStyle:'italic'}}>
               Posted: {daysAgo < 1 ? "Today" : daysAgo + " days ago"}
@@ -52,7 +50,7 @@ export const JobRenderItem = ({ item, iconColor }: { item: DocumentData, iconCol
                 fontSize: 14,
               }}
             >
-              {!item.taken ? "Open" : "Close"}
+              {!item.taken ? "Open" : "Taken"}
             </Text>
           </View>
           <View>
@@ -63,13 +61,13 @@ export const JobRenderItem = ({ item, iconColor }: { item: DocumentData, iconCol
             <Text>{item.location}</Text>
           </View>
           <View style={{justifyContent:'flex-end', alignItems:'flex-end'}}>
+            
             <Button mode="outlined" >See Details</Button>
           </View>
-        </TouchableOpacity>
-      </Link>
 
       <Divider bold horizontalInset style={{ marginTop: 14 }} />
     </View>
   );
 };
+
 

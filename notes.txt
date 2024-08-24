@@ -1,11 +1,4 @@
 
 cleanup the app
-admin
-maps
 transactions
 paystack issues
-add toasts when needed
-cancel request
-splash screen and icon  *
-social tags
-manage promoted products

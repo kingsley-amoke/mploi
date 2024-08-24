@@ -3,7 +3,6 @@ import React from 'react'
 import { useRouter } from 'expo-router';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Text } from 'react-native-paper';
-import useTheme from '@/src/hooks/useTheme';
 import { signOut } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '@/src/utils/firebaseConfig';
@@ -110,7 +109,7 @@ const shop = () => {
     
     { icon: "info-outline", text: "About", action: about },
     { icon: "logout", text: "Log out", action: logout },
-    !user.isAdmin && {icon: 'info', text: 'Admin', action: admin},
+    user.isAdmin && {icon: 'info', text: 'Admin', action: admin},
   ];
 
 interface settingsItemsProps{

@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import { useUsersStore } from "../state/store";
 import { useRouter } from "expo-router";
+import { noAvatar, shopAvatar } from "../utils/data";
 
 const ProductCard = ({ product }: { product: DocumentData }) => {
 
@@ -28,7 +29,7 @@ const ProductCard = ({ product }: { product: DocumentData }) => {
   
   return (
     <Card style={{ height: 280, width: 160 }}>
-      <Card.Cover source={{ uri: product.images[0] }} style={{ height: 140 }} />
+      <Card.Cover source={{ uri: product.images[0] || shopAvatar}} style={{ height: 140 }} />
       <Card.Content style={{ marginVertical: 10 }}>
         <Text variant='bodySmall' style={{ fontWeight: "bold", fontSize: 14, flexWrap:'wrap' }}>
           {product.name.length > 14 ? `${product.name.substring(0, 33)}...` : product.name}

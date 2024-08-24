@@ -5,6 +5,7 @@ import {
   jobTypes,
   serviceTypes,
 } from "@/src/utils/types";
+import { store } from "expo-router/build/global-state/router-store";
 import { DocumentData } from "firebase/firestore";
 import { create } from "zustand";
 
@@ -26,15 +27,16 @@ export interface JobStore {
   jobs: DocumentData[];
   storeJobs: (jobs: DocumentData[]) => void;
   addJob: (job: DocumentData) => void;
+  deleteJob: (job: DocumentData) => void;
 }
 
-export interface CareerStore {
-  careers: RecruitmentTypes[];
-  storeCareers: (careers: RecruitmentTypes[]) => void;
-  addCareer: (career: RecruitmentTypes) => void;
-  updateCareer: (career: RecruitmentTypes) => void;
-  deleteCareer: (career: RecruitmentTypes) => void;
-}
+// export interface CareerStore {
+//   careers: RecruitmentTypes[];
+//   storeCareers: (careers: RecruitmentTypes[]) => void;
+//   addCareer: (career: RecruitmentTypes) => void;
+//   updateCareer: (career: RecruitmentTypes) => void;
+//   deleteCareer: (career: RecruitmentTypes) => void;
+// }
 
 export interface categoryStore {
   categories: DocumentData[];
@@ -47,17 +49,22 @@ export interface shopsStore {
   storeShops: (shops: DocumentData[]) => void;
 }
 
-export interface ProductsStore{
+export interface ProductsStore {
   products: DocumentData[];
-  storeProducts: (products: DocumentData[]) => void;  
+  promoted: DocumentData[];
+  storeProducts: (products: DocumentData[]) => void;
+  storePromoted: (products: DocumentData[]) => void;
   addProduct: (product: DocumentData) => void;
+  addPromoted: (product: DocumentData) => void;
   updateProductImages: (product: DocumentData, images: string) => void;
+  deleteProduct: (product: DocumentData) => void;
+  deletePromoted: (product: DocumentData) => void;
 }
 
-export interface ReviewsStore{
+export interface ReviewsStore {
   reviews: DocumentData[];
-  storeReviews: (reviews: DocumentData[]) => void; 
-  updateReviews: (reviews: DocumentData) => void; 
+  storeReviews: (reviews: DocumentData[]) => void;
+  updateReviews: (reviews: DocumentData) => void;
 }
 export interface chatStore {
   chats: DocumentData[];
@@ -66,7 +73,10 @@ export interface chatStore {
 
 export interface requestStore {
   requests: DocumentData[];
+  newRequestId: string;
+  storeNewRequestId: (id:string) => void;
   storeRequests: (requests: DocumentData[]) => void;
+  addRequest: (request:DocumentData) => void
   deleteRequest: (request: DocumentData) => void;
 }
 
@@ -83,7 +93,12 @@ export interface imageStore {
 // global states
 
 export const useUserStore = create<UserStore>((set) => ({
-  user: {"walletBalance": "100000000", "email": "smoq1@gmail.com", "is_admin": true, "referee": "",},
+  user: {
+    walletBalance: "100000000",
+    email: "smoq1@gmail.com",
+    is_admin: true,
+    referee: "",
+  },
   storeUser: (user) => {
     set((state) => {
       state.user = user;
@@ -103,7 +118,7 @@ export const useUserStore = create<UserStore>((set) => ({
       };
     });
   },
-  decreaseUserBalance: ( amount) => {
+  decreaseUserBalance: (amount) => {
     set((state) => {
       state.user.walletBalance = (
         parseFloat(state.user?.walletBalance) - amount
@@ -112,7 +127,7 @@ export const useUserStore = create<UserStore>((set) => ({
         user: state.user,
       };
     });
-  }
+  },
 }));
 
 export const useUsersStore = create<UsersStore>((set) => ({
@@ -163,57 +178,66 @@ export const useJobsStore = create<JobStore>((set) => ({
       };
     });
   },
-}));
-
-export const useCareerStore = create<CareerStore>((set) => ({
-  careers: [],
-  storeCareers: (careers) => {
+  deleteJob: (job) => {
     set((state) => {
-      state.careers = careers;
+      const updatedJobs = state.jobs.filter((p) => p._id !== job._id);
 
       return {
-        careers: state.careers,
-      };
-    });
-  },
-  addCareer: (career) => {
-    set((state) => {
-      state.careers.push(career);
-
-      return {
-        careers: state.careers,
-      };
-    });
-  },
-
-  updateCareer: (career) => {
-    set((state) => {
-      const updatedCareers = state.careers.filter(
-        (storedCareer) => storedCareer._id !== career._id
-      );
-
-      updatedCareers.push(career);
-
-      return {
-        careers: state.careers,
-      };
-    });
-  },
-
-  deleteCareer: (career) => {
-    set((state) => {
-      const updatedCareers = state.careers.filter(
-        (storedCareer) => storedCareer._id !== career._id
-      );
-
-      state.careers = updatedCareers;
-
-      return {
-        careers: state.careers,
+        jobs: updatedJobs,
       };
     });
   },
 }));
+
+// export const useCareerStore = create<CareerStore>((set) => ({
+//   careers: [],
+//   storeCareers: (careers) => {
+//     set((state) => {
+//       state.careers = careers;
+
+//       return {
+//         careers: state.careers,
+//       };
+//     });
+//   },
+//   addCareer: (career) => {
+//     set((state) => {
+//       state.careers.push(career);
+
+//       return {
+//         careers: state.careers,
+//       };
+//     });
+//   },
+
+//   updateCareer: (career) => {
+//     set((state) => {
+//       const updatedCareers = state.careers.filter(
+//         (storedCareer) => storedCareer._id !== career._id
+//       );
+
+//       updatedCareers.push(career);
+
+//       return {
+//         careers: state.careers,
+//       };
+//     });
+//   },
+
+//   deleteCareer: (career) => {
+//     set((state) => {
+//       const updatedCareers = state.careers.filter(
+//         (storedCareer) => storedCareer._id !== career._id
+//       );
+
+//       state.careers = updatedCareers;
+
+//       return {
+//         careers: state.careers,
+//       };
+//     });
+//   },
+// }));
 
 export const useCategoryStore = create<categoryStore>((set) => ({
   categories: [],
@@ -252,12 +276,22 @@ export const useShopsStore = create<shopsStore>((set) => ({
 
 export const useProductsStore = create<ProductsStore>((set) => ({
   products: [],
+  promoted: [],
   storeProducts: (products) => {
     set((state) => {
       state.products = products;
 
       return {
         products: state.products,
+      };
+    });
+  },
+  storePromoted: (products) => {
+    set((state) => {
+      state.promoted = products;
+
+      return {
+        promoted: state.promoted,
       };
     });
   },
@@ -270,22 +304,56 @@ export const useProductsStore = create<ProductsStore>((set) => ({
       };
     });
   },
-  updateProductImages: (product, images) => {
+  addPromoted: (product) => {
     set((state) => {
-      const thisProduct = state.products.find(p => p._id === product._id)
-      if(!thisProduct) return {products: state.products}
-
-      const remainingProducts = state.products.filter(p => p._id !== product._id)
-
-      thisProduct.images.push(images)
-
-      const updatedProducts = [...remainingProducts, thisProduct]
+      state.promoted.push(product);
 
       return {
-        products: updatedProducts
-      }
-    })
-  }
+        promoted: state.promoted,
+      };
+    });
+  },
+  updateProductImages: (product, images) => {
+    set((state) => {
+      const thisProduct = state.products.find((p) => p._id === product._id);
+      if (!thisProduct) return { products: state.products };
+
+      const remainingProducts = state.products.filter(
+        (p) => p._id !== product._id
+      );
+
+      thisProduct.images.push(images);
+
+      const updatedProducts = [...remainingProducts, thisProduct];
+
+      return {
+        products: updatedProducts,
+      };
+    });
+  },
+
+  deleteProduct: (product) => {
+    set((state) => {
+      const updatedProducts = state.products.filter(
+        (p) => p._id !== product._id
+      );
+
+      return {
+        products: updatedProducts,
+      };
+    });
+  },
+  deletePromoted: (product) => {
+    set((state) => {
+      const updatedPromomoted = state.promoted.filter(
+        (p) => p._id !== product._id
+      );
+
+      return {
+        promoted: updatedPromomoted,
+      };
+    });
+  },
 }));
 
 export const useReviewsStore = create<ReviewsStore>((set) => ({
@@ -301,13 +369,13 @@ export const useReviewsStore = create<ReviewsStore>((set) => ({
   },
   updateReviews: (reviews) => {
     set((state) => {
-      const updatedReviews = [...state.reviews, reviews]
+      const updatedReviews = [...state.reviews, reviews];
 
       return {
-        reviews: updatedReviews
-      }
-    })
-  }
+        reviews: updatedReviews,
+      };
+    });
+  },
 }));
 
 export const useChatStore = create<chatStore>((set) => ({
@@ -325,6 +393,7 @@ export const useChatStore = create<chatStore>((set) => ({
 
 export const useRequestStore = create<requestStore>((set) => ({
   requests: [],
+  newRequestId: '',
   storeRequests: (requests) => {
     set((state) => {
       state.requests = requests;
@@ -334,15 +403,34 @@ export const useRequestStore = create<requestStore>((set) => ({
       };
     });
   },
-  deleteRequest: (request) => {
+  storeNewRequestId:(id) => {
     set((state) => {
-      const filteredRequests = state.requests.filter(req => req._id !== request._id);
-
+      state.newRequestId = id;
       return {
-        requests: filteredRequests
+        newRequestId: state.newRequestId
       }
     })
-  }
+  },
+  addRequest: (request) => {
+    set((state) => {
+     state.requests.push(request);
+
+      return {
+        requests: state.requests
+      }
+    })
+  },
+  deleteRequest: (request) => {
+    set((state) => {
+      const filteredRequests = state.requests.filter(
+        (req) => req._id !== request._id
+      );
+
+      return {
+        requests: filteredRequests,
+      };
+    });
+  },
 }));
 
 export const useNotificationStore = create<notificationStore>((set) => ({
@@ -358,7 +446,6 @@ export const useNotificationStore = create<notificationStore>((set) => ({
   },
 }));
 
-
 export const useImageStore = create<imageStore>((set) => ({
   image: null,
   updateImage: (image) => {
@@ -370,4 +457,4 @@ export const useImageStore = create<imageStore>((set) => ({
       };
     });
   },
-}) )
+}));

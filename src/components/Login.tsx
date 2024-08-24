@@ -22,6 +22,7 @@ import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 import { doc, getDoc } from "firebase/firestore";
 import { firestoreDB } from "../utils/firebaseConfig";
+import { CustomToast } from "../utils/data";
 
 const Login = () => {
   const auth = getAuth();
@@ -34,14 +35,9 @@ const Login = () => {
       ? Colors.dark.onSurfaceDisabled
       : Colors.light.onSurfaceDisabled;
 
-  const borderColor =
-    colorScheme === "dark"
-      ? Colors.dark.onSurfaceDisabled
-      : Colors.light.onSurfaceDisabled;
 
   const { storeUser } = useUserStore();
 
-  const [isPasswordShown, setIsPasswordShown] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -61,9 +57,11 @@ const Login = () => {
         getDoc(userRef).then((doc) => {
           storeUser(doc.data()!);
 
+          router.replace("/home");
+          CustomToast("Logged in Successfully");
+
           setLoading(false);
           AsyncStorage.setItem("@user", JSON.stringify(doc.data()));
-          router.replace("/");
         });
       })
       .catch((error) => {
@@ -147,7 +145,11 @@ const Login = () => {
           }}
           onPress={(e: GestureResponderEvent) => handleLogin(e)}
         >
-          {loading ? <Text style={{color:'#ffffff'}}>Please wait...</Text> : <Text style={{color:'#ffffff', fontWeight:'800'}}>Login</Text>}
+          {loading ? (
+            <Text style={{ color: "#ffffff" }}>Please wait...</Text>
+          ) : (
+            <Text style={{ color: "#ffffff", fontWeight: "800" }}>Login</Text>
+          )}
         </Button>
 
         <View

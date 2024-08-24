@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { View } from 'react-native'
 import React, { useEffect } from 'react'
 import { ActivityIndicator } from 'react-native-paper'
 import { useRouter } from 'expo-router';
@@ -16,7 +16,8 @@ const index = () => {
         if (loggedUser) {
           getUser(loggedUser._id).then((user) => {
             storeUser(user);
-            router.replace("/home");
+         
+              router.replace("/home")
           });
         } else {
           router.replace("/login");
@@ -25,7 +26,6 @@ const index = () => {
 
       useEffect(() => {
         checkLocalUser();
-
       }, []);
 
   return (
@@ -36,5 +36,3 @@ const index = () => {
 }
 
 export default index
-
-const styles = StyleSheet.create({})

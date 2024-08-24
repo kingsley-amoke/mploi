@@ -14,16 +14,15 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
-import { useCategoryStore, useUsersStore, useUserStore } from "../state/store";
+import { useCategoryStore, useRequestStore, useUsersStore, useUserStore } from "../state/store";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import {
+  CustomToast,
   distanceToUser,
   handleRequestService,
 } from "../utils/data";
 import { DocumentData } from "firebase/firestore";
-import { realtimeDB } from "../utils/firebaseConfig";
-import { onValue, ref } from "firebase/database";
 
 const Categories = () => {
   const router = useRouter();
@@ -33,6 +32,7 @@ const Categories = () => {
   const { categories } = useCategoryStore();
   const { users } = useUsersStore();
   const { user: loggedUser } = useUserStore();
+  const {requests, addRequest, storeNewRequestId} = useRequestStore();
 
   const [search, setSearch] = useState("");
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -51,43 +51,36 @@ const Categories = () => {
       
       const distance = distanceToUser(loggedUser, user);
 
-      return user._id !== loggedUser?._id && user.skills.includes(selectedService) && distance <= 0;
+      return user._id !== loggedUser?._id && user.skills.includes(selectedService) && distance <= 10;
     }
   );
 
-  console.log(recommendedUsers)
 
   const textColor = colorScheme === "light" ? "#000" : "#fff";
 
-  const handleBookService = async (item: {
-    id: string;
+  const handleBookService = (item: {
+    _id: string;
     client: DocumentData;
     serviceProvider: DocumentData;
   }) => {
-    const requestRef = ref(realtimeDB, "requests/");
 
-    onValue(requestRef, (snapshot) => {
-      let data = snapshot.val() || [];
-
-      const myData = Object.keys(data).map((key) => {
-        return data[key];
-      });
-
-      const existingRequest = myData.filter(
+      const existingRequest = requests.filter(
         (data) =>
           data.client._id === loggedUser?._id &&
           data.serviceProvider._id === item.serviceProvider._id
       );
 
       if (existingRequest.length > 0) {
-        console.log("There is a pending request");
+        CustomToast("There is a pending request");
       } else {
         handleRequestService(item).then(() => {
-          router.push(`service/${user._id}?request=${data.id}`);
+          router.push(`service/${item.serviceProvider._id}`);
+          CustomToast("Service booked Successfully");
+          addRequest(item)
+          storeNewRequestId(item._id);
           hideModal();
         });
       }
-    });
   };
 
   return (
@@ -185,7 +178,7 @@ const Categories = () => {
                 const id = `${Date.now()}`;
 
                 const data = {
-                  id: id,
+                  _id: id,
                   client: loggedUser,
                   serviceProvider: user,
                 };

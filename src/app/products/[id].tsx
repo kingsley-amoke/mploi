@@ -21,7 +21,7 @@ import {
 import { doc, DocumentData, setDoc } from "firebase/firestore";
 import { firestoreDB, realtimeDB } from "@/src/utils/firebaseConfig";
 import { ProductTypes, ReviewTypes } from "@/src/utils/types";
-import { averageRating, createChat, formatPrice } from "@/src/utils/data";
+import { averageRating, createChat, formatPrice, shopAvatar } from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
 import Reviews from "@/src/components/Reviews";
 import { ref } from "firebase/database";
@@ -116,14 +116,14 @@ const ProductDetails = () => {
               marginBottom: 30,
             }}
           >
-            {image && (
+       
               <Image
-                source={{ uri: image }}
+                source={{ uri: image  || shopAvatar}}
                 width={290}
                 height={290}
                 style={{ borderRadius: 10 }}
               />
-            )}
+
           </View>
           {product?.images.length > 1 && (
             <FlatList

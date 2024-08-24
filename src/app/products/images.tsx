@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, Button, Text } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
@@ -152,4 +152,3 @@ const images = () => {
 
 export default images;
 
-const styles = StyleSheet.create({});

@@ -4,7 +4,7 @@
     "slug": "mploi",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/splash.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "mploi",
     "userInterfaceStyle": "automatic",
     "splash": {

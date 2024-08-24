@@ -9,8 +9,6 @@ import { useProductsStore } from '@/src/state/store'
 
 const index = () => {
 
-  const {products} = useProductsStore();
-
     const [value, setValue] = useState("users");
 
   return (
@@ -29,7 +27,7 @@ const index = () => {
           },
           {
             value: 'shop',
-            label: 'Shop Products',
+            label: 'Shop',
           }
         ]}
       />
@@ -52,7 +50,7 @@ const index = () => {
       ) : value === 'career' ? (
         <CareerPage />
       ) : (
-        <ProductsPage products={products}/>
+        <ProductsPage />
       )
     }
     </SafeAreaView>

@@ -5,12 +5,13 @@ import { Colors } from '@/src/constants/Colors'
 
 const JobLayout = () => {
   return (
-    <Stack>
+    <Stack screenOptions={{
+              headerTitleAlign: "left",
+              headerTransparent: false,
+              headerTitleStyle: { fontSize: 14 },
+            }}>
         <Stack.Screen name='add' options={{
               title: 'Add Job',
-              headerTitleAlign: "center",
-          headerStyle: { backgroundColor: Colors.light.primary },
-          headerTintColor: "white",
             }}/>
         <Stack.Screen name='[id]'/>
     </Stack>

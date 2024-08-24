@@ -220,6 +220,7 @@ negotiable:boolean,
 sellerID: string,
 images: string[],
 category: string,
+promo:string
 }
 
 export interface ReviewTypes{

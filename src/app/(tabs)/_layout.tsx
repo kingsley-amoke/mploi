@@ -1,14 +1,15 @@
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet, Platform, View } from "react-native";
 import { Tabs, useRouter } from "expo-router";
 import { Feather,MaterialCommunityIcons, MaterialIcons, } from "@expo/vector-icons";
 import { useUserStore } from "@/src/state/store";
+import { Text } from "react-native-paper";
 
 const TabLayout = () => {
 
 const {user} = useUserStore();
 const router = useRouter();
 
-const location = user.location.subregion + ", " + user?.location.city
+const location = user?.location?.subregion + ", " + user?.location?.city || 'Loading...'
 
   return (
     
@@ -29,15 +30,19 @@ const location = user.location.subregion + ", " + user?.location.city
       <Tabs.Screen
         name="home"
         options={{
-          title: location,
-          headerTitleAlign: 'left',
-          headerTitleStyle: {fontSize: 14},
           tabBarLabel: 'Home',
-          headerRight: () => <MaterialIcons name="person" size={20} style={{marginRight:20}} onPress={()=>router.push('/profile')}/>,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" size={20} color={color} />
           ),
-
+header: () => (
+  <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginVertical:20, marginHorizontal:20, paddingTop:20}}>
+    <View>
+  <Text style={{fontWeight:'bold', marginLeft:20}}>Hi {user.lastName}</Text>
+  <Text> <MaterialIcons name='location-pin'/>  {location}</Text>
+    </View>
+    <MaterialIcons name="person" size={20}  onPress={()=>router.push('/profile')}/>
+  </View>
+)
         }}
       />
       <Tabs.Screen

@@ -12,6 +12,8 @@ import { ref, serverTimestamp, set } from "firebase/database";
 
 import Toast from 'react-native-root-toast'
 import { getDistance } from "geolib";
+import { ToastAndroid } from "react-native";
+
 
 //get image blog
 export const getBlobFroUri = async (uri: string) => {
@@ -31,8 +33,11 @@ export const getBlobFroUri = async (uri: string) => {
   return blob;
 };
 
-//map coords
+export const noAvatar = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+export const shopAvatar = 'https://as1.ftcdn.net/v2/jpg/02/22/69/78/1000_F_222697826_A8NjOe4hGgZ2UkQWBetmqVwpUhJJbWpc.jpg';
 
+
+//map coords
 export const latitudeDelta = 0.0079;
 export const longitudeDelta = 0.0079;
 
@@ -59,7 +64,11 @@ export const socialLinks = {
     link: "https://youtube.com/@myplugapp?si=MC3GGLprCBuh6Pms",
     color: "red",
   },
+  chat: 'https://whatsapp.com/+2347017663503',
+  email: ' connect@myplugmobile.com',
 };
+
+
 
 //fetch user
 
@@ -127,13 +136,13 @@ export const getJobs = async () => {
 export const handleRequestService = async (data: {
   client: DocumentData | null;
   serviceProvider: DocumentData;
-  id: string;
+  _id: string;
 }) => {
   const loggedUser = data.client;
 
   const user = data.serviceProvider;
 
-  const id = data.id;
+  const id = data._id;
   createRequest(loggedUser, user, id);
 };
 
@@ -167,9 +176,7 @@ const createRequest = async (
     client: loggedUser,
     serviceProvider: user,
   };
-  set(requestRef, data).then(() => {
-    sendMessage(data._id, data.client);
-  });
+  set(requestRef, data)
 };
 
 
@@ -182,7 +189,9 @@ export const createChat = async (
 ) => {
   const chatRef = ref(realtimeDB, "chats/" + data._id);
 
-  set(chatRef, data)
+  set(chatRef, data).then(() => {
+    sendMessage(data._id, data.client);
+  });
 };
 
 //fetch all shops
@@ -251,25 +260,11 @@ export const averageRating = (items: DocumentData[]) => {
 
  //toast
 
- export const CustomToast = (message: string, bgColor:string, textColor:string) => {
+ export const CustomToast = (message: string, ) => {
 
-  return (Toast.show(message, {
-    duration: Toast.durations.LONG,
-    position: Toast.positions.TOP,
-    shadow: true,
-    animation: true,
-  hideOnPress: true,
-  delay: 0,
-  backgroundColor: bgColor,
-  textColor: textColor,
-  textStyle:{
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  // containerStyle: {
-  //   marginTop:70
-  // }
-}))
+  return (
+    ToastAndroid.showWithGravity(message, ToastAndroid.LONG, ToastAndroid.TOP )
+  );
 }
 
 export const recharge = (id: string, rechargeAmount: string) => {

@@ -31,10 +31,12 @@ import * as MailComposer from "expo-mail-composer";
 
 import { useJobsStore, useUserStore } from "@/src/state/store";
 import { ExternalLink } from "@/src/components/ExternalLink";
-import { deduct, getBlobFroUri, socialLinks } from "@/src/utils/data";
+import { deduct, getBlobFroUri, getJobs, socialLinks } from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
-import { DocumentData } from "firebase/firestore";
+import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import { CustomModal } from "@/src/components/CustomModal";
+import { ref } from "firebase/database";
+import { firestoreDB } from "@/src/utils/firebaseConfig";
 
 const JobPage = () => {
   const { id } = useLocalSearchParams();
@@ -45,7 +47,7 @@ const JobPage = () => {
 
   const textColor = colorScheme === "dark" ? "white" : "black";
 
-  const { jobs } = useJobsStore();
+  const { jobs, storeJobs } = useJobsStore();
   const { user, decreaseUserBalance } = useUserStore();
 
   const job = jobs.find((job) => job._id === id)!;
@@ -71,6 +73,18 @@ const JobPage = () => {
     const [loading, setLoading] = useState(false);
     const [resume, setResume] = useState("");
     const [coverLetter, setCoverLetter] = useState("");
+
+    const handleJobStatus =() => {
+      const JobRef = doc(firestoreDB, "jobs", id.toString());
+      setLoading(true)
+
+      updateDoc(JobRef, {taken:!job.taken}).then(async() => {
+       const jobs = await getJobs()
+       storeJobs(jobs);
+       navigation.goBack();
+       setLoading(false)
+      });
+    }
 
     const handleSelectCV = async (isResume: boolean) => {
       setLoading(true);
@@ -325,7 +339,12 @@ const JobPage = () => {
             <Text>Note: {job.others}</Text>
           </View>
           <View style={{ marginVertical: 10 }}>
-            <CustomModal content={modalContent} triggerText="Apply" visible={visible} setVisible={setVisible} />
+            {
+              user.isAdmin ?
+              <CustomModal content={modalContent} triggerText="Apply" visible={visible} setVisible={setVisible} /> 
+              : 
+              <Button mode="contained" onPress={handleJobStatus}>{loading ? 'Please wait...' : job.taken ? 'Mark as open' :  'Mark as taken'}</Button>
+            }
           </View>
           <View style={{ marginVertical: 10 }}>
             <Text

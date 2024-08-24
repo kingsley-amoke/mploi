@@ -1,45 +1,120 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import { Link, useRouter } from "expo-router";
-import { useProductsStore, useUserStore } from "@/src/state/store";
-import ProductCard from "@/src/components/ProductCard";
-import { Text } from "react-native-paper";
-import { DocumentData } from "firebase/firestore";
+import {
+  useProductsStore,
+  useUsersStore,
+  useUserStore,
+} from "@/src/state/store";
+import { ActivityIndicator, Text } from "react-native-paper";
+import { deleteDoc, doc, DocumentData, updateDoc } from "firebase/firestore";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { firestoreDB } from "@/src/utils/firebaseConfig";
+import { CustomToast } from "@/src/utils/data";
 
-const ProductsPage = ({products}: {products: DocumentData[]}) => {
-  const router = useRouter();
-  const { user } = useUserStore();
+const ProductsPage = () => {
+
+  const { users } = useUsersStore();
+  const { products, deleteProduct,deletePromoted } = useProductsStore();
   const [loading, setLoading] = useState(false);
 
-  return (
-    <View>
-       <View style={{ width: "100%", paddingHorizontal: 20 }}>
-        <Text
+  const ProductRenderItem = ({ item }: DocumentData) => {
+    const seller = users.find((user) => user._id === item.sellerID);
+
+    const removeProduct = () => {
+      setLoading(true);
+      const productRef = doc(firestoreDB, "products", item._id);
+
+      deleteDoc(productRef).then(() => {
+        deleteProduct(item);
+        deletePromoted(item)
+        setLoading(false);
+        CustomToast("Product deleted Successfully");
+      });
+    };
+
+    const cancelPromo = () => {
+      const productRef = doc(firestoreDB, "products", item._id);
+
+      updateDoc(productRef, {promo: 'free'}).then(() => {
+        deletePromoted(item);
+        CustomToast("Successful");
+      })
+    };
+
+    return (
+      <View style={{ borderBottomWidth: 1, paddingBottom: 5, marginBottom: 5 }}>
+        <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+          Title: {item.name}
+        </Text>
+        <View
           style={{
-            textAlign: "left",
-            fontSize: 18,
-            fontWeight: "700",
-            marginVertical: 10,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "95%",
           }}
         >
-          Latest Products
-        </Text>
+          <View>
+            <Text>ID: {item._id}</Text>
+            <Text>Price: #{item.price}</Text>
+            <Text>Seller: {seller?.lastName}</Text>
+            <Text>Promo: {item.promo}</Text>
+          </View>
+          <View style={{ gap: 20, alignItems: "center", flexDirection: "row" }}>
+            {item.promo && item.promo !== "free" && (
+              <TouchableOpacity onPress={cancelPromo}>
+                <MaterialCommunityIcons name="cancel" size={20} />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity onPress={removeProduct}>
+              <MaterialCommunityIcons name="trash-can-outline" size={20} />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
+    );
+  };
 
-      <View
-        style={{
-          width: "100%",
-          marginVertical: 10,
-          flexDirection: "row",
-          marginHorizontal: "auto",
-          flexWrap: "wrap",
-          gap: 10,
-        }}
-      >
-        {products.map((product) => (
-          <ProductCard product={product} key={product._id} />
-        ))}
-      </View>
+  return loading || products.length < 1 ? (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 10,
+      }}
+    >
+      {!loading ? (
+        <View>
+          <Text>No products today...</Text>
+        </View>
+      ) : (
+        <View>
+          <ActivityIndicator animating color="teal" size="small" />
+          <Text>Deleting...</Text>
+        </View>
+      )}
+    </View>
+  ) : (
+    <View
+      style={{
+        margin: 10,
+        paddingTop: 10,
+        paddingBottom: 40,
+      }}
+    >
+      <FlatList
+        data={products}
+        renderItem={ProductRenderItem}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };

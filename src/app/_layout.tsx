@@ -66,7 +66,7 @@ export default function RootLayout() {
   const { storeChats } = useChatStore();
   const { storeRequests } = useRequestStore();
   const { storeShops } = useShopsStore();
-  const { storeProducts } = useProductsStore();
+  const { storeProducts, storePromoted } = useProductsStore();
   const { storeReviews } = useReviewsStore();
 
   const fetchAllUsers = async () => {
@@ -87,7 +87,9 @@ export default function RootLayout() {
 
   const fetchProducts = async () => {
     const products = await getProducts();
+    const promo = products.filter(p => p.promo !== 'free')
     storeProducts(products);
+    storePromoted(promo)
   };
 
   const fetchAllChats = () => {
@@ -143,13 +145,12 @@ export default function RootLayout() {
     <RootSiblingParent>
       <PaperProvider theme={paperTheme}>
         <ThemeProvider value={paperTheme}>
-          <Stack 
-           screenOptions={{
-            headerTitleAlign: "left",
-            headerTransparent: false,
-            headerTitleStyle: {fontSize:14},
-    
-          }}
+          <Stack
+            screenOptions={{
+              headerTitleAlign: "left",
+              headerTransparent: false,
+              headerTitleStyle: { fontSize: 14 },
+            }}
           >
             <Stack.Screen
               name="(tabs)"
@@ -169,11 +170,11 @@ export default function RootLayout() {
                 headerShown: false,
               }}
             />
-            <Stack.Screen 
-            name="index"
-            options={{
-              headerShown:false
-            }}
+            <Stack.Screen
+              name="index"
+              options={{
+                headerShown: false,
+              }}
             />
             <Stack.Screen
               name="admin/index"
@@ -206,7 +207,7 @@ export default function RootLayout() {
               name="profile/index"
               options={{
                 title: "My Profile",
-                headerTitleStyle:{fontSize:14},
+                headerTitleStyle: { fontSize: 14 },
 
                 headerRight: () => (
                   <Feather
@@ -256,6 +257,12 @@ export default function RootLayout() {
               options={{
                 title: "Wallet",
                 headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="suspended/index"
+              options={{
+                headerShown:false
               }}
             />
           </Stack>
