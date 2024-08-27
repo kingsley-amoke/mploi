@@ -50,10 +50,18 @@ const Categories = () => {
   const hideModal = () => setVisible(false);
 
   const filteredCategories = categories
-    .sort((a, b) => b.name - a.name)
     .filter((category) =>
       category.name.toLowerCase().includes(search.toLowerCase())
-    );
+    )
+    .sort(function (a, b) {
+      if (a.name < b.name) {
+        return -1;
+      }
+      if (a.name > b.name) {
+        return 1;
+      }
+      return 0;
+    });
 
   const recommendedUsers = users.filter((user) => {
     const distance = distanceToUser(location[0].coordinates, user);
@@ -144,7 +152,7 @@ const Categories = () => {
                   title={category.name}
                   id={category.name}
                   titleStyle={{ color: textColor }}
-                  onLongPress={() => console.log(category.name)}
+                  onPress={() => console.log(category.name)}
                 >
                   {category.subcategories &&
                     category.subcategories.map(
