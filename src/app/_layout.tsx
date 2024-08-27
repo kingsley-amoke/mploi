@@ -20,6 +20,7 @@ import {
   useCategoryStore,
   useChatStore,
   useJobsStore,
+  useLocationStore,
   useProductsStore,
   useRequestStore,
   useReviewsStore,
@@ -30,6 +31,8 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { realtimeDB } from "../utils/firebaseConfig";
 import {
+  CustomToast,
+  exitApp,
   getJobs,
   getProducts,
   getReviews,
@@ -37,10 +40,10 @@ import {
   getShops,
   getTransactions,
   getUsers,
-  transactions,
 } from "../utils/data";
 import { onValue, ref } from "firebase/database";
 import { RootSiblingParent } from "react-native-root-siblings";
+import * as Location from "expo-location";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
 const customLightTheme = { ...MD3LightTheme, colors: Colors.light };
@@ -71,17 +74,43 @@ export default function RootLayout() {
   const { storeShops } = useShopsStore();
   const { storeProducts, storePromoted } = useProductsStore();
   const { storeReviews } = useReviewsStore();
-  const {storeTransactions} = useTransactionsStore();
+  const { storeTransactions } = useTransactionsStore();
+  const { storeLocation } = useLocationStore();
 
   const fetchAllUsers = async () => {
     getUsers().then((users) => {
       storeUsers(users);
     });
-    getTransactions().then(transactions => {
-      storeTransactions(transactions)
-    })
+    getTransactions().then((transactions) => {
+      storeTransactions(transactions);
+    });
   };
 
+  const userLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    console.log(status);
+
+    if (status !== "granted") {
+      CustomToast("Permission to access location was denied");
+      exitApp();
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+
+    const coordinates = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+
+    let regionName = await Location.reverseGeocodeAsync(coordinates);
+
+    const locationData = {
+      coordinates,
+      regionName: regionName[0],
+    };
+    storeLocation(locationData);
+  };
   const fetchServices = async () => {
     const categories = await getServices();
     storeCategory(categories);
@@ -94,9 +123,9 @@ export default function RootLayout() {
 
   const fetchProducts = async () => {
     const products = await getProducts();
-    const promo = products.filter(p => p.promo !== 'free')
+    const promo = products.filter((p) => p.promo !== "free");
     storeProducts(products);
-    storePromoted(promo)
+    storePromoted(promo);
   };
 
   const fetchAllChats = () => {
@@ -138,6 +167,7 @@ export default function RootLayout() {
   };
 
   useLayoutEffect(() => {
+    userLocation();
     fetchServices();
     fetchAllChats();
     fetchAllRequests();
@@ -269,13 +299,10 @@ export default function RootLayout() {
             <Stack.Screen
               name="suspended/index"
               options={{
-                headerShown:false
+                headerShown: false,
               }}
             />
-            <Stack.Screen
-              name="rooms/[roomId]"
-              
-            />
+            <Stack.Screen name="rooms/[roomId]" />
           </Stack>
         </ThemeProvider>
       </PaperProvider>

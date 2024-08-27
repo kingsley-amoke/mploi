@@ -67,7 +67,6 @@ const images = () => {
       .then((snapshot) => {
         getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
           setImages([...images, url]);
-          console.log(images)
           updateProductImages(product!, url);
 
           const productRef = doc(firestoreDB, "products", id?.toString()!);

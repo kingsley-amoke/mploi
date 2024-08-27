@@ -1,2 +1,21 @@
 
 cleanup the app
+improve overall speeed
+user add video
+filter on shop
+handle mail not working
+apply delete and preload to product image upload *
+sort top services
+nest house for rent
+scrolling carousel
+company logo
+remove text input on admin messages
+welcome message for new users
+
+
+
+
+
+
+1.encapsulation
+2. abstraction

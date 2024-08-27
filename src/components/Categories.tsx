@@ -14,7 +14,13 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
-import { useCategoryStore, useRequestStore, useUsersStore, useUserStore } from "../state/store";
+import {
+  useCategoryStore,
+  useLocationStore,
+  useRequestStore,
+  useUsersStore,
+  useUserStore,
+} from "../state/store";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import {
@@ -32,7 +38,8 @@ const Categories = () => {
   const { categories } = useCategoryStore();
   const { users } = useUsersStore();
   const { user: loggedUser } = useUserStore();
-  const {requests, addRequest, storeNewRequestId} = useRequestStore();
+  const { requests, addRequest, storeNewRequestId } = useRequestStore();
+  const { location } = useLocationStore();
 
   const [search, setSearch] = useState("");
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -42,19 +49,21 @@ const Categories = () => {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredCategories = categories
+    .sort((a, b) => b.name - a.name)
+    .filter((category) =>
+      category.name.toLowerCase().includes(search.toLowerCase())
+    );
 
-  const recommendedUsers = users.filter(
-    (user) => {
-      
-      const distance = distanceToUser(loggedUser, user);
+  const recommendedUsers = users.filter((user) => {
+    const distance = distanceToUser(location[0].coordinates, user);
 
-      return user._id !== loggedUser?._id && user.skills.includes(selectedService) && distance <= 10;
-    }
-  );
-
+    return (
+      user._id !== loggedUser?._id &&
+      user.skills.includes(selectedService) &&
+      distance <= 10000
+    );
+  });
 
   const textColor = colorScheme === "light" ? "#000" : "#fff";
 
@@ -63,24 +72,23 @@ const Categories = () => {
     client: DocumentData;
     serviceProvider: DocumentData;
   }) => {
+    const existingRequest = requests.filter(
+      (data) =>
+        data.client._id === loggedUser?._id &&
+        data.serviceProvider._id === item.serviceProvider._id
+    );
 
-      const existingRequest = requests.filter(
-        (data) =>
-          data.client._id === loggedUser?._id &&
-          data.serviceProvider._id === item.serviceProvider._id
-      );
-
-      if (existingRequest.length > 0) {
-        CustomToast("There is a pending request");
-      } else {
-        handleRequestService(item).then(() => {
-          router.push(`service/${item.serviceProvider._id}`);
-          CustomToast("Service booked Successfully");
-          addRequest(item)
-          storeNewRequestId(item._id);
-          hideModal();
-        });
-      }
+    if (existingRequest.length > 0) {
+      CustomToast("There is a pending request");
+    } else {
+      handleRequestService(item).then(() => {
+        router.push(`service/${item.serviceProvider._id}`);
+        CustomToast("Service booked Successfully");
+        addRequest(item);
+        storeNewRequestId(item._id);
+        hideModal();
+      });
+    }
   };
 
   return (
@@ -168,82 +176,123 @@ const Categories = () => {
               alignItems: "center",
             }}
           >
-            {recommendedUsers.length > 0 ? 
-            (
-            <View style={{ alignItems: "center", marginBottom: 20 }}>
-              {recommendedUsers.map((user) => {
+            {recommendedUsers.length > 0 ? (
+              <View style={{ alignItems: "center", marginBottom: 20 }}>
+                {recommendedUsers.map((user) => {
+                  const distanceInKm = Math.floor(
+                    distanceToUser(location[0].coordinates, user) / 1000
+                  );
 
-                const distanceInKm = Math.floor(distanceToUser(loggedUser, user) / 1000);
+                  const distanceInMeters = Math.floor(
+                    distanceToUser(location[0].coordinates, user)
+                  );
 
-                const id = `${Date.now()}`;
+                  const serviceProviderSkill = user.skills.find(
+                    (skill: string) => skill === selectedService
+                  );
 
-                const data = {
-                  _id: id,
-                  client: loggedUser,
-                  serviceProvider: user,
-                };
-                return (
-                  <View
-                    key={user._id}
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "grey",
-                      borderRadius: 10,
-                      padding: 10,
-                      gap: 30,
-                    }}
-                  >
+                  const serviceProviderName =
+                    user.firstName + " " + user.lastName[0];
+
+                  const id = `${Date.now()}`;
+
+                  const data = {
+                    _id: id,
+                    client: loggedUser,
+                    serviceProvider: user,
+                  };
+                  return (
                     <View
+                      key={user._id}
                       style={{
-                        flexDirection: "row",
-                        gap: 20,
-                        alignItems: "center",
+                        borderWidth: 1,
+                        borderColor: "grey",
+                        borderRadius: 10,
+                        padding: 10,
+                        gap: 30,
                       }}
                     >
-                      <Avatar.Image source={{ uri: user.image }} size={40} />
-                      <View>
-                        <NativeText
-                          style={{ fontSize: 20, fontWeight: "bold" }}
-                        >{`${user.firstName} ${user.lastName}`}</NativeText>
-                        <NativeText>{user.skills[1]}</NativeText>
-                      </View>
-                      <NativeText>{distanceInKm}km</NativeText>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: 10,
-                      }}
-                    >
-                      <Button
-                        mode="outlined"
-                        onPress={() => {
-                          router.push(`/profile/${user._id}`);
-                          hideModal();
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          gap: 20,
+                          alignItems: "center",
                         }}
                       >
-                        View Profile
-                      </Button>
-                      <Button
-                        mode="contained"
-                        onPress={() => handleBookService(data)}
+                        <Avatar.Image source={{ uri: user.image }} size={40} />
+                        <View>
+                          <NativeText
+                            style={{ fontSize: 20, fontWeight: "bold" }}
+                          >
+                            {serviceProviderName}
+                          </NativeText>
+                          <NativeText>{serviceProviderSkill}</NativeText>
+                        </View>
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            alignItems: "center",
+                          }}
+                        >
+                          {distanceInMeters > 1000 ? (
+                            <NativeText
+                              style={{ color: "red", fontWeight: "bold" }}
+                            >
+                              {distanceInKm}km
+                            </NativeText>
+                          ) : (
+                            <NativeText
+                              style={{ color: "green", fontWeight: "bold" }}
+                            >
+                              {distanceInMeters}m
+                            </NativeText>
+                          )}
+                        </View>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          gap: 10,
+                        }}
                       >
-                        Book Service
-                      </Button>
+                        <Button
+                          mode="outlined"
+                          onPress={() => {
+                            router.push(`/profile/${user._id}`);
+                            hideModal();
+                          }}
+                        >
+                          View Profile
+                        </Button>
+                        <Button
+                          mode="contained"
+                          onPress={() => handleBookService(data)}
+                        >
+                          Book Service
+                        </Button>
+                      </View>
                     </View>
-                  </View>
-                );
-              })}
-            </View>
-            ) : (
-              <View style={{marginBottom:40, justifyContent:'center', alignItems:'center', gap:10}}>
-                <MaterialIcons name='info' size={50}/>
-
-              <Text>No service provider around you</Text>
+                  );
+                })}
               </View>
-            ) }
+            ) : (
+              <View
+                style={{
+                  marginBottom: 40,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <MaterialIcons name="info" size={50} />
+
+                <Text>No service provider around you</Text>
+              </View>
+            )}
           </Dialog>
         </Portal>
       </ScrollView>

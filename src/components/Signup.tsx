@@ -1,8 +1,4 @@
-import {
-  View,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { View, Pressable, ScrollView } from "react-native";
 import { Button, Text } from "react-native-paper";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,7 +12,7 @@ import * as Location from "expo-location";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useUserStore } from "@/src/state/store";
+import { useLocationStore, useUserStore } from "@/src/state/store";
 import { DBUser } from "../utils/types";
 import { firestoreDB } from "../utils/firebaseConfig";
 import { useForm } from "react-hook-form";
@@ -28,6 +24,7 @@ const Signup = () => {
   const router = useRouter();
 
   const { storeUser } = useUserStore();
+  const { location } = useLocationStore();
 
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState(false);
@@ -68,13 +65,11 @@ const Signup = () => {
       phone: "",
       password: "",
       passwordConfirm: "",
-  
     },
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = async (data:z.infer<typeof formSchema>) => {
-
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (!isChecked) {
       setError(true);
       return;
@@ -82,53 +77,53 @@ const Signup = () => {
 
     setLoading(true);
 
-    let { status } = await Location.requestForegroundPermissionsAsync();
+    // let { status } = await Location.requestForegroundPermissionsAsync();
 
-    if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied");
-      return;
-    }
+    // if (status !== "granted") {
+    //   setErrorMsg("Permission to access location was denied");
+    //   return;
+    // }
 
-    console.log(status);
+    // console.log(status);
 
-    let location = await Location.getCurrentPositionAsync({});
+    // let location = await Location.getCurrentPositionAsync({});
 
-    const coords = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
+    // const coords = {
+    //   latitude: location.coords.latitude,
+    //   longitude: location.coords.longitude,
+    // };
 
-    let regionName = await Location.reverseGeocodeAsync(coords);
+    // let regionName = await Location.reverseGeocodeAsync(coords);
 
-    createUserWithEmailAndPassword(auth, data.email, data.password).then(async({user})=>{
+    createUserWithEmailAndPassword(auth, data.email, data.password).then(
+      async ({ user }) => {
+        const newUser = {
+          _id: user.uid,
+          email: user.email!,
+          firstName: data.firstname,
+          lastName: data.lastname,
+          image: noAvatar,
+          address: location[0].regionName.formattedAddress,
+          nin: "",
+          status: { isVIP: false, isVerified: true },
+          referee: data.referee || "",
+          phone: data.phone,
+          phoneVerified: false,
+          createdAt: Date.now(),
+          bio: "",
+          location: location[0],
+          walletBalance: "0",
+          referralBalance: "0",
+          referral: [""],
+          bankDetails: { accountName: "", accountNumber: "", bank: "" },
+          isAdmin: false,
+          coordinates: location[0].coordinates,
+          suspended: false,
+        };
 
-      const newUser = {
-        _id: user.uid,
-        email: user.email!,
-        firstName: data.firstname,
-        lastName: data.lastname,
-        image: noAvatar,
-        address: regionName[0].formattedAddress,
-        nin: "",
-        status: { isVIP: false, isVerified: true },
-        referee: data.referee || "",
-        phone: data.phone,
-        phoneVerified: false,
-        createdAt: Date.now(),
-        bio: "",
-        location: regionName[0],
-        walletBalance: "0",
-        referralBalance: "0",
-        referral: [""],
-        bankDetails: { accountName: "", accountNumber: "", bank: "" },
-        isAdmin: false,
-        coordinates: coords,
-        suspended: false
-      };
+        const userRef = doc(firestoreDB, "users", newUser._id);
 
-      const userRef = doc(firestoreDB, "users", newUser._id);
-
-       setDoc(userRef, newUser).then(async () => {
+        setDoc(userRef, newUser).then(async () => {
           const docSnap = await getDoc(userRef);
 
           storeUser(docSnap.data()!);
@@ -138,11 +133,10 @@ const Signup = () => {
           setLoading(false);
           AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
         });
-
-    })
- 
+      }
+    );
   };
-
+  console.log(location);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={{ flex: 1, marginHorizontal: 22 }}>
@@ -193,8 +187,7 @@ const Signup = () => {
         </View>
 
         <View style={{ marginBottom: 12 }}>
-        
-        <ValidatedInput
+          <ValidatedInput
             control={control}
             name="phone"
             label="Phone Number"
@@ -203,7 +196,7 @@ const Signup = () => {
         </View>
 
         <View style={{ marginBottom: 12 }}>
-          <ValidatedInput control={control} name="password" label="Password"/>
+          <ValidatedInput control={control} name="password" label="Password" />
         </View>
         <View style={{ marginBottom: 12 }}>
           <ValidatedInput

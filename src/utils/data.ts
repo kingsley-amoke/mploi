@@ -9,11 +9,8 @@ import {
 } from "firebase/firestore";
 import { firestoreDB, realtimeDB } from "./firebaseConfig";
 import { ref, serverTimestamp, set } from "firebase/database";
-
-import Toast from 'react-native-root-toast'
 import { getDistance } from "geolib";
 import { ToastAndroid } from "react-native";
-
 
 //get image blog
 export const getBlobFroUri = async (uri: string) => {
@@ -33,9 +30,10 @@ export const getBlobFroUri = async (uri: string) => {
   return blob;
 };
 
-export const noAvatar = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-export const shopAvatar = 'https://as1.ftcdn.net/v2/jpg/02/22/69/78/1000_F_222697826_A8NjOe4hGgZ2UkQWBetmqVwpUhJJbWpc.jpg';
-
+export const noAvatar =
+  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+export const shopAvatar =
+  "https://as1.ftcdn.net/v2/jpg/02/22/69/78/1000_F_222697826_A8NjOe4hGgZ2UkQWBetmqVwpUhJJbWpc.jpg";
 
 //map coords
 export const latitudeDelta = 0.0079;
@@ -64,11 +62,9 @@ export const socialLinks = {
     link: "https://youtube.com/@myplugapp?si=MC3GGLprCBuh6Pms",
     color: "red",
   },
-  chat: 'https://whatsapp.com/+2347017663503',
-  email: ' connect@myplugmobile.com',
+  chat: "https://whatsapp.com/+2347017663503",
+  email: " connect@myplugmobile.com",
 };
-
-
 
 //fetch user
 
@@ -176,17 +172,12 @@ const createRequest = async (
     client: loggedUser,
     serviceProvider: user,
   };
-  set(requestRef, data)
+  set(requestRef, data);
 };
-
-
 
 //accept service request
 
-
-export const createChat = async (
-  data: DocumentData
-) => {
+export const createChat = async (data: DocumentData) => {
   const chatRef = ref(realtimeDB, "chats/" + data._id);
 
   set(chatRef, data).then(() => {
@@ -238,46 +229,48 @@ export const getReviews = async () => {
 
 //format price
 
-export const formatPrice = (price: number ) => {
-  const formattedPrice = new Intl.NumberFormat('en-UK', { style:'currency', currency: 'NGN', currencySign: 'accounting'}).format(price);
+export const formatPrice = (price: number) => {
+  const formattedPrice = new Intl.NumberFormat("en-UK", {
+    style: "currency",
+    currency: "NGN",
+    currencySign: "accounting",
+  }).format(price);
   return formattedPrice;
-}
+};
 
 //calculate average rating
 
 export const averageRating = (items: DocumentData[]) => {
+  if (items.length < 1) return 0;
 
-  if(items.length <1) return 0
-
-  const totalPrice = items.reduce((accumulator ,item) => {
-    return accumulator += item.rating;
+  const totalPrice = items.reduce((accumulator, item) => {
+    return (accumulator += item.rating);
   }, 0);
 
-  const average = totalPrice/items.length;
+  const average = totalPrice / items.length;
 
   return average.toFixed(1);
-}
+};
 
- //toast
+//toast
 
- export const CustomToast = (message: string, ) => {
-
-  return (
-    ToastAndroid.showWithGravity(message, ToastAndroid.LONG, ToastAndroid.TOP )
+export const CustomToast = (message: string) => {
+  return ToastAndroid.showWithGravity(
+    message,
+    ToastAndroid.LONG,
+    ToastAndroid.TOP
   );
-}
+};
 
 export const recharge = (id: string, rechargeAmount: string) => {
-
   const userRef = doc(firestoreDB, "users", id?.toString()!);
 
   updateDoc(userRef, {
     walletBalance: rechargeAmount,
   });
-}
+};
 
-export const deduct = async(user:DocumentData, charge: number) => {
-
+export const deduct = async (user: DocumentData, charge: number) => {
   const amount = (parseFloat(user.walletBalance) - charge).toString();
 
   const userRef = doc(firestoreDB, "users", user._id?.toString()!);
@@ -285,20 +278,16 @@ export const deduct = async(user:DocumentData, charge: number) => {
   updateDoc(userRef, {
     walletBalance: amount,
   });
-}
+};
 
 //upload transactions to firebase
 export const setTransaction = (transaction: DocumentData) => {
+  const transRef = doc(firestoreDB, "transactions", transaction._id);
 
-  const transRef = doc(firestoreDB, "transactions", transaction._id)
-  
-  setDoc(transRef, transaction).then(() => {
-
-  })
-}
+  setDoc(transRef, transaction).then(() => {});
+};
 
 //fetch all transactions
-
 
 export const getTransactions = async () => {
   const transactionsRef = collection(firestoreDB, "transactions");
@@ -312,23 +301,32 @@ export const getTransactions = async () => {
   return transactions;
 };
 
-
 //distance between user in km
 
-export const distanceToUser  =  (loggedUser:DocumentData, user:DocumentData) => {
-
-  const clientCoordinates = {
-    latitude: loggedUser?.coordinates.latitude,
-    longitude: loggedUser?.coordinates.longitude,
-  }
-
-  const serviceProviderCoordinates =  
-  {
+export const distanceToUser = (
+  location: { latitude: number; longitude: number },
+  user: DocumentData
+) => {
+  const serviceProviderCoordinates = {
     latitude: user.coordinates.latitude,
     longitude: user.coordinates.longitude,
-  }
+  };
 
-  const distance = getDistance(clientCoordinates, serviceProviderCoordinates)
+  const distance = getDistance(location, serviceProviderCoordinates);
 
-return distance;
-}
+  // console.log(distance);
+
+  return distance;
+};
+
+export const exitApp = () => {
+  throw {};
+};
+
+export const extractImagePath = (url: string): string => {
+  return url.split("/").pop()?.split("?")[0].split("%").pop()?.slice(2)!;
+};
+
+export const getImageUrl = (filename: string, folder: string): string => {
+  return `https://firebasestorage.googleapis.com/v0/b/mploi247.appspot.com/o/${folder}/${filename}?alt=media&token=18367db0-dd5a-4d14-bb89-844f2c67ff11`;
+};

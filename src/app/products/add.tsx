@@ -1,7 +1,14 @@
-import { Pressable, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
 import {
+  useLocationStore,
   useProductsStore,
   useShopsStore,
   useUserStore,
@@ -22,6 +29,7 @@ const add = () => {
   const { user, decreaseUserBalance } = useUserStore();
   const { shops } = useShopsStore();
   const { addProduct, addPromoted } = useProductsStore();
+  const { location: userLocation } = useLocationStore();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -34,11 +42,17 @@ const add = () => {
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState(1);
 
-  const textColor = colorScheme === 'dark' ? '#fff' : '#000';
+  const textColor = colorScheme === "dark" ? "#fff" : "#000";
 
   const handleSubmitProduct = () => {
-
-    const promo = active === 2 ?  '7 days' : active === 3 ? '30 days' : active === 4 ? '3 months' : 'free';
+    const promo =
+      active === 2
+        ? "7 days"
+        : active === 3
+        ? "30 days"
+        : active === 4
+        ? "3 months"
+        : "free";
 
     const id = `${Date.now()}`;
 
@@ -46,7 +60,7 @@ const add = () => {
       _id: id,
       name,
       description,
-      location,
+      location: location !== "" ? location : userLocation[0].regionName.city!,
       price: parseFloat(price),
       negotiable,
       category,
@@ -59,14 +73,13 @@ const add = () => {
     setDoc(productRef, data).then(() => {
       addProduct(data);
       if (active !== 1) {
+        addPromoted(data);
 
-      addPromoted(data);
-
-      router.push(`/products/images?id=${data._id}`);
-      CustomToast("Please upload images and continue");
-      setVisible(false);
-      setPosting(false);
-      }else{
+        router.push(`/products/images?id=${data._id}`);
+        CustomToast("Please upload images and continue");
+        setVisible(false);
+        setPosting(false);
+      } else {
         router.push(`/products/images?id=${data._id}`);
         CustomToast("Please upload images and continue");
         setVisible(false);
@@ -76,13 +89,11 @@ const add = () => {
   };
 
   const handleProcessPayment = (active: number) => {
-    console.log('here')
     setPosting(true);
-    if(active > parseInt(user?.walletBalance)) {
-      console.log('yes')
-      CustomToast('Insufficiant balance');
-      setPosting(false)
-    }else{
+    if (active > parseInt(user?.walletBalance)) {
+      CustomToast("Insufficiant balance");
+      setPosting(false);
+    } else {
       decreaseUserBalance(active);
       deduct(user, active).then(() => {
         handleSubmitProduct();
@@ -97,9 +108,8 @@ const add = () => {
 
         break;
       case 2:
-        
         handleProcessPayment(600);
-        
+
         break;
       case 3:
         handleProcessPayment(5000);
@@ -277,6 +287,7 @@ const add = () => {
         />
         <TextInput
           label="Location"
+          defaultValue={userLocation[0].regionName.city!}
           mode="outlined"
           onChangeText={(value) => setLocation(value)}
         />
@@ -294,7 +305,6 @@ const add = () => {
                 value="Yes"
                 status={negotiable ? "checked" : "unchecked"}
                 onPress={() => setNegotiable(true)}
-                
               />
               <Text>Yes</Text>
             </View>
@@ -303,7 +313,6 @@ const add = () => {
                 value="No"
                 status={!negotiable ? "checked" : "unchecked"}
                 onPress={() => setNegotiable(false)}
-                
               />
               <Text>No</Text>
             </View>
@@ -322,7 +331,7 @@ const add = () => {
             single
             subKey="subshops"
             selectText={category}
-            colors={{selectToggleTextColor: textColor}}
+            colors={{ selectToggleTextColor: textColor }}
             onSelectedItemsChange={(item) => setCategory(item[0])}
           />
         </View>

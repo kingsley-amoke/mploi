@@ -16,11 +16,12 @@ const BookService = ({ user }: { user: DocumentData }) => {
 
   const handleBookService = () => {
     setApplying(true);
-    const existingRequest = requests.filter(
-      (data) =>
-        data.client._id === loggedUser?._id &&
-        data.serviceProvider._id === user._id
-    );
+    const existingRequest = requests.filter((data) => {
+      return (
+        data.client?._id === loggedUser?._id &&
+        data.serviceProvider?._id === user._id
+      );
+    });
     if (existingRequest.length > 0) {
       CustomToast("There is a pending request");
       setApplying(false);

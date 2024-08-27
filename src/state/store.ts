@@ -5,7 +5,7 @@ import {
   jobTypes,
   serviceTypes,
 } from "@/src/utils/types";
-import { store } from "expo-router/build/global-state/router-store";
+import { LocationGeocodedAddress, LocationObject } from "expo-location";
 import { DocumentData } from "firebase/firestore";
 import { create } from "zustand";
 
@@ -15,6 +15,8 @@ export interface UserStore {
   storeUser: (user: DocumentData) => void;
   increaseUserBalance: (amount: number) => void;
   decreaseUserBalance: (amount: number) => void;
+  updateUserImage: (image: string) => void;
+  removeUserImage: (image: string) => void;
 }
 
 export interface UsersStore {
@@ -23,7 +25,17 @@ export interface UsersStore {
   updateUsers: (user: DBUser) => void;
 }
 
-export interface TransactionStore{
+interface Location {
+  coordinates: { latitude: number; longitude: number };
+  regionName: LocationGeocodedAddress;
+}
+
+export interface UserLocation {
+  location: Location[];
+  storeLocation: (location: Location) => void;
+}
+
+export interface TransactionStore {
   transactions: DocumentData[];
   storeTransactions: (transactions: DocumentData[]) => void;
   addTransaction: (transaction: DocumentData) => void;
@@ -35,7 +47,6 @@ export interface JobStore {
   addJob: (job: DocumentData) => void;
   deleteJob: (job: DocumentData) => void;
 }
-
 
 export interface categoryStore {
   categories: DocumentData[];
@@ -73,18 +84,16 @@ export interface chatStore {
 export interface requestStore {
   requests: DocumentData[];
   newRequestId: string;
-  storeNewRequestId: (id:string) => void;
+  storeNewRequestId: (id: string) => void;
   storeRequests: (requests: DocumentData[]) => void;
-  addRequest: (request:DocumentData) => void
+  addRequest: (request: DocumentData) => void;
   deleteRequest: (request: DocumentData) => void;
 }
-
 
 export interface imageStore {
   image: string | null;
   updateImage: (image: string) => void;
 }
-
 
 // global states
 
@@ -124,6 +133,35 @@ export const useUserStore = create<UserStore>((set) => ({
       };
     });
   },
+  updateUserImage: (image) => {
+    set((state) => {
+      state.user.photos = state.user.photos.push(image);
+
+      return {
+        user: state.user,
+      };
+    });
+  },
+  removeUserImage: (image) => {
+    set((state) => {
+      // const index = state.user.photos.indexOf(image);
+
+      // if (index > -1) {
+      //   const updatedArray = state.user.photos
+      //     .slice(0, index)
+      //     .concat(state.user.photos.slice(index + 1));
+
+      const updatedArray = state.user.photos.filter(
+        (img: string) => img !== image
+      );
+
+      state.user.photos = updatedArray;
+
+      return {
+        user: state.user,
+      };
+    });
+  },
 }));
 
 export const useUsersStore = create<UsersStore>((set) => ({
@@ -154,30 +192,40 @@ export const useUsersStore = create<UsersStore>((set) => ({
   },
 }));
 
+export const useLocationStore = create<UserLocation>((set) => ({
+  location: [],
+  storeLocation: (location) => {
+    set((state) => {
+      state.location.push(location);
+
+      return {
+        location: state.location,
+      };
+    });
+  },
+}));
+
 export const useTransactionsStore = create<TransactionStore>((set) => ({
   transactions: [],
   storeTransactions: (transactions) => {
     set((state) => {
-
       state.transactions = transactions;
 
       return {
-        transactions: state.transactions
-      }
-    })
+        transactions: state.transactions,
+      };
+    });
   },
   addTransaction: (transaction) => {
-
     set((state) => {
-
       state.transactions.push(transaction);
 
       return {
-        transactions: state.transactions
-      }
-    })
-  }
-}))
+        transactions: state.transactions,
+      };
+    });
+  },
+}));
 
 export const useJobsStore = create<JobStore>((set) => ({
   jobs: [],
@@ -209,7 +257,6 @@ export const useJobsStore = create<JobStore>((set) => ({
     });
   },
 }));
-
 
 export const useCategoryStore = create<categoryStore>((set) => ({
   categories: [],
@@ -365,7 +412,7 @@ export const useChatStore = create<chatStore>((set) => ({
 
 export const useRequestStore = create<requestStore>((set) => ({
   requests: [],
-  newRequestId: '',
+  newRequestId: "",
   storeRequests: (requests) => {
     set((state) => {
       state.requests = requests;
@@ -375,22 +422,22 @@ export const useRequestStore = create<requestStore>((set) => ({
       };
     });
   },
-  storeNewRequestId:(id) => {
+  storeNewRequestId: (id) => {
     set((state) => {
       state.newRequestId = id;
       return {
-        newRequestId: state.newRequestId
-      }
-    })
+        newRequestId: state.newRequestId,
+      };
+    });
   },
   addRequest: (request) => {
     set((state) => {
-     state.requests.push(request);
+      state.requests.push(request);
 
       return {
-        requests: state.requests
-      }
-    })
+        requests: state.requests,
+      };
+    });
   },
   deleteRequest: (request) => {
     set((state) => {
@@ -404,7 +451,6 @@ export const useRequestStore = create<requestStore>((set) => ({
     });
   },
 }));
-
 
 export const useImageStore = create<imageStore>((set) => ({
   image: null,

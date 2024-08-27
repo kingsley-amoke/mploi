@@ -31,7 +31,13 @@ import * as MailComposer from "expo-mail-composer";
 
 import { useJobsStore, useUserStore } from "@/src/state/store";
 import { ExternalLink } from "@/src/components/ExternalLink";
-import { CustomToast, deduct, getBlobFroUri, getJobs, socialLinks } from "@/src/utils/data";
+import {
+  CustomToast,
+  deduct,
+  getBlobFroUri,
+  getJobs,
+  socialLinks,
+} from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
 import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import { CustomModal } from "@/src/components/CustomModal";
@@ -67,232 +73,245 @@ const JobPage = () => {
 
   //TODO: implement apply for job
 
-    const [visible, setVisible] = useState(false);
-    const [active, setActive] = useState(1);
-    const [applying, setApplying] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [resume, setResume] = useState("");
-    const [coverLetter, setCoverLetter] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [active, setActive] = useState(1);
+  const [applying, setApplying] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [resume, setResume] = useState("");
+  const [coverLetter, setCoverLetter] = useState("");
 
-    const handleJobStatus =() => {
-      const JobRef = doc(firestoreDB, "jobs", id.toString());
-      setLoading(true)
+  const handleJobStatus = () => {
+    const JobRef = doc(firestoreDB, "jobs", id.toString());
+    setLoading(true);
 
-      updateDoc(JobRef, {taken:!job.taken}).then(async() => {
-       const jobs = await getJobs()
-       storeJobs(jobs);
-       CustomToast('Successful')
-       navigation.goBack();
-       setLoading(false)
-      });
-    }
+    updateDoc(JobRef, { taken: !job.taken }).then(async () => {
+      const jobs = await getJobs();
+      storeJobs(jobs);
+      CustomToast("Successful");
+      navigation.goBack();
+      setLoading(false);
+    });
+  };
 
-    const handleSelectCV = async (isResume: boolean) => {
-      setLoading(true);
-      DocumentPicker.getDocumentAsync().then(async (document) => {
-        if (!document.canceled) {
-          const file = document.assets[0].uri;
+  const handleSelectCV = async (isResume: boolean) => {
+    setLoading(true);
+    DocumentPicker.getDocumentAsync().then(async (document) => {
+      if (!document.canceled) {
+        const file = document.assets[0].uri;
 
-          if (isResume) {
-            setResume(file);
-          } else {
-            setCoverLetter(file);
-          }
+        if (isResume) {
+          setResume(file);
+        } else {
+          setCoverLetter(file);
         }
-      });
-    };
+      }
+    });
+  };
 
-    const payment = () => {
-      const data = { resume: resume, coverLetter: coverLetter };
+  const payment = () => {
+    const data = { resume: resume, coverLetter: coverLetter };
 
-      if (active === 1) {
-        handleMail(data);
+    if (active === 1) {
+      handleMail(data);
+    } else {
+      const charge = active === 2 ? 1000 : 2000;
+      if (active > parseInt(user?.walletBalance)) {
+        CustomToast("Insufficiant balance");
+        setApplying(false);
       } else {
-        const amount =
-          parseFloat(user?.walletBalance) - active === 2 ? 1000 : 2000;
+        const amount = parseFloat(user?.walletBalance) - charge;
         decreaseUserBalance(amount);
         setApplying(true);
         deduct(user, amount).then(() => {
           handleMail(data);
+        });
+      }
+    }
+  };
+
+  const handleMail = (attachments: DocumentData) => {
+    MailComposer.isAvailableAsync().then((value) => {
+      if (value) {
+        const options: MailComposer.MailComposerOptions = {
+          recipients: ["klordbravo@gmail.com"],
+          body: "Enter your personal details here..",
+          subject: `Application for the position of ${job.title} at ${job.company}`,
+          attachments: [attachments.resume, attachments.coverLetter],
+        };
+
+        MailComposer.composeAsync(options).then((res) => {
           setApplying(false);
         });
       }
-    };
+    });
+  };
 
-    const handleMail = (attachments: DocumentData) => {
-      MailComposer.isAvailableAsync().then((value) => {
-        if (value) {
-          const options: MailComposer.MailComposerOptions = {
-            recipients: ["klordbravo@gmail.com"],
-            body: "Enter your personal details here..",
-            subject: `Application for the position of ${job.title} at ${job.company}`,
-            attachments: [attachments.resume, attachments.coverLetter],
-          };
-
-          MailComposer.composeAsync(options).then((res) => {
-            console.log(res);
-          });
-        }
-      });
-    };
-
-    const modalContent = <View style={{ justifyContent: "center", alignItems: "center" }}>
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 20,
-      }}
-    >
+  const modalContent = (
+    <View style={{ justifyContent: "center", alignItems: "center" }}>
       <View
         style={{
-          width: 100,
-          height: 70,
-          overflow: "hidden",
-          flexWrap: "nowrap",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 20,
         }}
       >
-        <Pressable
-          onPress={() => handleSelectCV(true)}
+        <View
           style={{
-            justifyContent: "space-between",
-            flexDirection: "row",
-            alignItems: "center",
-     borderWidth:1,
-     borderColor: textColor,
-            padding: 5,
-            marginVertical: 10,
-            borderRadius: 10,
+            width: 100,
+            height: 70,
+            overflow: "hidden",
+            flexWrap: "nowrap",
           }}
         >
-          <Text>Resume</Text>
-          <MaterialCommunityIcons name="plus" size={20} color={textColor}/>
+          <Pressable
+            onPress={() => handleSelectCV(true)}
+            style={{
+              justifyContent: "space-between",
+              flexDirection: "row",
+              alignItems: "center",
+              borderWidth: 1,
+              borderColor: textColor,
+              padding: 5,
+              marginVertical: 10,
+              borderRadius: 10,
+            }}
+          >
+            <Text>Resume</Text>
+            <MaterialCommunityIcons name="plus" size={20} color={textColor} />
+          </Pressable>
+          <Text>{resume.split("/").pop()}</Text>
+        </View>
+        <View
+          style={{
+            width: 100,
+            height: 70,
+            overflow: "hidden",
+            flexWrap: "nowrap",
+          }}
+        >
+          <Pressable
+            onPress={() => handleSelectCV(false)}
+            style={{
+              justifyContent: "space-between",
+              flexDirection: "row",
+              alignItems: "center",
+              borderWidth: 1,
+              borderColor: textColor,
+              padding: 5,
+              marginVertical: 10,
+              borderRadius: 10,
+            }}
+          >
+            <Text>Cover letter</Text>
+            <MaterialCommunityIcons name="plus" size={20} color={textColor} />
+          </Pressable>
+          <Text style={{ overflow: "hidden", flexWrap: "nowrap" }}>
+            {coverLetter.split("/").pop()}
+          </Text>
+        </View>
+      </View>
+      <Text style={{ fontWeight: "bold" }}>
+        How would you like to apply for this job?
+      </Text>
+      <View style={{ width: 300, marginVertical: 20, gap: 10 }}>
+        <Pressable
+          style={{
+            flexDirection: "row",
+            padding: 10,
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: Colors.dark.primary,
+            borderRadius: 10,
+            backgroundColor: active === 1 ? Colors.light.primary : "white",
+          }}
+          onPress={() => setActive(1)}
+        >
+          <Text
+            style={{
+              color: active === 1 ? "white" : "black",
+              fontWeight: "bold",
+            }}
+          >
+            No Feedback
+          </Text>
+          <Text style={{ color: active === 1 ? "white" : "black" }}>Free</Text>
         </Pressable>
-        <Text>{resume.split("/").pop()}</Text>
+        <Pressable
+          style={{
+            flexDirection: "row",
+            padding: 10,
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: Colors.dark.primary,
+            borderRadius: 10,
+            backgroundColor: active === 2 ? Colors.light.primary : "white",
+          }}
+          onPress={() => setActive(2)}
+        >
+          <Text
+            style={{
+              color: active === 2 ? "white" : "black",
+              fontWeight: "bold",
+            }}
+          >
+            Feedback/Update
+          </Text>
+          <Text style={{ color: active === 2 ? "white" : "black" }}>#1000</Text>
+        </Pressable>
+        <Pressable
+          style={{
+            flexDirection: "row",
+            padding: 10,
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            borderWidth: 1,
+            borderColor: Colors.dark.primary,
+            borderRadius: 10,
+            backgroundColor: active === 3 ? Colors.light.primary : "white",
+          }}
+          onPress={() => setActive(3)}
+        >
+          <Text
+            style={{
+              color: active === 3 ? "white" : "black",
+              fontWeight: "bold",
+              flexWrap: "wrap",
+              width: "70%",
+            }}
+          >
+            Update, follow up, recieve calls from our agents for information and
+            interview date, time and venue
+          </Text>
+          <Text style={{ color: active === 3 ? "white" : "black" }}>#2000</Text>
+        </Pressable>
       </View>
       <View
         style={{
-          width: 100,
-          height: 70,
-          overflow: "hidden",
-          flexWrap: "nowrap",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 20,
+          marginBottom: 10,
         }}
       >
-        <Pressable
-          onPress={() => handleSelectCV(false)}
-          style={{
-            justifyContent: "space-between",
-            flexDirection: "row",
-            alignItems: "center",
-         borderWidth:1,
-         borderColor: textColor,
-            padding: 5,
-            marginVertical: 10,
-            borderRadius: 10,
-          }}
-        >
-          <Text>Cover letter</Text>
-          <MaterialCommunityIcons name="plus" size={20} color={textColor} />
-        </Pressable>
-        <Text style={{ overflow: "hidden", flexWrap: "nowrap" }}>
-          {coverLetter.split("/").pop()}
-        </Text>
+        <Button mode="outlined" onPress={() => setVisible(false)}>
+          Cancel
+        </Button>
+        <Button mode="contained" onPress={payment}>
+          Proceed
+        </Button>
       </View>
     </View>
-    <Text style={{  fontWeight: "bold" }}>
-      How would you like to apply for this job?
-    </Text>
-    <View style={{ width: 300, marginVertical: 20, gap: 10 }}>
-      <Pressable
-        style={{
-          flexDirection: "row",
-          padding: 10,
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderWidth: 1,
-          borderColor: Colors.dark.primary,
-          borderRadius: 10,
-          backgroundColor:
-            active === 1 ? Colors.light.primary : "white",
-        }}
-        onPress={() => setActive(1)}
-      >
-        <Text style={{ color: active === 1 ? "white" : "black", fontWeight: "bold" }}>
-          No Feedback
-        </Text>
-        <Text style={{color: active === 1 ? "white" : "black"}} >Free</Text>
-      </Pressable>
-      <Pressable
-        style={{
-          flexDirection: "row",
-          padding: 10,
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderWidth: 1,
-          borderColor: Colors.dark.primary,
-          borderRadius: 10,
-          backgroundColor:
-            active === 2 ? Colors.light.primary : "white",
-        }}
-        onPress={() => setActive(2)}
-      >
-        <Text style={{color: active === 2 ? "white" : "black",  fontWeight: "bold" }}>
-          Feedback/Update
-        </Text>
-        <Text style={{color: active === 2 ? "white" : "black"}}>#1000</Text>
-      </Pressable>
-      <Pressable
-        style={{
-          flexDirection: "row",
-          padding: 10,
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-          borderWidth: 1,
-          borderColor: Colors.dark.primary,
-          borderRadius: 10,
-          backgroundColor:
-            active === 3 ? Colors.light.primary : "white",
-        }}
-        onPress={() => setActive(3)}
-      >
-        <Text
-          style={{
-         color: active === 3 ? "white" : "black",
-            fontWeight: "bold",
-            flexWrap: "wrap",
-            width: "70%",
-          }}
-        >
-          Update, follow up, recieve calls from our agents for
-          information and interview date, time and venue
-        </Text>
-        <Text style={{color: active === 3 ? "white" : "black"}} >#2000</Text>
-      </Pressable>
-    </View>
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 20,
-        marginBottom:10
-      }}
-    >
-      <Button mode="outlined" onPress={()=>setVisible(false)}>
-        Cancel
-      </Button>
-      <Button mode="contained" onPress={payment}>
-        Proceed
-      </Button>
-    </View>
-  </View>
+  );
 
   useEffect(() => {
     navigation.setOptions({
       title: job.title + " " + "at" + " " + job.company,
       headerTitleAlign: "center",
-      headerTitleStyle: {fontSize:14}
+      headerTitleStyle: { fontSize: 14 },
     });
   }, [id]);
 
@@ -342,12 +361,22 @@ const JobPage = () => {
             <Text>Note: {job.others}</Text>
           </View>
           <View style={{ marginVertical: 10 }}>
-            {
-              !user.isAdmin ?
-              <CustomModal content={modalContent} triggerText="Apply" visible={visible} setVisible={setVisible} /> 
-              : 
-              <Button mode="contained" onPress={handleJobStatus}>{loading ? 'Please wait...' : job.taken ? 'Mark as open' :  'Mark as taken'}</Button>
-            }
+            {!user.isAdmin ? (
+              <CustomModal
+                content={modalContent}
+                triggerText="Apply"
+                visible={visible}
+                setVisible={setVisible}
+              />
+            ) : (
+              <Button mode="contained" onPress={handleJobStatus}>
+                {loading
+                  ? "Please wait..."
+                  : job.taken
+                  ? "Mark as open"
+                  : "Mark as taken"}
+              </Button>
+            )}
           </View>
           <View style={{ marginVertical: 10 }}>
             <Text

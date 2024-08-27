@@ -11,30 +11,33 @@ import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 
 import { firestoreDB, storage } from "@/src/utils/firebaseConfig";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { doc, DocumentData, updateDoc } from "firebase/firestore";
-import { getBlobFroUri } from "../utils/data";
+import { extractImagePath, getBlobFroUri } from "../utils/data";
 import { PhotosCard } from "./PhotosCard";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useUserStore } from "../state/store";
-import useTheme from "../hooks/useTheme";
 
 export default function UserPhotos({ user }: { user: DocumentData | null }) {
-  const { user: loggedUser } = useUserStore();
+  const { user: loggedUser, updateUserImage, removeUserImage } = useUserStore();
 
-  const  colorScheme  = useColorScheme();
+  const colorScheme = useColorScheme();
 
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>([""]);
   const [loading, setLoading] = useState(false);
 
-  const loadImages = async () => {
-    const files: string[] = user?.photos;
+  const photos =
+    loggedUser._id === user?._id ? loggedUser.photos : user?.photos;
 
-    if (files?.length > 0) {
-      setImages(files);
-    }
+  const loadImages = () => {
+    setImages(photos);
   };
 
   const selectImage = async (useLibrary: boolean) => {
@@ -56,6 +59,7 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
 
     if (!result.canceled) {
       uploadImage(result.assets[0].uri);
+      setImages([...images, result.assets[0].uri]);
     }
   };
 
@@ -72,13 +76,13 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
     uploadBytes(storageRef, imageBlob)
       .then((snapshot) => {
         getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
-          setImages([...images, url]);
+          updateUserImage(url);
 
           const userRef = doc(firestoreDB, "users", loggedUser?._id);
 
           // updates user images array
           updateDoc(userRef, {
-            photos: [...images, url],
+            photos: [...photos, url],
           });
         });
       })
@@ -90,9 +94,40 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
     setLoading(false);
   };
 
+  const handleDeleteFile = (image: string) => {
+    const index = images.indexOf(image);
+
+    if (index > -1) {
+      const updatedArray = images
+        .slice(0, index)
+        .concat(images.slice(index + 1));
+
+      setImages(updatedArray);
+
+      removeUserImage(image);
+
+      const userRef = doc(firestoreDB, "users", loggedUser?._id);
+
+      // updates user images array
+      updateDoc(userRef, {
+        photos: photos.filter((img: string) => img !== image),
+      });
+
+      //delete from storage
+
+      const filename = extractImagePath(image);
+
+      const storageRef = ref(storage, `images/${filename}`);
+      deleteObject(storageRef);
+    }
+  };
+
+  // const url =
+  // "https://firebasestorage.googleapis.com/v0/b/mploi247.appspot.com/o/images%2F1724512496224`.jpg?alt=media&token=18367db0-dd5a-4d14-bb89-844f2c67ff11";
+
   useEffect(() => {
     loadImages();
-  }, []);
+  }, photos);
 
   return (
     <View style={{ marginVertical: 10, width: "100%" }}>
@@ -108,7 +143,19 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
         }}
       >
         {images.map((image) => (
-          <PhotosCard item={image} key={image} />
+          <View key={image} style={{ position: "relative" }}>
+            <PhotosCard item={image} />
+            <View style={{ position: "absolute", right: 5 }}>
+              {user?._id === loggedUser?._id && (
+                <MaterialCommunityIcons
+                  name="cancel"
+                  size={20}
+                  color="red"
+                  onPress={() => handleDeleteFile(image)}
+                />
+              )}
+            </View>
+          </View>
         ))}
         {user?._id === loggedUser?._id && (
           <Button
