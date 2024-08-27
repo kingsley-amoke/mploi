@@ -28,7 +28,6 @@ const Room = () => {
 
   const textColor = colorScheme === "dark" ? "#fff" : "#000";
 
-
   const userChatBg = Colors.light.primary;
   const clientChatBg = Colors.light.secondary;
 
@@ -37,13 +36,13 @@ const Room = () => {
 
   const room = chats.find((chat) => chat._id === roomId);
 
-  if(!room) return
+  if (!room) return;
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<DocumentData[]>([]);
 
   const sendMessage = async () => {
-    if(message === '') return
+    if (message === "") return;
     const id = `${Date.now()}`;
     const timeStamp = serverTimestamp();
 
@@ -86,25 +85,29 @@ const Room = () => {
     return (
       <View
         style={{
-          
           flexDirection: "row",
           height: 80,
           alignItems: "flex-end",
           gap: 40,
           paddingBottom: 15,
           paddingLeft: 10,
-          backgroundColor: colorScheme=== 'dark' ? Colors.dark.background : Colors.light.background
+          backgroundColor:
+            colorScheme === "dark"
+              ? Colors.dark.background
+              : Colors.light.background,
         }}
       >
         <Ionicons
           name="chevron-back"
           size={20}
-       color={textColor}
+          color={textColor}
           onPress={() => navigation.goBack()}
         />
         <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
           <Avatar.Image source={{ uri: chatImage }} size={20} />
-          <Text style={{ fontSize: 14, fontWeight: "bold",color: textColor}}>{chatName}</Text>
+          <Text style={{ fontSize: 14, fontWeight: "bold", color: textColor }}>
+            {chatName}
+          </Text>
         </View>
       </View>
     );
@@ -117,7 +120,6 @@ const Room = () => {
 
     fetchRoomMessages();
   }, [roomId]);
-
 
   return (
     <View style={{ flex: 1 }}>
@@ -180,7 +182,7 @@ const Room = () => {
                               style={{
                                 fontWeight: "bold",
                                 fontSize: 14,
-                                color:'white'
+                                color: "white",
                               }}
                             >
                               {msg.text}
@@ -199,8 +201,8 @@ const Room = () => {
                                 style={{
                                   fontWeight: "bold",
                                   fontSize: 8,
-                                  color:'white',
-                                  fontStyle:'italic'
+                                  color: "white",
+                                  fontStyle: "italic",
                                 }}
                               >
                                 {new Date(msg?.timeStamp).toLocaleTimeString(
@@ -217,7 +219,7 @@ const Room = () => {
                               <Ionicons
                                 name="checkmark-done-outline"
                                 size={15}
-                                color='white'
+                                color="white"
                               />
                             </Text>
                           </View>
@@ -256,13 +258,26 @@ const Room = () => {
                           }}
                         >
                           <View>
-                            <Text style={{ fontWeight: "bold", fontSize: 14, color:'white' }}>
+                            <Text
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: 14,
+                                color: "white",
+                              }}
+                            >
                               {msg.text}
                             </Text>
                           </View>
                           <View style={{ alignSelf: "flex-end" }}>
                             {msg?.timeStamp && (
-                              <Text style={{ fontWeight: "300", fontSize: 8, color:'white', fontStyle:'italic' }}>
+                              <Text
+                                style={{
+                                  fontWeight: "300",
+                                  fontSize: 8,
+                                  color: "white",
+                                  fontStyle: "italic",
+                                }}
+                              >
                                 {new Date(msg?.timeStamp).toLocaleTimeString(
                                   "en-US",
                                   {
@@ -280,37 +295,38 @@ const Room = () => {
                   )
                 )}
             </ScrollView>
-
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                paddingHorizontal: 10,
-                marginHorizontal: 5,
-                marginBottom: 10,
-                marginTop: 20,
-              }}
-            >
-              <TextInput
-                mode="outlined"
+            {!room?.client?.isAdmin && (
+              <View
                 style={{
-                  flex: 1,
-                  fontWeight: "bold",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingHorizontal: 10,
+                  marginHorizontal: 5,
+                  marginBottom: 10,
+                  marginTop: 20,
                 }}
-                placeholder="Type here..."
-                placeholderTextColor='grey'
-                value={message}
-                onChangeText={(text) => setMessage(text)}
-              />
-
-              <TouchableOpacity
-                style={{ paddingHorizontal: 10 }}
-                onPress={sendMessage}
               >
-                <FontAwesome name="send" size={24} color={textColor}/>
-              </TouchableOpacity>
-            </View>
+                <TextInput
+                  mode="outlined"
+                  style={{
+                    flex: 1,
+                    fontWeight: "bold",
+                  }}
+                  placeholder="Type here..."
+                  placeholderTextColor="grey"
+                  value={message}
+                  onChangeText={(text) => setMessage(text)}
+                />
+
+                <TouchableOpacity
+                  style={{ paddingHorizontal: 10 }}
+                  onPress={sendMessage}
+                >
+                  <FontAwesome name="send" size={24} color={textColor} />
+                </TouchableOpacity>
+              </View>
+            )}
           </>
         </KeyboardAvoidingView>
       </View>
