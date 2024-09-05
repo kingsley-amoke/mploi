@@ -303,6 +303,13 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen name="rooms/[roomId]" />
+            <Stack.Screen
+              name="cv/index"
+              options={{
+                title: "Review CV",
+                headerTitleAlign: "center",
+              }}
+            />
           </Stack>
         </ThemeProvider>
       </PaperProvider>

@@ -29,6 +29,9 @@ import {
   handleRequestService,
 } from "../utils/data";
 import { DocumentData } from "firebase/firestore";
+import SectionedMultiSelect from "react-native-sectioned-multi-select";
+import { MaterialIcons as Icon } from "@expo/vector-icons";
+import { Colors } from "../constants/Colors";
 
 const Categories = () => {
   const router = useRouter();
@@ -42,7 +45,7 @@ const Categories = () => {
   const { location } = useLocationStore();
 
   const [search, setSearch] = useState("");
-  const [selectedService, setSelectedService] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<string[]>([]);
 
   const [visible, setVisible] = React.useState(false);
 
@@ -68,7 +71,7 @@ const Categories = () => {
 
     return (
       user._id !== loggedUser?._id &&
-      user.skills.includes(selectedService) &&
+      user.skills.includes(selectedService[0]) &&
       distance <= 10000
     );
   });
@@ -111,7 +114,7 @@ const Categories = () => {
       <Text variant="headlineSmall" style={{ fontWeight: "bold" }}>
         What help do you need today?
       </Text>
-      <View
+      {/* <View
         style={{
           marginVertical: 20,
           position: "relative",
@@ -133,10 +136,10 @@ const Categories = () => {
           color={textColor}
           style={{ position: "absolute", left: 35 }}
         />
-      </View>
+      </View> */}
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {filteredCategories.map((category) => {
+      <View style={{ width: "100%", padding: 20 }}>
+        {/* {filteredCategories.map((category) => {
           return (
             <View
               style={{
@@ -173,7 +176,42 @@ const Categories = () => {
               </List.AccordionGroup>
             </View>
           );
-        })}
+        })} */}
+        <SectionedMultiSelect
+          items={filteredCategories}
+          IconRenderer={Icon}
+          uniqueKey="name"
+          subKey="subcategories"
+          onSelectedItemsChange={(item: string[]) => {
+            setSelectedService(item);
+            showModal();
+          }}
+          selectedItems={selectedService}
+          expandDropDowns
+          single
+          selectText="Find your service..."
+          searchPlaceholderText="Search services..."
+          modalAnimationType="slide"
+          colors={{ primary: Colors.light.primary }}
+          styles={{
+            chipContainer: {
+              borderWidth: 0,
+              backgroundColor: "#ddd",
+              borderRadius: 8,
+            },
+            chipText: {
+              color: "#222",
+              fontSize: 14.5,
+            },
+            selectToggle: {
+              borderWidth: 1,
+              borderRadius: 8,
+              borderColor: "#bbb",
+              padding: 12,
+              marginBottom: 12,
+            },
+          }}
+        />
         <Portal>
           <Dialog
             visible={visible}
@@ -185,7 +223,7 @@ const Categories = () => {
             }}
           >
             {recommendedUsers.length > 0 ? (
-              <View style={{ alignItems: "center", marginBottom: 20 }}>
+              <View style={{ alignItems: "center", marginBottom: 20, gap: 30 }}>
                 {recommendedUsers.map((user) => {
                   const distanceInKm = Math.floor(
                     distanceToUser(location[0].coordinates, user) / 1000
@@ -196,7 +234,7 @@ const Categories = () => {
                   );
 
                   const serviceProviderSkill = user.skills.find(
-                    (skill: string) => skill === selectedService
+                    (skill: string) => skill === selectedService[0]
                   );
 
                   const serviceProviderName =
@@ -227,23 +265,18 @@ const Categories = () => {
                           alignItems: "center",
                         }}
                       >
-                        <Avatar.Image source={{ uri: user.image }} size={40} />
+                        <Avatar.Image source={{ uri: user.image }} size={30} />
                         <View>
                           <NativeText
-                            style={{ fontSize: 20, fontWeight: "bold" }}
+                            style={{ fontSize: 16, fontWeight: "bold" }}
                           >
                             {serviceProviderName}
                           </NativeText>
-                          <NativeText>{serviceProviderSkill}</NativeText>
+                          <NativeText style={{ fontSize: 12 }}>
+                            {serviceProviderSkill}
+                          </NativeText>
                         </View>
-                        <View
-                          style={{
-                            flex: 1,
-                            flexDirection: "row",
-                            justifyContent: "flex-end",
-                            alignItems: "center",
-                          }}
-                        >
+                        <View>
                           {distanceInMeters > 1000 ? (
                             <NativeText
                               style={{ color: "red", fontWeight: "bold" }}
@@ -262,7 +295,7 @@ const Categories = () => {
                       <View
                         style={{
                           flexDirection: "row",
-                          justifyContent: "space-between",
+                          justifyContent: "space-evenly",
                           alignItems: "center",
                           gap: 10,
                         }}
@@ -274,13 +307,13 @@ const Categories = () => {
                             hideModal();
                           }}
                         >
-                          View Profile
+                          View
                         </Button>
                         <Button
                           mode="contained"
                           onPress={() => handleBookService(data)}
                         >
-                          Book Service
+                          Book
                         </Button>
                       </View>
                     </View>
@@ -303,7 +336,7 @@ const Categories = () => {
             )}
           </Dialog>
         </Portal>
-      </ScrollView>
+      </View>
     </View>
   );
 };

@@ -20,10 +20,7 @@ import { serviceTypes } from "@/src/utils/types";
 import { useCategoryStore, useUserStore } from "@/src/state/store";
 import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
-import {
-  CustomToast,
-  getBlobFroUri,
-} from "../utils/data";
+import { CustomToast, getBlobFroUri } from "../utils/data";
 import { firestoreDB, storage } from "../utils/firebaseConfig";
 import { ref } from "firebase/storage";
 import { getDownloadURL, uploadBytes } from "firebase/storage";
@@ -43,7 +40,7 @@ const EditProfile = () => {
       : Colors.light.onSurfaceDisabled;
 
   const { user, storeUser } = useUserStore();
-  const {categories} = useCategoryStore();
+  const { categories } = useCategoryStore();
 
   const [selectedItems, setSelectedItems] = useState([""]);
   const [loading, setLoading] = useState(false);
@@ -53,8 +50,6 @@ const EditProfile = () => {
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [bio, setBio] = useState("");
-
-
 
   const handleProfileImageSelection = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -88,14 +83,11 @@ const EditProfile = () => {
     }
   };
 
-
   const updateProfile = async () => {
-
     selectedItems.shift();
     const updatedSkills = [...selectedItems];
 
-    user?.skills?.map((skill: string) => updatedSkills.push(skill));
-
+    const uniqueSkills = [...new Set([...updatedSkills, ...user?.skills])];
 
     setLoading(true);
     const loggedUser = await getLoggedUser();
@@ -108,9 +100,8 @@ const EditProfile = () => {
       phone: phone !== "" ? phone : user?.phone,
       image: profileImage !== "" ? profileImage : user?.image,
       bio: bio !== "" ? bio : user?.bio,
-      skills: updatedSkills,
+      skills: uniqueSkills,
     };
-
 
     updateDoc(userRef, data).then(async () => {
       const user = await getDoc(userRef);
@@ -122,9 +113,7 @@ const EditProfile = () => {
     });
 
     setLoading(false);
-
   };
-  
 
   return (
     <KeyboardAvoidingView
@@ -135,7 +124,6 @@ const EditProfile = () => {
         style={{
           flex: 1,
           paddingHorizontal: 22,
-          
         }}
       >
         <ScrollView
@@ -145,7 +133,6 @@ const EditProfile = () => {
           <View
             style={{
               alignItems: "center",
-              
             }}
           >
             <TouchableOpacity onPress={handleProfileImageSelection}>
@@ -246,7 +233,7 @@ const EditProfile = () => {
               />
             </View>
           </View>
-         
+
           <Text
             style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
           >
@@ -275,11 +262,14 @@ const EditProfile = () => {
               />
             </View>
           </View>
-         
-         
-          <Button mode="contained" style={{marginTop:10}} onPress={() => updateProfile()}>{!loading ? "Save Change" : "Saving"}</Button>
 
-
+          <Button
+            mode="contained"
+            style={{ marginTop: 10 }}
+            onPress={() => updateProfile()}
+          >
+            {!loading ? "Save Change" : "Saving"}
+          </Button>
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>

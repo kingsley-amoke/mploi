@@ -6,12 +6,14 @@ import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 
 export default function AboutUser({ user }: { user: DocumentData | null }) {
-  const  colorScheme  = useColorScheme();
+  const colorScheme = useColorScheme();
 
   const borderColor =
     colorScheme === "dark"
       ? Colors.dark.onSurfaceDisabled
       : Colors.light.onSurfaceDisabled;
+
+  const uniqueSkills: string[] = [...new Set(user?.skills)];
 
   return (
     <View
@@ -35,9 +37,9 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
       />
       <View>
         <Text style={{ fontSize: 20 }}>Skills</Text>
-        {user?.skills.length > 0 && (
+        {uniqueSkills.length > 0 && (
           <View>
-            {user?.skills?.map((skill: string, index:number) => (
+            {uniqueSkills?.map((skill: string, index: number) => (
               <Text key={index}>{skill}</Text>
             ))}
           </View>

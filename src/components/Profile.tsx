@@ -15,7 +15,12 @@ import UserPhotos from "./UserPhotos";
 import AboutUser from "./AboutUser";
 import BookService from "./BookService";
 import { useRouter } from "expo-router";
-import { useImageStore, useReviewsStore, useUserStore } from "../state/store";
+import {
+  useChatStore,
+  useImageStore,
+  useReviewsStore,
+  useUserStore,
+} from "../state/store";
 import Reviews from "./Reviews";
 import { averageRating } from "../utils/data";
 
@@ -27,6 +32,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
   const { updateImage } = useImageStore();
   const { reviews } = useReviewsStore();
   const { user: loggedUser } = useUserStore();
+  const { chats } = useChatStore();
 
   const [value, setValue] = useState("about");
 
@@ -39,6 +45,10 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
 
   const userReviews = reviews.filter((review) => review.productID === user._id);
 
+  const engagements = chats.filter(
+    (c) => c.serviceProvider._id === user._id || c.client._id === user._id
+  ).length;
+
   //view image fullscreen
 
   const handleViewImage = () => {
@@ -50,7 +60,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
     <SafeAreaView style={{ margin: 10 }}>
       <View style={{ flexDirection: "row", gap: 20 }}>
         <TouchableOpacity onPress={() => handleViewImage()}>
-          <Avatar.Image size={60} source={{ uri: user?.image }} />
+          <Avatar.Image size={40} source={{ uri: user?.image }} />
         </TouchableOpacity>
         <View>
           <View>
@@ -108,8 +118,8 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           }}
         >
           <View style={{ alignItems: "center" }}>
-            <Text>Total Jobs</Text>
-            <Text>1</Text>
+            <Text>Engagements</Text>
+            <Text>{engagements}</Text>
           </View>
           <View style={{ borderRightColor: borderColor, borderWidth: 1 }} />
           <View style={{ alignItems: "center" }}>

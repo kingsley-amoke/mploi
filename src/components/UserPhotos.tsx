@@ -142,7 +142,7 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
           gap: 20,
         }}
       >
-        {images.map((image) => (
+        {images?.map((image) => (
           <View key={image} style={{ position: "relative" }}>
             <PhotosCard item={image} />
             <View style={{ position: "absolute", right: 5 }}>

@@ -38,6 +38,13 @@ const FloatingButton = () => {
               labelTextColor: "white",
               onPress: () => router.push("/service"),
             },
+            {
+              icon: "file-eye-outline",
+              style: { backgroundColor: Colors.light.primary },
+              label: "CV Review",
+              labelTextColor: "white",
+              onPress: () => router.push("/cv"),
+            },
           ]}
           onStateChange={onStateChange}
           onPress={() => {

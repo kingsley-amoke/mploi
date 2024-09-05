@@ -7,11 +7,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import {
-  Card,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import { Card, Text, TextInput } from "react-native-paper";
 
 import ProductsPage from "@/src/components/ProductsPage";
 import { DocumentData } from "firebase/firestore";
@@ -29,11 +25,12 @@ export default function Shop() {
 
   const textColor = colorScheme === "light" ? "#000" : "#fff";
 
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.location.toLowerCase().includes(search.toLowerCase()) ||
+      p.description.toLowerCase().includes(search.toLowerCase())
   );
-
-
 
   const ShopItem = ({ item }: { item: DocumentData }) => {
     return (
@@ -41,7 +38,10 @@ export default function Shop() {
         style={{ width: 150, marginLeft: 10 }}
         onPress={() => router.push(`/products/${item._id}`)}
       >
-        <Card.Cover source={{ uri: item.images[0] || shopAvatar }} style={{ height: 150 }} />
+        <Card.Cover
+          source={{ uri: item.images[0] || shopAvatar }}
+          style={{ height: 150 }}
+        />
         <Card.Content style={{ marginVertical: 5 }}>
           <Text style={{ fontWeight: "bold" }}>
             {item.name.length > 20
@@ -89,28 +89,27 @@ export default function Shop() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {promoted.length > 0 && (
           <>
-          <View style={{ width: "100%", paddingHorizontal: 20 }}>
-            <Text
-              style={{
-                textAlign: "left",
-                fontSize: 18,
-                fontWeight: "700",
-                marginVertical: 10,
-              }}
-            >
-              Best Selling Deals
-            </Text>
-          </View>
-        <FlatList
-        data={promoted}
-        renderItem={(item) => ShopItem(item)}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ marginBottom: 10, height: 200 }}
-        />
-      </>
-
-      )}
+            <View style={{ width: "100%", paddingHorizontal: 20 }}>
+              <Text
+                style={{
+                  textAlign: "left",
+                  fontSize: 18,
+                  fontWeight: "700",
+                  marginVertical: 10,
+                }}
+              >
+                Best Selling Deals
+              </Text>
+            </View>
+            <FlatList
+              data={promoted}
+              renderItem={(item) => ShopItem(item)}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={{ marginBottom: 10, height: 200 }}
+            />
+          </>
+        )}
         {products.length > 0 ? (
           <ProductsPage products={filteredProducts} />
         ) : (

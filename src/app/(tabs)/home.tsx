@@ -1,12 +1,12 @@
-
 import FloatingButton from "@/src/components/FloatingButton";
 import UserCard from "@/src/components/UserCard";
 import {
+  useChatStore,
   useProductsStore,
   useUsersStore,
   useUserStore,
 } from "@/src/state/store";
-import { CustomToast, formatPrice, shopAvatar, transactions } from "@/src/utils/data";
+import { CustomToast, formatPrice, shopAvatar } from "@/src/utils/data";
 import { Link, useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import React, { useEffect } from "react";
@@ -15,23 +15,24 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  Text,
-  ActivityIndicator,
-  Card,
-  Button,
-} from "react-native-paper";
-import Toast from "react-native-root-toast";
+import { Carousel } from "react-native-flash-carousel";
+import { Text, ActivityIndicator, Card, Button } from "react-native-paper";
 
 const Home = () => {
   const { users } = useUsersStore();
   const { user } = useUserStore();
+  const { chats } = useChatStore();
   const { promoted } = useProductsStore();
   const router = useRouter();
+
+  const serviceProviderChats = chats.map((c) => c.serviceProvider._id);
+
+  const topUsers = users.filter((usr) => {
+    return serviceProviderChats.indexOf(usr._id) > 0;
+  });
 
   const ShopItem = ({ item }: { item: DocumentData }) => {
     return (
@@ -39,26 +40,27 @@ const Home = () => {
         style={{ width: 150, marginLeft: 10 }}
         onPress={() => router.push(`/products/${item._id}`)}
       >
-        <Card.Cover source={{ uri: item.images[0] || shopAvatar }} style={{ height: 150 }} />
+        <Card.Cover
+          source={{ uri: item?.images[0] || shopAvatar }}
+          style={{ height: 150 }}
+        />
         <Card.Content style={{ marginVertical: 5 }}>
           <Text style={{ fontWeight: "bold" }}>
-            {item.name.length > 20
-              ? item.name.substring(0, 14) + "..."
-              : item.name}
+            {item?.name.length > 20
+              ? item?.name.substring(0, 14) + "..."
+              : item?.name}
           </Text>
-          <Text style={{ fontSize: 10 }}>{formatPrice(item.price)}</Text>
+          <Text style={{ fontSize: 10 }}>{formatPrice(item?.price)}</Text>
         </Card.Content>
       </Card>
     );
   };
-
 
   useEffect(() => {
     if (user.suspended) {
       router.replace("/suspended");
     }
   }, [user]);
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,6 +88,7 @@ const Home = () => {
             />
           </>
         )}
+        <Carousel data={promoted} renderItem={({ item }) => ShopItem(item)} />
 
         <View>
           <Text style={{ textAlign: "left", fontSize: 20, fontWeight: "700" }}>
@@ -94,7 +97,7 @@ const Home = () => {
         </View>
 
         <View>
-          {users.length > 0 ? (
+          {topUsers.length > 0 ? (
             <View
               style={{
                 width: "100%",
@@ -105,7 +108,7 @@ const Home = () => {
                 gap: 10,
               }}
             >
-              {users.map((user) => (
+              {topUsers.map((user) => (
                 <Link
                   href={{
                     pathname: `/profile/[id]`,
@@ -123,14 +126,13 @@ const Home = () => {
           ) : (
             <ActivityIndicator
               animating={true}
-              color='teal'
+              color="teal"
               style={{ marginVertical: 200 }}
             />
           )}
         </View>
-
       </ScrollView>
-        <FloatingButton />
+      <FloatingButton />
     </SafeAreaView>
   );
 };

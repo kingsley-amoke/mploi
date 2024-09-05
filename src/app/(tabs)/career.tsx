@@ -13,36 +13,7 @@ const career = () => {
   const { jobs } = useJobsStore();
   const [loading, setLoading] = useState(false);
 
-  // const categoryName = categories.map((c) => {
-  //   return c.name;
-  // });
-
-  // console.log(categoryName);
-
-  // const addCategories = () => {
-  //   setLoading(true);
-  //   categoryName.forEach((name) => {
-  //     const id = `${Date.now()}`;
-
-  //     const data = {
-  //       _id: id,
-  //       name,
-  //     };
-
-  //     const serviceRef = doc(firestoreDB, "services", data._id);
-
-  //     setDoc(serviceRef, data);
-  //   });
-
-  //   setLoading(false);
-  // };
-
   return (
-    // <View>
-    //   <Button mode="outlined" disabled={loading} onPress={addCategories}>
-    //     {loading ? "Adding categories" : "Add categories"}
-    //   </Button>
-    // </View>
     <ScrollView style={{ flex: 1, width: "100%" }}>
       {jobs ? (
         jobs.map((job) => <JobRenderItem item={job} key={job._id} />)
