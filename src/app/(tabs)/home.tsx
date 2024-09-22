@@ -35,6 +35,7 @@ const Home = () => {
   });
 
   const ShopItem = ({ item }: { item: DocumentData }) => {
+    console.log(item?.price);
     return (
       <Card
         style={{ width: 150, marginLeft: 10 }}
@@ -88,7 +89,14 @@ const Home = () => {
             />
           </>
         )}
-        <Carousel data={promoted} renderItem={({ item }) => ShopItem(item)} />
+        {/* <Carousel
+          data={promoted}
+          autoScroll
+          horizontal
+          autoScrollInterval={5}
+          autoScrollPause={5}
+          renderItem={({ item }) => ShopItem(item)}
+        /> */}
 
         <View>
           <Text style={{ textAlign: "left", fontSize: 20, fontWeight: "700" }}>
