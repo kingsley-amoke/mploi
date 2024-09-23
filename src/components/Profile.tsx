@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/src/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { DocumentData } from "firebase/firestore";
+import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import UserPhotos from "./UserPhotos";
 import AboutUser from "./AboutUser";
 import BookService from "./BookService";
@@ -23,6 +23,7 @@ import {
 } from "../state/store";
 import Reviews from "./Reviews";
 import { averageRating } from "../utils/data";
+import { firestoreDB } from "../utils/firebaseConfig";
 
 const Profile = ({ user }: { user: DocumentData | null }) => {
   if (!user) return;
@@ -55,6 +56,8 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
     updateImage(user?.image);
     router.push(`/image`);
   };
+
+
 
   return (
     <SafeAreaView style={{ margin: 10 }}>
@@ -102,7 +105,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           }}
         />
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Text style={{ fontSize: 12 }}>{user?.skills[0]}</Text>
+          <Text style={{ fontSize: 12 }}>{user?.skills ? user?.skills[0] : 'Client'}</Text>
         </View>
       </View>
       <ScrollView showsHorizontalScrollIndicator={false}>

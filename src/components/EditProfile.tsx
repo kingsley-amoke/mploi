@@ -4,26 +4,22 @@ import {
   ScrollView,
   Image,
   Platform,
-  PermissionsAndroid,
   KeyboardAvoidingView,
   useColorScheme,
 } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as ImagePicker from "expo-image-picker";
-import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import { MaterialIcons as Icon, MaterialIcons } from "@expo/vector-icons";
+// import * as ImagePicker from "expo-image-picker";
+// import SectionedMultiSelect from "react-native-sectioned-multi-select";
+// import { MaterialIcons as Icon, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { fetchAllBanks, validateAccountNumber } from "@/src/utils/paystack";
-import { serviceTypes } from "@/src/utils/types";
 import { useCategoryStore, useUserStore } from "@/src/state/store";
-import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 import { CustomToast, getBlobFroUri } from "../utils/data";
 import { firestoreDB, storage } from "../utils/firebaseConfig";
 import { ref } from "firebase/storage";
-import { getDownloadURL, uploadBytes } from "firebase/storage";
+// import { getDownloadURL, uploadBytes } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getLoggedUser } from "../utils/userActions";
 
@@ -40,54 +36,54 @@ const EditProfile = () => {
       : Colors.light.onSurfaceDisabled;
 
   const { user, storeUser } = useUserStore();
-  const { categories } = useCategoryStore();
+  // const { categories } = useCategoryStore();
 
-  const [selectedItems, setSelectedItems] = useState([""]);
+  // const [selectedItems, setSelectedItems] = useState([""]);
   const [loading, setLoading] = useState(false);
 
-  const [profileImage, setProfileImage] = useState("");
+  // const [profileImage, setProfileImage] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
-  const [bio, setBio] = useState("");
+  // const [bio, setBio] = useState("");
 
-  const handleProfileImageSelection = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
+  // const handleProfileImageSelection = async () => {
+  //   let result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
+  //     allowsEditing: true,
+  //     aspect: [4, 4],
+  //     quality: 1,
+  //   });
 
-    if (!result.canceled) {
-      const imageBlob = await getBlobFroUri(result.assets[0].uri);
+  //   if (!result.canceled) {
+  //     const imageBlob = await getBlobFroUri(result.assets[0].uri);
 
-      if (!imageBlob) return;
+  //     if (!imageBlob) return;
 
-      const filename = result.assets[0].uri.split("/").pop();
+  //     const filename = result.assets[0].uri.split("/").pop();
 
-      const storageRef = ref(storage, `images/${filename}`);
+  //     const storageRef = ref(storage, `images/${filename}`);
 
-      uploadBytes(storageRef, imageBlob)
-        .then((snapshot) => {
-          getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then(
-            (url) => {
-              setProfileImage(url);
-            }
-          );
-        })
-        .catch((error) => {
-          console.log("Upload failed!", error);
-          setLoading(false);
-        });
-    }
-  };
+  //     uploadBytes(storageRef, imageBlob)
+  //       .then((snapshot) => {
+  //         getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then(
+  //           (url) => {
+  //             setProfileImage(url);
+  //           }
+  //         );
+  //       })
+  //       .catch((error) => {
+  //         console.log("Upload failed!", error);
+  //         setLoading(false);
+  //       });
+  //   }
+  // };
 
   const updateProfile = async () => {
-    selectedItems.shift();
-    const updatedSkills = [...selectedItems];
+    // selectedItems.shift();
+    // const updatedSkills = [...selectedItems];
 
-    const uniqueSkills = [...new Set([...updatedSkills, ...user?.skills])];
+    // const uniqueSkills = [...new Set([...updatedSkills, ...user?.skills])];
 
     setLoading(true);
     const loggedUser = await getLoggedUser();
@@ -98,9 +94,9 @@ const EditProfile = () => {
       firstName: firstName !== "" ? firstName : user?.firstName,
       lastName: lastName !== "" ? lastName : user?.lastName,
       phone: phone !== "" ? phone : user?.phone,
-      image: profileImage !== "" ? profileImage : user?.image,
-      bio: bio !== "" ? bio : user?.bio,
-      skills: uniqueSkills,
+      // image: profileImage !== "" ? profileImage : user?.image,
+      // bio: bio !== "" ? bio : user?.bio,
+      // skills: uniqueSkills,
     };
 
     updateDoc(userRef, data).then(async () => {
@@ -130,7 +126,7 @@ const EditProfile = () => {
           style={{ marginBottom: 10 }}
           showsVerticalScrollIndicator={false}
         >
-          <View
+          {/* <View
             style={{
               alignItems: "center",
             }}
@@ -162,7 +158,7 @@ const EditProfile = () => {
                 />
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View>
             <Text>Please update your profile to continue!</Text>
           </View>
@@ -201,23 +197,6 @@ const EditProfile = () => {
                 editable={true}
               />
             </View>
-
-            <View
-              style={{
-                flexDirection: "column",
-                marginBottom: 6,
-              }}
-            >
-              <TextInput
-                mode="outlined"
-                label="Bio"
-                multiline
-                numberOfLines={5}
-                textAlignVertical="top"
-                onChangeText={(value) => setBio(value)}
-                editable={true}
-              />
-            </View>
             <View
               style={{
                 flexDirection: "column",
@@ -230,35 +209,6 @@ const EditProfile = () => {
                 placeholder={user?.phone}
                 onChangeText={(value) => setPhone(value)}
                 editable={true}
-              />
-            </View>
-          </View>
-
-          <Text
-            style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
-          >
-            Others
-          </Text>
-          <View>
-            <View
-              style={{
-                flexDirection: "column",
-                marginBottom: 6,
-                borderColor: borderColor,
-                borderWidth: 1,
-                borderRadius: 10,
-              }}
-            >
-              <SectionedMultiSelect
-                items={categories}
-                IconRenderer={Icon}
-                uniqueKey="name"
-                onSelectedItemsChange={setSelectedItems}
-                selectedItems={selectedItems}
-                selectText="Select Skills"
-                subKey="subcategories"
-                selectChildren={true}
-                colors={{ selectToggleTextColor: iconColor }}
               />
             </View>
           </View>

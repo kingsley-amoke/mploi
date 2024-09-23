@@ -17,7 +17,7 @@ const Disclaimer = () => {
       2. No other activities which are not in line with the provisions of MyPlug through our app shall be tolerated. 
       </Text>
       <Text>
-      MyPlug Africa Initiative shall not be responsible for whatever purpose users perform with the app or for whatever transaction users decides to perform or whatever arrangements users might have outside the features provided by MyPlug APP.
+      MyPlug shall not be responsible for whatever purpose users perform with the app or for whatever transaction users decides to perform or whatever arrangements users might have outside the features provided by MyPlug APP.
       </Text>
       </ScrollView>
   )

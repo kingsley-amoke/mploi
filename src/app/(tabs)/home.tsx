@@ -35,7 +35,6 @@ const Home = () => {
   });
 
   const ShopItem = ({ item }: { item: DocumentData }) => {
-    console.log(item?.price);
     return (
       <Card
         style={{ width: 150, marginLeft: 10 }}

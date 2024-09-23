@@ -128,7 +128,7 @@ const Signup = () => {
 
           storeUser(docSnap.data()!);
 
-          router.push("/profile/edit");
+          router.push("/home");
           CustomToast("Please update profile to continue");
           setLoading(false);
           AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
@@ -136,7 +136,7 @@ const Signup = () => {
       }
     );
   };
-  console.log(location);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={{ flex: 1, marginHorizontal: 22 }}>

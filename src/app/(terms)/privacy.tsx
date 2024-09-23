@@ -21,7 +21,7 @@ const privacy = () => {
       showsVerticalScrollIndicator={false}
     >
       <Text style={{ marginVertical: 10 }}>
-        MyPlug Africa Initiative and companies are totally committed to
+        MyPlug companies are totally committed to
         protecting your privacy.
       </Text>
       <Text style={{ marginVertical: 10 }}>
@@ -49,7 +49,7 @@ const privacy = () => {
 
       <Text style={{ marginVertical: 10 }}>
         To exercise any of the above mentioned rights, you can reach out to
-        MyPlug Africa Initiative through our phone lines............., Our
+        MyPlug through our phone lines............., Our
         email................ When you contact us, we may demand to specific
         information from you to confirm your identity.
       </Text>

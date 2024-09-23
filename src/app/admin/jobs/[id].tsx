@@ -333,7 +333,7 @@ const JobPage = () => {
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              My Plug Global Resources
+              MyPlug
             </Text>
           </View>
           <Divider bold horizontalInset style={{ marginBottom: 10 }} />

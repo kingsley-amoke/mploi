@@ -17,6 +17,7 @@ export interface UserStore {
   decreaseUserBalance: (amount: number) => void;
   updateUserImage: (image: string) => void;
   removeUserImage: (image: string) => void;
+  updateUser: (field:string, value:string) => void;
 }
 
 export interface UsersStore {
@@ -161,6 +162,15 @@ export const useUserStore = create<UserStore>((set) => ({
         user: state.user,
       };
     });
+  },
+  updateUser: (field, value) => {
+    set((state) => {
+      
+      state.user[field] = value;
+      return {
+        user: state.user
+      }
+    })
   },
 }));
 

@@ -11,7 +11,7 @@ const Terms = () => {
     >
       <Text style={{ marginVertical: 10 }}>
         The terms and conditions are the operational guidelines on the usage of
-        MyPlug APP written out by the MyPlug Africa Initiative's legal team. The
+        MyPlug APP written out by the MyPlug's legal team. The
         content and provisions of these terms and conditions are subject to
         periodic amendments or changes according to the realities of time.{" "}
       </Text>

@@ -1,7 +1,8 @@
+import { Icon } from "@expo/vector-icons/build/createIconSet";
 import { ReactNode, useState } from "react"
 import { Button, Dialog, Modal, Portal } from "react-native-paper"
 
-export const CustomModal = ({triggerText, mode, content, visible, setVisible, icon }: {triggerText: string, icon?:string, mode?:"outlined" | "contained", content:ReactNode, visible:boolean, setVisible: React.Dispatch<React.SetStateAction<boolean>>}) => {
+export const CustomModal = ({triggerText, mode, content, visible, setVisible, icon }: {triggerText: string | any, icon?:string, mode?:"outlined" | "contained", content:ReactNode, visible:boolean, setVisible: React.Dispatch<React.SetStateAction<boolean>>}) => {
 
 
    
