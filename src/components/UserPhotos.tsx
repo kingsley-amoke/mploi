@@ -17,28 +17,21 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { doc, DocumentData, updateDoc } from "firebase/firestore";
+import { doc, DocumentData, getDoc, updateDoc } from "firebase/firestore";
 import { extractImagePath, getBlobFroUri } from "../utils/data";
 import { PhotosCard } from "./PhotosCard";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useUserStore } from "../state/store";
 
 export default function UserPhotos({ user }: { user: DocumentData | null }) {
-  const { user: loggedUser, updateUserImage, removeUserImage } = useUserStore();
+  const { user: loggedUser, storeUser } = useUserStore();
 
   const colorScheme = useColorScheme();
 
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
-  const [images, setImages] = useState<string[]>([""]);
   const [loading, setLoading] = useState(false);
-
-  const photos =
-    loggedUser._id === user?._id ? loggedUser.photos : user?.photos;
-
-  const loadImages = () => {
-    setImages(photos);
-  };
+  const [photos, setPhotos] = useState(user?.photos || []);
 
   const selectImage = async (useLibrary: boolean) => {
     let result;
@@ -59,7 +52,7 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
 
     if (!result.canceled) {
       uploadImage(result.assets[0].uri);
-      setImages([...images, result.assets[0].uri]);
+      // setImages([...images, result.assets[0].uri]);
     }
   };
 
@@ -76,13 +69,19 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
     uploadBytes(storageRef, imageBlob)
       .then((snapshot) => {
         getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
-          updateUserImage(url);
+          photos.push(url);
+          // updateUserImage(url);
 
           const userRef = doc(firestoreDB, "users", loggedUser?._id);
 
           // updates user images array
           updateDoc(userRef, {
             photos: [...photos, url],
+          }).then(async () => {
+            const user = await getDoc(userRef);
+
+            storeUser(user.data()!);
+            setLoading(false);
           });
         });
       })
@@ -90,27 +89,27 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
         console.log("Upload failed!", error);
         setLoading(false);
       });
-
-    setLoading(false);
   };
 
   const handleDeleteFile = (image: string) => {
-    const index = images.indexOf(image);
+    const index = photos.indexOf(image);
 
     if (index > -1) {
-      const updatedArray = images
+      const updatedArray = photos
         .slice(0, index)
-        .concat(images.slice(index + 1));
+        .concat(photos.slice(index + 1));
 
-      setImages(updatedArray);
-
-      removeUserImage(image);
+      setPhotos(updatedArray);
 
       const userRef = doc(firestoreDB, "users", loggedUser?._id);
 
       // updates user images array
       updateDoc(userRef, {
         photos: photos.filter((img: string) => img !== image),
+      }).then(async () => {
+        const user = await getDoc(userRef);
+
+        storeUser(user.data()!);
       });
 
       //delete from storage
@@ -125,9 +124,9 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
   // const url =
   // "https://firebasestorage.googleapis.com/v0/b/mploi247.appspot.com/o/images%2F1724512496224`.jpg?alt=media&token=18367db0-dd5a-4d14-bb89-844f2c67ff11";
 
-  useEffect(() => {
-    loadImages();
-  }, photos);
+  // useEffect(() => {
+  //   loadImages();
+  // }, photos);
 
   return (
     <View style={{ marginVertical: 10, width: "100%" }}>
@@ -142,16 +141,16 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
           gap: 20,
         }}
       >
-        {images?.map((image) => (
-          <View key={image} style={{ position: "relative" }}>
-            <PhotosCard item={image} />
+        {photos?.map((photo: string) => (
+          <View key={photo} style={{ position: "relative" }}>
+            <PhotosCard item={photo} />
             <View style={{ position: "absolute", right: 5 }}>
               {user?._id === loggedUser?._id && (
                 <MaterialCommunityIcons
                   name="cancel"
                   size={20}
                   color="red"
-                  onPress={() => handleDeleteFile(image)}
+                  onPress={() => handleDeleteFile(photo)}
                 />
               )}
             </View>
@@ -168,8 +167,8 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
               justifyContent: "center",
             }}
           >
-            <Ionicons
-              name="add"
+            <MaterialCommunityIcons
+              name={loading ? "loading" : "plus"}
               size={25}
               color={iconColor}
               style={{ margin: 0 }}

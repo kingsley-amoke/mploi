@@ -5,13 +5,7 @@ import { Card, Text } from "react-native-paper";
 import { useImageStore } from "../state/store";
 import { shopAvatar } from "../utils/data";
 
-export const PhotosCard = ({
-  item,
-  preview,
-}: {
-  item: string;
-  preview?: string;
-}) => {
+export const PhotosCard = ({ item }: { item: string }) => {
   const router = useRouter();
   const { updateImage } = useImageStore();
 

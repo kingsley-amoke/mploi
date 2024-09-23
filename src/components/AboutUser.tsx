@@ -41,7 +41,7 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
       ? Colors.dark.onSurfaceDisabled
       : Colors.light.onSurfaceDisabled;
 
-  const uniqueSkills: string[] = [...new Set(user?.skills)];
+  // const uniqueSkills: string[] = [...new Set(user?.skills)];
 
   //update bio
 
@@ -182,9 +182,9 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
             />
           )}
         </View>
-        {uniqueSkills.length > 0 && (
+        {user?.skills?.length > 0 && (
           <View>
-            {uniqueSkills?.map((skill: string, index: number) => (
+            {user?.skills?.map((skill: string, index: number) => (
               <Text key={index}>{skill}</Text>
             ))}
           </View>
