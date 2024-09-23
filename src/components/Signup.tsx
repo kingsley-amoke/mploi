@@ -8,12 +8,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "expo-router";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import * as Location from "expo-location";
+
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useLocationStore, useUserStore } from "@/src/state/store";
-import { DBUser } from "../utils/types";
 import { firestoreDB } from "../utils/firebaseConfig";
 import { useForm } from "react-hook-form";
 import ValidatedInput from "./ValidatedInput";
@@ -76,24 +75,6 @@ const Signup = () => {
     }
 
     setLoading(true);
-
-    // let { status } = await Location.requestForegroundPermissionsAsync();
-
-    // if (status !== "granted") {
-    //   setErrorMsg("Permission to access location was denied");
-    //   return;
-    // }
-
-    // console.log(status);
-
-    // let location = await Location.getCurrentPositionAsync({});
-
-    // const coords = {
-    //   latitude: location.coords.latitude,
-    //   longitude: location.coords.longitude,
-    // };
-
-    // let regionName = await Location.reverseGeocodeAsync(coords);
 
     createUserWithEmailAndPassword(auth, data.email, data.password).then(
       async ({ user }) => {

@@ -19,7 +19,7 @@ import { useCategoryStore, useUserStore } from "../state/store";
 
 export default function AboutUser({ user }: { user: DocumentData | null }) {
   const colorScheme = useColorScheme();
-  const { storeUser } = useUserStore();
+  const { user: loggedUser, storeUser } = useUserStore();
   const { categories } = useCategoryStore();
 
   const [selectedItems, setSelectedItems] = useState(user?.skills || "");
@@ -113,11 +113,13 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
             </Dialog>
           </Portal>
 
-          <MaterialCommunityIcons
-            name="pencil"
-            size={20}
-            onPress={showBioModal}
-          />
+          {loggedUser._id === user?._id && (
+            <MaterialCommunityIcons
+              name="pencil"
+              size={20}
+              onPress={showBioModal}
+            />
+          )}
         </View>
         <Text>{user?.bio}</Text>
       </View>
@@ -172,11 +174,13 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
             </Dialog>
           </Portal>
 
-          <MaterialCommunityIcons
-            name="pencil"
-            size={20}
-            onPress={showSkillsModal}
-          />
+          {loggedUser._id === user?._id && (
+            <MaterialCommunityIcons
+              name="pencil"
+              size={20}
+              onPress={showSkillsModal}
+            />
+          )}
         </View>
         {uniqueSkills.length > 0 && (
           <View>

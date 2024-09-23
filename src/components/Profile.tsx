@@ -9,8 +9,8 @@ import React, { useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/src/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
-import { doc, DocumentData, updateDoc } from "firebase/firestore";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { doc, DocumentData, getDoc, updateDoc } from "firebase/firestore";
 import UserPhotos from "./UserPhotos";
 import AboutUser from "./AboutUser";
 import BookService from "./BookService";
@@ -23,7 +23,11 @@ import {
 } from "../state/store";
 import Reviews from "./Reviews";
 import { averageRating } from "../utils/data";
-import { firestoreDB } from "../utils/firebaseConfig";
+import { firestoreDB, storage } from "../utils/firebaseConfig";
+import * as ImagePicker from "expo-image-picker";
+import { ref } from "firebase/storage";
+import { getDownloadURL, uploadBytes } from "firebase/storage";
+import { getBlobFroUri } from "../utils/data";
 
 const Profile = ({ user }: { user: DocumentData | null }) => {
   if (!user) return;
@@ -32,10 +36,13 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
   const colorScheme = useColorScheme();
   const { updateImage } = useImageStore();
   const { reviews } = useReviewsStore();
-  const { user: loggedUser } = useUserStore();
+  const { user: loggedUser, storeUser } = useUserStore();
   const { chats } = useChatStore();
 
   const [value, setValue] = useState("about");
+  const [loading, setLoading] = useState(false);
+
+  const [profileImage, setProfileImage] = useState("");
 
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
@@ -57,14 +64,72 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
     router.push(`/image`);
   };
 
+  //upload image
 
+  const handleProfileImageSelection = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const imageBlob = await getBlobFroUri(result.assets[0].uri);
+
+      if (!imageBlob) return;
+
+      const filename = result.assets[0].uri.split("/").pop();
+
+      const storageRef = ref(storage, `images/${filename}`);
+      const userRef = doc(firestoreDB, "users", user?._id.toString()!);
+      setLoading(true);
+
+      uploadBytes(storageRef, imageBlob)
+        .then((snapshot) => {
+          getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then(
+            (url) => {
+              setProfileImage(url);
+              updateDoc(userRef, { image: url }).then(async () => {
+                const user = await getDoc(userRef);
+
+                storeUser(user.data()!);
+                setLoading(false);
+              });
+            }
+          );
+        })
+        .catch((error) => {
+          console.log("Upload failed!", error);
+          setLoading(false);
+        });
+    }
+  };
 
   return (
     <SafeAreaView style={{ margin: 10 }}>
       <View style={{ flexDirection: "row", gap: 20 }}>
-        <TouchableOpacity onPress={() => handleViewImage()}>
-          <Avatar.Image size={40} source={{ uri: user?.image }} />
+        <TouchableOpacity
+          onPress={() => handleViewImage()}
+          style={{ position: "relative" }}
+        >
+          <Avatar.Image
+            size={60}
+            source={{ uri: loading ? profileImage : user?.image }}
+          />
         </TouchableOpacity>
+        {loggedUser._id === user._id && (
+          <MaterialCommunityIcons
+            name="upload"
+            size={30}
+            style={{
+              position: "absolute",
+              bottom: -4,
+              color: Colors.light.primary,
+            }}
+            onPress={handleProfileImageSelection}
+          />
+        )}
         <View>
           <View>
             {user?.status?.isVerified ? (
@@ -93,7 +158,11 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           </View>
           <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
             <Ionicons name="location" color={iconColor} />
-            <Text>{user?.location?.subregion}</Text>
+            <Text>
+              {user?.location?.regionName?.region +
+                ", " +
+                user?.location?.regionName?.country}
+            </Text>
           </View>
         </View>
         <View
@@ -105,7 +174,9 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           }}
         />
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Text style={{ fontSize: 12 }}>{user?.skills ? user?.skills[0] : 'Client'}</Text>
+          <Text style={{ fontSize: 12 }}>
+            {user?.skills ? user?.skills[0] : "Client"}
+          </Text>
         </View>
       </View>
       <ScrollView showsHorizontalScrollIndicator={false}>
