@@ -124,7 +124,7 @@ const Home = () => {
                   key={user._id}
                   asChild
                 >
-                  <TouchableOpacity style={{ width: 150 }}>
+                  <TouchableOpacity style={{ width: "48%" }}>
                     <UserCard user={user} />
                   </TouchableOpacity>
                 </Link>

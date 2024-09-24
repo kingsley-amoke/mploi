@@ -24,6 +24,8 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
 
   const [selectedItems, setSelectedItems] = useState(user?.skills || "");
 
+  const [loading, setLoading] = useState(false);
+
   const [bio, setBio] = useState("");
   const [bioVisible, setBioVisible] = useState(false);
   const [skillsVisible, setSkillsVisible] = useState(false);
@@ -46,12 +48,14 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
   //update bio
 
   const updateBio = () => {
+    setLoading(true);
     const userRef = doc(firestoreDB, "users", user?._id.toString()!);
 
     updateDoc(userRef, { bio: bio }).then(async () => {
       const user = await getDoc(userRef);
 
       storeUser(user.data()!);
+      setLoading(false);
       setBioVisible(false);
     });
   };
@@ -59,6 +63,7 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
   //update skills
 
   const updateSkills = () => {
+    setLoading(true);
     selectedItems.shift();
     const userRef = doc(firestoreDB, "users", user?._id.toString()!);
 
@@ -66,6 +71,7 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
       const user = await getDoc(userRef);
 
       storeUser(user.data()!);
+      setLoading(false);
       setSkillsVisible(false);
     });
   };
@@ -101,6 +107,8 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
             >
               <TextInput
                 label="Bio"
+                multiline
+                numberOfLines={5}
                 style={{
                   width: "90%",
                   marginBottom: 20,
@@ -109,7 +117,9 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
                 onChangeText={(text) => setBio(text)}
               />
 
-              <Button onPress={() => updateBio()}>Save</Button>
+              <Button onPress={() => updateBio()}>
+                {loading ? "Saving..." : "Save"}
+              </Button>
             </Dialog>
           </Portal>
 
@@ -170,7 +180,9 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
                   colors={{ selectToggleTextColor: iconColor }}
                 />
               </View>
-              <Button onPress={() => updateSkills()}>Save</Button>
+              <Button onPress={() => updateSkills()}>
+                {loading ? "Saving..." : "Save"}
+              </Button>
             </Dialog>
           </Portal>
 
