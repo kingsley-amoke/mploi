@@ -229,8 +229,8 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
             <AboutUser user={user} />
           </View>
         ) : value === "photos" ? (
-          <View>
-            <UserPhotos user={user} photos={user?.photos || []} />
+          <View style={{ flex: 1 }}>
+            <UserPhotos user={user} />
           </View>
         ) : (
           <Reviews itemID={user._id} item="user" />

@@ -287,7 +287,7 @@ const add = () => {
         />
         <TextInput
           label="Location"
-          defaultValue={userLocation[0].regionName.city!}
+          defaultValue={userLocation[0].regionName.region!}
           mode="outlined"
           onChangeText={(value) => setLocation(value)}
         />

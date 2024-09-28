@@ -1,4 +1,4 @@
-import { StyleSheet, Platform, View } from "react-native";
+import { StyleSheet, Platform, View, TouchableOpacity } from "react-native";
 import { Tabs, useRouter } from "expo-router";
 import {
   Feather,
@@ -51,7 +51,7 @@ const TabLayout = () => {
                 paddingTop: 20,
               }}
             >
-              <View>
+              <TouchableOpacity onPress={() => router.push("/profile/edit")}>
                 <Text style={{ fontWeight: "bold", marginLeft: 20 }}>
                   Hi {user.lastName}
                 </Text>
@@ -59,7 +59,7 @@ const TabLayout = () => {
                   {" "}
                   <MaterialIcons name="location-pin" /> {location}
                 </Text>
-              </View>
+              </TouchableOpacity>
               <MaterialIcons
                 name="person"
                 size={20}

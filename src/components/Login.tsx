@@ -35,7 +35,6 @@ const Login = () => {
       ? Colors.dark.onSurfaceDisabled
       : Colors.light.onSurfaceDisabled;
 
-
   const { storeUser } = useUserStore();
 
   const [isChecked, setIsChecked] = useState(false);
@@ -133,7 +132,7 @@ const Login = () => {
             value={isChecked}
             onValueChange={setIsChecked}
           />
-          <Text>Remenber Me</Text>
+          <Text>Remember Me</Text>
         </View>
 
         <Button

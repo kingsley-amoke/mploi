@@ -28,7 +28,7 @@ import {
   useTransactionsStore,
   useUsersStore,
 } from "../state/store";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { realtimeDB } from "../utils/firebaseConfig";
 import {
   CustomToast,
@@ -88,8 +88,6 @@ export default function RootLayout() {
 
   const userLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
-
-    console.log(status);
 
     if (status !== "granted") {
       CustomToast("Permission to access location was denied");
@@ -247,7 +245,7 @@ export default function RootLayout() {
                 headerTitleStyle: { fontSize: 14 },
 
                 headerRight: () => (
-                  <Feather
+                  <MaterialCommunityIcons
                     name="home"
                     size={20}
                     color={iconColor}

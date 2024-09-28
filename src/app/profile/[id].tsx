@@ -2,7 +2,7 @@ import Profile from "@/src/components/Profile";
 import { Colors } from "@/src/constants/Colors";
 import { useUsersStore } from "@/src/state/store";
 import { fetchUserById } from "@/src/utils/data";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import React, { useLayoutEffect, useState } from "react";
@@ -11,7 +11,7 @@ import { useColorScheme } from "react-native";
 const UserProfile = () => {
   const { users } = useUsersStore();
   const navigation = useNavigation();
-  const router= useRouter();
+  const router = useRouter();
 
   const { id } = useLocalSearchParams();
 
@@ -19,8 +19,7 @@ const UserProfile = () => {
 
   const colorScheme = useColorScheme();
 
-  const iconColor = colorScheme === 'dark' ? '#fff' : '#000';
-
+  const iconColor = colorScheme === "dark" ? "#fff" : "#000";
 
   useLayoutEffect(() => {
     if (!id) {
@@ -32,16 +31,16 @@ const UserProfile = () => {
       } else {
         navigation.setOptions({
           title: user?.firstName + " " + user?.lastName,
-          headerLeft:null,
+          headerLeft: null,
           headerRight: () => (
-            <MaterialIcons
-            name="home"
-            color={iconColor}
-            size={20}
+            <MaterialCommunityIcons
+              name="home"
+              color={iconColor}
+              size={20}
               style={{ paddingRight: 10 }}
-              onPress={() => router.replace('/home')}
-           />
-          )
+              onPress={() => router.replace("/home")}
+            />
+          ),
         });
         setUser(user);
       }

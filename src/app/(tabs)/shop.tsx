@@ -35,7 +35,7 @@ export default function Shop() {
   const ShopItem = ({ item }: { item: DocumentData }) => {
     return (
       <Card
-        style={{ width: 150, marginLeft: 10 }}
+        style={{ width: 150, marginLeft: 10, marginBottom: 10 }}
         onPress={() => router.push(`/products/${item._id}`)}
       >
         <Card.Cover
