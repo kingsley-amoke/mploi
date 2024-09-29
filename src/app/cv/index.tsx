@@ -1,10 +1,9 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { Button } from "react-native-paper";
 
-import * as DocumentPicker from "expo-document-picker";
 import * as MailComposer from "expo-mail-composer";
 import Plans from "./components/plans";
 
@@ -27,35 +26,54 @@ const index = () => {
   // const imageLink =
   //   "https://firebasestorage.googleapis.com/v0/b/mploi247.appspot.com/o/others%2Freviewcv.jpeg?alt=media&token=bb825d77-d980-49a1-9ad9-4edf4604efd7";
 
-  const firstTierDetails = [
-    "Career Questionnaire",
-    "Uploading Existing CV",
+  const firstTier = {
+    title: "First Tier",
+    description:
+      "A well crafted curricullum vitae that makes you outstanding in a very competitive labour market.",
+    price: 46000,
+    details: [
+      "Career Questionnaire",
+      "Uploading Existing CV",
 
-    "Scrutinizing CV Draft",
+      "Scrutinizing CV Draft",
 
-    "CV",
-  ];
+      "CV",
+    ],
+  };
 
-  const secondTierDetails = [
-    "Personalized Cover Letter",
-    "Career Questionnaire",
-    "Uploading Existing CV",
+  const secondTier = {
+    title: "Second Tier",
+    description:
+      "A well crafted curricullum vitae that makes you outstanding in a very competitive labour market. Required for a more successful job applications, including a personalized cover letter.",
+    price: 66000,
+    details: [
+      "Personalized Cover Letter",
+      "Career Questionnaire",
+      "Uploading Existing CV",
 
-    "Scrutinizing CV Draft",
+      "Scrutinizing CV Draft",
 
-    "Final CV",
-  ];
+      "Final CV",
+    ],
+  };
 
-  const thirdTierDetails = [
-    "Cover Letter",
-    "A LinkedIn Profile",
-    "Career Questionnaire",
-    "Uploading Existing CV",
+  const thirdTier = {
+    title: "Third Tier",
+    description:
+      "A well crafted curricullum vitae that makes you outstanding in a very competitive labour market. An ATS-verified CV, LinkedIn profile and personalized cover letter.",
+    price: 96000,
+    details: [
+      "Cover Letter",
+      "A LinkedIn Profile",
+      "Career Questionnaire",
+      "Uploading Existing CV",
 
-    "Scrutinizing CV Draft",
+      "Scrutinizing CV Draft",
 
-    "Final CV",
-  ];
+      "Final CV",
+    ],
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -108,27 +126,24 @@ const index = () => {
         </View>
         <View style={{ paddingHorizontal: 20 }}>
           <Plans
-            title="First Tier"
-            description="A well crafted curricullum vitae that makes you outstanding in a very
-          competitive labour market."
-            price="46,000"
-            details={firstTierDetails}
+            title={firstTier.title}
+            description={firstTier.description}
+            price={firstTier.price}
+            details={firstTier.details}
           />
           <View style={{ marginVertical: 10 }} />
           <Plans
-            title="Second Tier"
-            description="A well crafted curricullum vitae that makes you outstanding in a very
-          competitive labour market. Required for a more successful job applications, including a personalized cover letter."
-            price="66,000"
-            details={secondTierDetails}
+            title={secondTier.title}
+            description={secondTier.description}
+            price={secondTier.price}
+            details={secondTier.details}
           />
           <View style={{ marginVertical: 10 }} />
           <Plans
-            title="Third Tier"
-            description="A well crafted curricullum vitae that makes you outstanding in a very
-          competitive labour market. An ATS-verified CV, LinkedIn profile and personalized cover letter."
-            price="96,000"
-            details={thirdTierDetails}
+            title={thirdTier.title}
+            description={thirdTier.description}
+            price={thirdTier.price}
+            details={thirdTier.details}
           />
           <View style={{ marginVertical: 10 }} />
         </View>

@@ -201,7 +201,7 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
               borderRadius: 10,
             }}
           >
-            <ProgressBar progress={progress} />
+            <ProgressBar progress={progress} barWidth={100} />
           </View>
         ) : userVideo ? (
           <Video
@@ -231,7 +231,13 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
         <Button
           mode="contained"
           style={{ marginVertical: 10, marginHorizontal: 20, marginTop: 10 }}
-          onPress={pickVideo}
+          onPress={() => {
+            pickVideo();
+            const filename = extractImagePath(userVideo);
+
+            const storageRef = ref(storage, `images/${filename}`);
+            deleteObject(storageRef);
+          }}
         >
           Change Video
         </Button>
@@ -277,7 +283,7 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
                 borderRadius: 10,
               }}
             >
-              <ProgressBar progress={progress} />
+              <ProgressBar progress={progress} barWidth={100} />
             </View>
           ) : (
             <Button
