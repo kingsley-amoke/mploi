@@ -42,6 +42,13 @@ export interface TransactionStore {
   addTransaction: (transaction: DocumentData) => void;
 }
 
+export interface CVStore {
+  cvs: DocumentData[];
+  storeCV: (cvs: DocumentData[]) => void;
+  addCV: (cv: DocumentData) => void;
+  deleteCv: (cv:DocumentData) => void;
+}
+
 export interface JobStore {
   jobs: DocumentData[];
   storeJobs: (jobs: DocumentData[]) => void;
@@ -235,6 +242,37 @@ export const useTransactionsStore = create<TransactionStore>((set) => ({
       };
     });
   },
+}));
+
+export const useCVStore = create<CVStore>((set) => ({
+  cvs: [],
+  storeCV: (cvs) => {
+    set((state) => {
+      state.cvs = cvs;
+
+      return {
+        cvs: state.cvs,
+      };
+    });
+  },
+  addCV: (cv) => {
+    set((state) => {
+      state.cvs.push(cv);
+
+      return {
+        cvs: state.cvs,
+      };
+    });
+  },
+  deleteCv:(cv) => {
+    set((state) => {
+      const updatedCV = state.cvs.filter(item=> item._id != cv._id);
+
+      return {
+        cvs: updatedCV
+      }
+    })
+  }
 }));
 
 export const useJobsStore = create<JobStore>((set) => ({

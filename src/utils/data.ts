@@ -301,6 +301,20 @@ export const getTransactions = async () => {
   return transactions;
 };
 
+//fetch all cvs
+
+export const getCV = async () => {
+  const cvRef = collection(firestoreDB, "resume");
+
+  const cvs: DocumentData[] = [];
+
+  const querySnapshot = await getDocs(cvRef);
+  querySnapshot.forEach((doc) => {
+  cvs.push(doc.data());
+  });
+  return cvs;
+};
+
 //distance between user in km
 
 export const distanceToUser = (

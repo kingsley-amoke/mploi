@@ -1,18 +1,29 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { SegmentedButtons } from 'react-native-paper'
-import UsersPage from './components/UsersPage'
-import CareerPage from './components/CareerPage'
-import ProductsPage from './components/ProductsPage'
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, SegmentedButtons } from "react-native-paper";
+import UsersPage from "./components/UsersPage";
+import CareerPage from "./components/CareerPage";
+import ProductsPage from "./components/ProductsPage";
+import { useRouter } from "expo-router";
 
 const index = () => {
+  const [value, setValue] = useState("users");
 
-    const [value, setValue] = useState("users");
+  const router = useRouter();
 
   return (
     <SafeAreaView style={styles.container}>
-        <SegmentedButtons
+      <View>
+        <Button
+          mode="outlined"
+          style={{ marginVertical: 20 }}
+          onPress={() => router.push("/admin/cv")}
+        >
+          CV Reviews
+        </Button>
+      </View>
+      <SegmentedButtons
         value={value}
         onValueChange={setValue}
         buttons={[
@@ -25,42 +36,31 @@ const index = () => {
             label: "Career Jobs",
           },
           {
-            value: 'shop',
-            label: 'Shop',
-          }
+            value: "shop",
+            label: "Shop",
+          },
         ]}
       />
-         {value === "users" ? (
+      {value === "users" ? (
         <View>
-          
-            <View
-              style={{
-                width: "100%",
-                marginVertical: 20,
-                flexDirection: "row",
-                marginHorizontal: "auto",
-                flexWrap: "wrap",
-                gap: 10,
-              }}
-            >
-                <UsersPage />
-              </View>
+          <View>
+            <UsersPage />
+          </View>
         </View>
-      ) : value === 'career' ? (
+      ) : value === "career" ? (
         <CareerPage />
       ) : (
         <ProductsPage />
-      )
-    }
+      )}
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default index
+export default index;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-      },
-})
+  container: {
+    flex: 1,
+    alignItems: "center",
+  },
+});

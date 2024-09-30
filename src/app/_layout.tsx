@@ -19,6 +19,7 @@ import { useLayoutEffect } from "react";
 import {
   useCategoryStore,
   useChatStore,
+  useCVStore,
   useJobsStore,
   useLocationStore,
   useProductsStore,
@@ -33,6 +34,7 @@ import { realtimeDB } from "../utils/firebaseConfig";
 import {
   CustomToast,
   exitApp,
+  getCV,
   getJobs,
   getProducts,
   getReviews,
@@ -76,6 +78,7 @@ export default function RootLayout() {
   const { storeReviews } = useReviewsStore();
   const { storeTransactions } = useTransactionsStore();
   const { storeLocation } = useLocationStore();
+  const { storeCV } = useCVStore();
 
   const fetchAllUsers = async () => {
     getUsers().then((users) => {
@@ -164,6 +167,11 @@ export default function RootLayout() {
     storeReviews(reviews);
   };
 
+  const fetchCVs = async () => {
+    const cvs = await getCV();
+    storeCV(cvs);
+  };
+
   useLayoutEffect(() => {
     userLocation();
     fetchServices();
@@ -174,6 +182,7 @@ export default function RootLayout() {
     fetchShops();
     fetchProducts();
     fetchReviews();
+    fetchCVs();
   }, []);
 
   return (

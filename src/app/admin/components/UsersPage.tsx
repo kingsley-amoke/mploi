@@ -61,7 +61,7 @@ const UsersPage = () => {
       <>
         <View
           style={{
-            marginHorizontal: 20,
+            width: "95%",
             marginVertical: 10,
             flexDirection: "row",
             justifyContent: "space-between",
@@ -74,7 +74,9 @@ const UsersPage = () => {
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>
                 {item.firstName} {item.lastName}
               </Text>
-              <Text style={{ fontSize: 10 }}>{item.skills[0]}</Text>
+              <Text style={{ fontSize: 10 }}>
+                {user?.skills ? user?.skills[0] : "Client"}
+              </Text>
             </View>
           </View>
 
@@ -129,15 +131,9 @@ const UsersPage = () => {
         <TextInput
           mode="outlined"
           placeholder="Search services"
-          style={{ width: 300, paddingLeft: 20, height: 40 }}
+          style={{ width: "80%", height: 40 }}
           outlineStyle={{ width: 1 }}
           onChangeText={(value) => setSearch(value)}
-        />
-        <MaterialIcons
-          name="search"
-          size={20}
-          color={iconColor}
-          style={{ position: "absolute", left: 35 }}
         />
       </View>
       <FlatList data={filteredUsers} renderItem={UsersRenderItem} />
