@@ -227,7 +227,7 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
           <Text style={{ color: "silver" }}>No video</Text>
         )}
       </View>
-      {user?._id === loggedUser?._id && (
+      {user?._id === loggedUser?._id && userVideo && (
         <Button
           mode="contained"
           style={{ marginVertical: 10, marginHorizontal: 20, marginTop: 10 }}

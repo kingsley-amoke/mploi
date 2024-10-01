@@ -159,25 +159,29 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
             <Ionicons name="location" color={iconColor} />
             <Text>
-              {user?.location?.regionName?.region +
-                ", " +
-                user?.location?.regionName?.country}
+              {user?.location?.region + ", " + user?.location?.country}
             </Text>
           </View>
         </View>
-        <View
+        {/* <View
           style={{
             borderRightColor: borderColor,
             borderWidth: 1,
             height: 30,
             marginTop: 10,
           }}
-        />
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Text style={{ fontSize: 12 }}>
+        /> */}
+        {/* <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          <Text style={{ fontSize: 12, flexWrap: "wrap" }}>
             {user?.skills ? user?.skills[0] : "Client"}
           </Text>
-        </View>
+        </View> */}
       </View>
       <ScrollView showsHorizontalScrollIndicator={false}>
         <View

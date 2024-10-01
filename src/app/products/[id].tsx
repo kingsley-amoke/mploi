@@ -1,16 +1,27 @@
 import {
   FlatList,
   Image,
+  Linking,
   SafeAreaView,
   ScrollView,
+  Share,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
 import { Avatar, Button, Divider, Text, TextInput } from "react-native-paper";
 import React, { useLayoutEffect, useState } from "react";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import {
+  Feather,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
+import {
+  useGlobalSearchParams,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
 import {
   useImageStore,
   useProductsStore,
@@ -18,33 +29,47 @@ import {
   useUsersStore,
   useUserStore,
 } from "@/src/state/store";
-import { doc, DocumentData, setDoc } from "firebase/firestore";
-import { firestoreDB, realtimeDB } from "@/src/utils/firebaseConfig";
-import { ProductTypes, ReviewTypes } from "@/src/utils/types";
-import { averageRating, createChat, formatPrice, shopAvatar } from "@/src/utils/data";
+import {
+  averageRating,
+  createChat,
+  formatPrice,
+  shopAvatar,
+} from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
 import Reviews from "@/src/components/Reviews";
 import { ref } from "firebase/database";
 
 const ProductDetails = () => {
   const { id: productID } = useLocalSearchParams();
+  const url = useGlobalSearchParams();
 
   const navigation = useNavigation();
   const router = useRouter();
 
   const { products } = useProductsStore();
-  const { reviews} = useReviewsStore();
-  const {user: loggedUser} = useUserStore();
-  const {users} = useUsersStore();
-  
+  const { reviews } = useReviewsStore();
+  const { user: loggedUser } = useUserStore();
+  const { users } = useUsersStore();
+
   const { image, updateImage } = useImageStore();
-  
+
   const product = products.find((product) => product._id === productID);
-  const seller = users.find((user) => user._id === product?.sellerID)
+  const seller = users.find((user) => user._id === product?.sellerID);
 
   const productReviews = reviews.filter(
     (review) => review.productID === productID
   );
+
+  const onShare = async () => {
+    console.log(url.id);
+    try {
+      const result = await Share.share({
+        message: `myplug://products/${url.id}`,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const ImageRenderItem = ({ item }: { item: string }) => {
     return (
@@ -72,25 +97,31 @@ const ProductDetails = () => {
   };
 
   const contactSeller = () => {
-
     const id = `${Date.now()}`;
     //create chat
     const item = {
       _id: id,
       client: loggedUser,
       serviceProvider: seller,
-    }
-
-      createChat(item).then(() => {
-        router.push(`/rooms/${item._id}`)
-      });
     };
+
+    createChat(item).then(() => {
+      router.push(`/rooms/${item._id}`);
+    });
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: product?.name.substring(0, 25),
       headerTitleAlign: "left",
-      headerTitleStyle: {fontSize:14}
+      headerRight: () => (
+        <MaterialCommunityIcons
+          name="share-variant-outline"
+          size={20}
+          onPress={onShare}
+        />
+      ),
+      headerTitleStyle: { fontSize: 14 },
     });
     updateImage(product?.images[0]);
   }, []);
@@ -116,14 +147,12 @@ const ProductDetails = () => {
               marginBottom: 30,
             }}
           >
-       
-              <Image
-                source={{ uri: image  || shopAvatar}}
-                width={290}
-                height={290}
-                style={{ borderRadius: 10 }}
-              />
-
+            <Image
+              source={{ uri: image || shopAvatar }}
+              width={290}
+              height={290}
+              style={{ borderRadius: 10 }}
+            />
           </View>
           {product?.images.length > 1 && (
             <FlatList
@@ -179,7 +208,7 @@ const ProductDetails = () => {
         </View>
       </View>
 
-      <Reviews itemID={productID} item="product"/>
+      <Reviews itemID={productID} item="product" />
     </ScrollView>
   );
 };

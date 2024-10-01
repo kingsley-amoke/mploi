@@ -11,7 +11,11 @@ import { Button, Text, TextInput } from "react-native-paper";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useCategoryStore, useUserStore } from "@/src/state/store";
+import {
+  useCategoryStore,
+  useLocationStore,
+  useUserStore,
+} from "@/src/state/store";
 import { Colors } from "../constants/Colors";
 import { CustomToast, getBlobFroUri } from "../utils/data";
 import { firestoreDB, storage } from "../utils/firebaseConfig";
@@ -22,6 +26,7 @@ const EditProfile = () => {
   const router = useRouter();
 
   const colorScheme = useColorScheme();
+  const { location } = useLocationStore();
 
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
@@ -40,9 +45,8 @@ const EditProfile = () => {
 
   const updateProfile = async () => {
     setLoading(true);
-    const loggedUser = await getLoggedUser();
 
-    const userRef = doc(firestoreDB, "users", loggedUser._id);
+    const userRef = doc(firestoreDB, "users", user._id);
 
     const data = {
       firstName: firstName !== "" ? firstName : user?.firstName,
@@ -63,7 +67,25 @@ const EditProfile = () => {
   };
 
   const updateLocation = () => {
-    console.log(user);
+    setLoading(true);
+
+    const userRef = doc(firestoreDB, "users", user._id);
+
+    const data = {
+      location: location[0].regionName,
+      coordinates: location[0].coordinates,
+    };
+
+    updateDoc(userRef, data).then(async () => {
+      const user = await getDoc(userRef);
+
+      storeUser(user.data()!);
+      router.push("/profile");
+      CustomToast("Profile updated Successfully");
+      setLoading(false);
+    });
+
+    setLoading(false);
   };
 
   return (
@@ -147,11 +169,7 @@ const EditProfile = () => {
           <View>
             <TextInput
               disabled
-              value={
-                user?.location?.regionName?.region +
-                ", " +
-                user?.location?.regionName?.country
-              }
+              value={user?.location?.region + ", " + user?.location?.country}
             />
           </View>
           <Button
@@ -159,7 +177,7 @@ const EditProfile = () => {
             style={{ marginTop: 10 }}
             onPress={() => updateLocation()}
           >
-            {!loading ? "Update Location" : "Updating"}
+            {!loading ? "Update Location " : "Updating"}
           </Button>
         </ScrollView>
       </SafeAreaView>
