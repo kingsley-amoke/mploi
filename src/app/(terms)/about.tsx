@@ -24,7 +24,7 @@ const About = () => {
       </Text>
       <Text>
         Irrespective of how simple a job may seem, it can be paid for when
-        completed under the provisions of MPLOi APP. Take advantage of our
+        completed under the provisions of MyPlug APP. Take advantage of our
         in-app purchases, product and services, loans and credits and our mobile
         wallet, in-app calls and chat. These options are provided to satisfy the
         desires our users and subscribers.

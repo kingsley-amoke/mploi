@@ -127,28 +127,28 @@ const settings = () => {
     {
       icon: "whatsapp",
       text: "Whatsapp Channel",
-      action: socialLinks.whatsapp,
+      action: socialLinks.whatsapp.link,
     },
 
     {
       icon: "facebook-square",
       text: "Facebook",
-      action: socialLinks.facebook,
+      action: socialLinks.facebook.link,
     },
     {
       icon: "instagram",
       text: "Instagram",
-      action: socialLinks.instagram,
+      action: socialLinks.instagram.link,
     },
     {
       icon: "twitter",
       text: "Twitter",
-      action: socialLinks.twitter,
+      action: socialLinks.twitter.link,
     },
     {
       icon: "youtube",
       text: "Youtube",
-      action: socialLinks.youtube,
+      action: socialLinks.youtube.link,
     },
   ];
 

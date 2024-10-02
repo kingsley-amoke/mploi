@@ -373,10 +373,12 @@ export const useProductsStore = create<ProductsStore>((set) => ({
   },
   addPromoted: (product) => {
     set((state) => {
-      state.promoted.push(product);
+      
+      const nonPromo = state.products.filter((p) => p.promo == "free" && p._id !== product._id);
+      const promoted = state.products.filter((p) => p.promo !== "free")
 
       return {
-        promoted: state.promoted,
+        products: [...nonPromo, ...promoted, product],
       };
     });
   },
@@ -412,12 +414,14 @@ export const useProductsStore = create<ProductsStore>((set) => ({
   },
   deletePromoted: (product) => {
     set((state) => {
-      const updatedPromomoted = state.promoted.filter(
-        (p) => p._id !== product._id
+
+      const nonPromo = state.products.filter((p) => p.promo == "free");
+      const updatedPromomoted = state.products.filter(
+        (p) => p._id !== product._id && p.promo !== "free"
       );
 
       return {
-        promoted: updatedPromomoted,
+        products: [...updatedPromomoted, ...nonPromo, product],
       };
     });
   },

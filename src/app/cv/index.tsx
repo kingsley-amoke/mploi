@@ -87,31 +87,15 @@ const index = () => {
       >
         <View>
           <Text>
-            Get your desired job Leave your employer with no options than to
-            hire you Our CV experts can make you employable Click on the link
-            below to get started
+            Get your desired job, leave your employer with no options than to
+            hire you.
           </Text>
-        </View>
-        <View style={{ marginVertical: 20 }}>
-          <Text>For journals and publications, let us be your plug.</Text>
-          <Text>
-            We offer comprehensive academic content analysis services to help
-            you .
+          <Text style={{ marginVertical: 10 }}>
+            Our CV experts can make you employable.
           </Text>
-          <View style={{ marginVertical: 10 }}>
-            <Text>1. Develop a robust research methodology.</Text>
-            <Text>2. Analyse data with confidence.</Text>
-            <Text>3. Interpret results with clarity.</Text>
-            <Text>4. Write publishabe papers.</Text>
-          </View>
-          <View style={{ marginVertical: 10 }}>
-            <Text>
-              Whether you're working on a thesis, dissertation, or research
-              article.
-            </Text>
-            <Text>Our experts got you covered.</Text>
-          </View>
+          <Text>Click on the link below to get started.</Text>
         </View>
+
         <View style={{ marginVertical: 10 }}>
           <Text
             style={{

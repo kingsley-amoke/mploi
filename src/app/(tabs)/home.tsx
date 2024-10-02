@@ -1,5 +1,6 @@
 import FloatingButton from "@/src/components/FloatingButton";
 import UserCard from "@/src/components/UserCard";
+import { Colors } from "@/src/constants/Colors";
 import {
   useChatStore,
   useProductsStore,
@@ -7,6 +8,7 @@ import {
   useUserStore,
 } from "@/src/state/store";
 import { CustomToast, formatPrice, shopAvatar } from "@/src/utils/data";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import React, { useEffect } from "react";
@@ -40,13 +42,15 @@ const Home = () => {
         onPress={() => router.push(`/products/${item._id}`)}
       >
         <Card.Cover
-          source={{ uri: item?.images[0] || shopAvatar }}
+          source={{
+            uri: item?.images?.length > 0 ? item?.images[0] : shopAvatar,
+          }}
           style={{ height: 150 }}
         />
         <Card.Content style={{ marginVertical: 5 }}>
           <Text style={{ fontWeight: "bold" }}>
-            {item?.name.length > 20
-              ? item?.name.substring(0, 14) + "..."
+            {item?.name?.length > 20
+              ? item?.name?.substring(0, 14) + "..."
               : item?.name}
           </Text>
           <Text style={{ fontSize: 10 }}>{formatPrice(item?.price)}</Text>
@@ -83,7 +87,7 @@ const Home = () => {
               renderItem={(item) => ShopItem(item)}
               horizontal
               showsHorizontalScrollIndicator={false}
-              style={{ marginBottom: 10, height: 200 }}
+              style={{ marginBottom: 10, height: 230 }}
             />
           </>
         )}
@@ -130,11 +134,30 @@ const Home = () => {
               ))}
             </View>
           ) : (
-            <ActivityIndicator
-              animating={true}
-              color="teal"
-              style={{ marginVertical: 200 }}
-            />
+            <View
+              style={{
+                marginVertical: 100,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <MaterialCommunityIcons
+                name="hammer-wrench"
+                color={Colors.light.primary}
+                size={100}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                  marginTop: 70,
+                }}
+              >
+                <Text>Hire a service provide today.</Text>
+                <MaterialCommunityIcons name="arrow-down-right" size={35} />
+              </View>
+            </View>
           )}
         </View>
       </ScrollView>

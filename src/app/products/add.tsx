@@ -91,7 +91,7 @@ const add = () => {
   const handleProcessPayment = (active: number) => {
     setPosting(true);
     if (active > parseInt(user?.walletBalance)) {
-      CustomToast("Insufficiant balance");
+      CustomToast("Please fund your wallet to continue.");
       setPosting(false);
     } else {
       decreaseUserBalance(active);

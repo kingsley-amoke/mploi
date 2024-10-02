@@ -1,66 +1,149 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
+import { Avatar, Divider, Text, TextInput } from "react-native-paper";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, SegmentedButtons } from "react-native-paper";
-import UsersPage from "./components/UsersPage";
-import CareerPage from "./components/CareerPage";
-import ProductsPage from "./components/ProductsPage";
+import { useUsersStore, useUserStore } from "@/src/state/store";
+import { doc, DocumentData, updateDoc } from "firebase/firestore";
+import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { firestoreDB } from "@/src/utils/firebaseConfig";
+import { createChat, CustomToast, getUsers } from "@/src/utils/data";
 import { useRouter } from "expo-router";
-
-const index = () => {
-  const [value, setValue] = useState("users");
-
+const UsersPage = () => {
+  const colorScheme = useColorScheme();
+  const { users, storeUsers } = useUsersStore();
+  const { user } = useUserStore();
   const router = useRouter();
 
-  return (
-    <SafeAreaView style={styles.container}>
+  const [search, setSearch] = useState("");
+
+  const iconColor = colorScheme === "light" ? "#000" : "#fff";
+
+  const allUsers = users.filter((item) => item._id !== user?._id);
+
+  const filteredUsers = allUsers.filter(
+    (p) =>
+      p.firstName.toLowerCase().includes(search.toLowerCase()) ||
+      p.lastName.toLowerCase().includes(search.toLowerCase()) ||
+      p.bio.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const UsersRenderItem = ({ item }: { item: DocumentData }) => {
+    const handleSuspendUSer = () => {
+      const userRef = doc(firestoreDB, "users", item._id);
+
+      updateDoc(userRef, { suspended: !item.suspended }).then(async () => {
+        const users = await getUsers();
+        storeUsers(users);
+        CustomToast("User suspended Successfully");
+      });
+    };
+
+    const handleMessageUser = () => {
+      const id = `${Date.now()}`;
+      //create chat
+      const data = {
+        _id: id,
+        client: user,
+        serviceProvider: item,
+      };
+
+      createChat(data).then(() => {
+        router.push(`/rooms/${data._id}`);
+      });
+    };
+
+    return (
       <View>
-        <Button
-          mode="outlined"
-          style={{ marginVertical: 20 }}
-          onPress={() => router.push("/admin/cv")}
+        <View
+          style={{
+            marginVertical: 10,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          CV Reviews
-        </Button>
-      </View>
-      <SegmentedButtons
-        value={value}
-        onValueChange={setValue}
-        buttons={[
-          {
-            value: "users",
-            label: "All Users",
-          },
-          {
-            value: "career",
-            label: "Career Jobs",
-          },
-          {
-            value: "shop",
-            label: "Shop",
-          },
-        ]}
-      />
-      {value === "users" ? (
-        <View>
-          <View>
-            <UsersPage />
+          <View style={{ flexDirection: "row", gap: 20, alignItems: "center" }}>
+            <Avatar.Image source={{ uri: item.image }} size={30} />
+            <View style={{ justifyContent: "center" }}>
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                {item.firstName} {item.lastName}
+              </Text>
+              <Text style={{ fontSize: 10 }}>
+                {user?.skills ? user?.skills[0] : "Client"}
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row", marginLeft: 30, gap: 20 }}>
+            <TouchableOpacity
+              style={{ justifyContent: "center" }}
+              onPress={handleMessageUser}
+            >
+              <MaterialIcons name="message" size={20} color={iconColor} />
+            </TouchableOpacity>
+            {item.suspended ? (
+              <TouchableOpacity
+                style={{ justifyContent: "center" }}
+                onPress={handleSuspendUSer}
+              >
+                <FontAwesome6
+                  name="person-circle-check"
+                  size={20}
+                  color={iconColor}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={{ justifyContent: "center" }}
+                onPress={handleSuspendUSer}
+              >
+                <FontAwesome6
+                  name="person-circle-xmark"
+                  size={20}
+                  color={iconColor}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
-      ) : value === "career" ? (
-        <CareerPage />
-      ) : (
-        <ProductsPage />
-      )}
-    </SafeAreaView>
+        <Divider bold horizontalInset />
+      </View>
+    );
+  };
+
+  return (
+    <View style={{ width: "100%", paddingHorizontal: 10 }}>
+      <View
+        style={{
+          marginVertical: 10,
+
+          position: "relative",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <TextInput
+          mode="outlined"
+          placeholder="Search services"
+          style={{ width: "95%", height: 40 }}
+          outlineStyle={{ width: 1 }}
+          onChangeText={(value) => setSearch(value)}
+        />
+      </View>
+      <FlatList
+        data={filteredUsers}
+        renderItem={UsersRenderItem}
+        style={{
+          marginBottom: 90,
+        }}
+      />
+    </View>
   );
 };
 
-export default index;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-  },
-});
+export default UsersPage;

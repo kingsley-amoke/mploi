@@ -20,8 +20,6 @@ const CareerPage = () => {
   const iconColor = colorScheme === "dark" ? "#ffffff" : "#000000";
 
   const JobRenderItem = ({ item }: { item: DocumentData }) => {
- 
-
     const salary = new Intl.NumberFormat("en-UK", {
       style: "currency",
       currency: "NGN",
@@ -44,37 +42,47 @@ const CareerPage = () => {
 
     return (
       <>
-      <View style={{ marginVertical:10 }}>
-        <Text style={{ fontSize: 12, fontWeight: "bold" }}>
-          Company: {item.company}
-        </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "95%",
-          }}
-        >
-          <View>
-            <Text>ID: {item._id}</Text>
-            <Text>Position: #{item.position}</Text>
-            <Text>Salary: {salary}</Text>
-            <Text>Location: {item.location}</Text>
-          </View>
-          <View style={{ gap: 20, alignItems: "center", flexDirection: "row" }}>
-            <TouchableOpacity onPress={handleViewJob}>
-              <MaterialCommunityIcons name="eye" size={20}  color={iconColor}/>
-            </TouchableOpacity>
+        <View style={{ marginVertical: 10 }}>
+          <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+            Company: {item.company}
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "95%",
+            }}
+          >
+            <View>
+              <Text>ID: {item._id}</Text>
+              <Text>Position: #{item.position}</Text>
+              <Text>Salary: {salary}</Text>
+              <Text>Location: {item.location}</Text>
+            </View>
+            <View
+              style={{ gap: 20, alignItems: "center", flexDirection: "row" }}
+            >
+              <TouchableOpacity onPress={handleViewJob}>
+                <MaterialCommunityIcons
+                  name="eye"
+                  size={20}
+                  color={iconColor}
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity onPress={handleDeleteJob}>
-              <MaterialCommunityIcons name="trash-can-outline" size={20}  color={iconColor}/>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={handleDeleteJob}>
+                <MaterialCommunityIcons
+                  name="trash-can-outline"
+                  size={20}
+                  color={iconColor}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-        <Divider bold horizontalInset/>
-            </>
+        <Divider bold horizontalInset />
+      </>
     );
   };
 
@@ -86,7 +94,8 @@ const CareerPage = () => {
           justifyContent: "flex-end",
           width: "100%",
           padding: 20,
-        }} onPress={()=>router.push('/admin/jobs/add')}
+        }}
+        onPress={() => router.push("/admin/jobs/add")}
       >
         <MaterialCommunityIcons
           name="plus"

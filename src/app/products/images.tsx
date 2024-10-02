@@ -4,7 +4,12 @@ import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 
 import { firestoreDB, storage } from "@/src/utils/firebaseConfig";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import { getBlobFroUri } from "@/src/utils/data";
 import { PhotosCard } from "@/src/components/PhotosCard";
@@ -22,12 +27,11 @@ const images = () => {
   const { products, updateProductImages } = useProductsStore();
 
   const [images, setImages] = useState<string[]>([]);
-  const [product, setProduct] = useState<DocumentData | undefined>()
+  const [product, setProduct] = useState<DocumentData | undefined>();
   const [loading, setLoading] = useState(false);
 
-
   const loadProduct = async () => {
-    const product = products.find(product => product._id === id);
+    const product = products.find((product) => product._id === id);
 
     setProduct(product);
   };
@@ -58,42 +62,71 @@ const images = () => {
 
     setLoading(true);
 
-    const imageBlob = await getBlobFroUri(uri);
-    if (!imageBlob) return;
+    const response = await fetch(uri);
+    const blob = await response.blob();
 
     const storageRef = ref(storage, `products/${filename}`);
+    const productRef = doc(firestoreDB, "products", id?.toString()!);
 
-    uploadBytes(storageRef, imageBlob)
-      .then((snapshot) => {
-        getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
-          setImages([...images, url]);
-          updateProductImages(product!, url);
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+        // setProgress(Math.floor(progress));
+      },
+      (error) => {
+        // handle error
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+          console.log("File available at", downloadURL);
+          // save record
 
-          const productRef = doc(firestoreDB, "products", id?.toString()!);
-
-          // updates user images array
-          updateDoc(productRef, {
-            images: [...images, url],
+          await updateDoc(productRef, {
+            images:
+              images.length > 0 ? [...images, downloadURL] : [downloadURL],
           });
+          setImages(
+            images.length > 0 ? [...images, downloadURL] : [downloadURL]
+          );
         });
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log("Upload failed!", error);
-        setLoading(false);
-      });
+      }
+    );
+
+    // uploadBytes(storageRef, blob)
+    //   .then((snapshot) => {
+    //     getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
+    //       setImages([...images, url]);
+    //       updateProductImages(product!, url);
+
+    //       const productRef = doc(firestoreDB, "products", id?.toString()!);
+
+    //       // updates user images array
+    //       updateDoc(productRef, {
+    //         images: [...images, url],
+    //       });
+    //     });
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log("Upload failed!", error);
+    //     setLoading(false);
+    //   });
 
     setLoading(false);
   };
 
-
-  const productPrice = new Intl.NumberFormat('en-UK', {style: 'currency', currency: 'NGN'}).format(product?.price);
+  const productPrice = new Intl.NumberFormat("en-UK", {
+    style: "currency",
+    currency: "NGN",
+  }).format(product?.price);
 
   useEffect(() => {
-
     loadProduct();
-  },[id])
-
+  }, [id]);
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -108,7 +141,7 @@ const images = () => {
         <Text>Price: {productPrice}</Text>
         <Text>Category: {product?.category}</Text>
       </View>
-      <View style={{marginVertical:5}}>
+      <View style={{ marginVertical: 5 }}>
         <Text>Select images for this product (Max: 4)</Text>
       </View>
       {!loading ? (
@@ -117,7 +150,7 @@ const images = () => {
             padding: 30,
             backgroundColor: Colors.dark.primary,
             borderWidth: 1,
-            borderRadius:10
+            borderRadius: 10,
           }}
           onPress={() => selectImage(true)}
         >
@@ -135,15 +168,15 @@ const images = () => {
           flexWrap: "wrap",
         }}
       >
-        {images.length > 0 && images.map((image, index) => (
-          <View style={{ marginHorizontal: 10 }} key={index}>
-            <PhotosCard item={image} />
-          </View>
-        ))}
+        {images.length > 0 &&
+          images.map((image, index) => (
+            <View style={{ marginHorizontal: 10 }} key={index}>
+              <PhotosCard item={image} />
+            </View>
+          ))}
       </View>
     </View>
   );
 };
 
 export default images;
-

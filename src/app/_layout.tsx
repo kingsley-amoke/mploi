@@ -221,18 +221,12 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
-              name="admin/index"
-              options={{
-                title: "Admin Dashboard",
-                headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="admin/jobs"
+              name="admin"
               options={{
                 headerShown: false,
               }}
             />
+
             <Stack.Screen
               name="products"
               options={{

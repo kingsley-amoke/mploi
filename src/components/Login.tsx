@@ -39,7 +39,7 @@ const Login = () => {
 
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,26 +48,20 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        const user = userCredential.user;
-
+      .then(async ({ user }) => {
         const userRef = doc(firestoreDB, "users", user.uid);
 
-        getDoc(userRef).then((doc) => {
-          storeUser(doc.data()!);
+        const docSnap = await getDoc(userRef);
+        storeUser(docSnap.data()!);
 
-          router.replace("/home");
-          CustomToast("Logged in Successfully");
+        router.replace("/home");
+        CustomToast("Logged in Successfully");
 
-          setLoading(false);
-          AsyncStorage.setItem("@user", JSON.stringify(doc.data()));
-        });
+        setLoading(false);
+        AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        setError(errorCode);
+        setError(error);
         setLoading(false);
       });
   };

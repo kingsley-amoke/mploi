@@ -74,7 +74,7 @@ export default function Shop() {
       >
         <TextInput
           mode="outlined"
-          placeholder="Search services"
+          placeholder="Search"
           style={{ width: 300, paddingLeft: 20, height: 40 }}
           outlineStyle={{ width: 1 }}
           onChangeText={(value) => setSearch(value)}

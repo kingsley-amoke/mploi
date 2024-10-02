@@ -116,7 +116,7 @@ const JobPage = () => {
     } else {
       const charge = active === 2 ? 1000 : 2000;
       if (active > parseInt(user?.walletBalance)) {
-        CustomToast("Insufficiant balance");
+        CustomToast("Please fund your wallet to continue.");
         setApplying(false);
       } else {
         const amount = parseFloat(user?.walletBalance) - charge;
@@ -332,9 +332,7 @@ const JobPage = () => {
               marginVertical: 10,
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              MyPlug
-            </Text>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>MyPlug</Text>
           </View>
           <Divider bold horizontalInset style={{ marginBottom: 10 }} />
           <View>

@@ -17,7 +17,7 @@ import { CustomToast } from "@/src/utils/data";
 import { deleteObject, ref } from "firebase/storage";
 import { firestoreDB, storage } from "@/src/utils/firebaseConfig";
 
-const index = () => {
+const cv = () => {
   const navigation = useNavigation();
 
   const { cvs } = useCVStore();
@@ -79,6 +79,6 @@ const index = () => {
   );
 };
 
-export default index;
+export default cv;
 
 const styles = StyleSheet.create({});

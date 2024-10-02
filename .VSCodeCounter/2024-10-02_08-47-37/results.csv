@@ -1,0 +1,90 @@
+"filename", "language", "TypeScript", "TypeScript JSX", "comment", "blank", "total"
+"/home/kingsley/Documents/mploi/src/app/(public)/_layout.tsx", "TypeScript JSX", 0, 60, 0, 7, 67
+"/home/kingsley/Documents/mploi/src/app/(public)/login.tsx", "TypeScript JSX", 0, 12, 0, 7, 19
+"/home/kingsley/Documents/mploi/src/app/(public)/register.tsx", "TypeScript JSX", 0, 14, 3, 8, 25
+"/home/kingsley/Documents/mploi/src/app/(tabs)/_layout.tsx", "TypeScript JSX", 0, 112, 0, 7, 119
+"/home/kingsley/Documents/mploi/src/app/(tabs)/career.tsx", "TypeScript JSX", 0, 21, 0, 4, 25
+"/home/kingsley/Documents/mploi/src/app/(tabs)/home.tsx", "TypeScript JSX", 0, 136, 8, 11, 155
+"/home/kingsley/Documents/mploi/src/app/(tabs)/messages.tsx", "TypeScript JSX", 0, 131, 0, 19, 150
+"/home/kingsley/Documents/mploi/src/app/(tabs)/settings.tsx", "TypeScript JSX", 0, 317, 6, 29, 352
+"/home/kingsley/Documents/mploi/src/app/(tabs)/shop.tsx", "TypeScript JSX", 0, 117, 0, 9, 126
+"/home/kingsley/Documents/mploi/src/app/(terms)/_layout.tsx", "TypeScript JSX", 0, 41, 0, 7, 48
+"/home/kingsley/Documents/mploi/src/app/(terms)/about.tsx", "TypeScript JSX", 0, 59, 0, 4, 63
+"/home/kingsley/Documents/mploi/src/app/(terms)/disclaimer.tsx", "TypeScript JSX", 0, 23, 0, 5, 28
+"/home/kingsley/Documents/mploi/src/app/(terms)/privacy.tsx", "TypeScript JSX", 0, 228, 0, 8, 236
+"/home/kingsley/Documents/mploi/src/app/(terms)/terms-policy.tsx", "TypeScript JSX", 0, 223, 0, 5, 228
+"/home/kingsley/Documents/mploi/src/app/_layout.tsx", "TypeScript JSX", 0, 288, 0, 33, 321
+"/home/kingsley/Documents/mploi/src/app/admin/_layout.tsx", "TypeScript JSX", 0, 66, 0, 2, 68
+"/home/kingsley/Documents/mploi/src/app/admin/careers.tsx", "TypeScript JSX", 0, 127, 0, 14, 141
+"/home/kingsley/Documents/mploi/src/app/admin/cvs.tsx", "TypeScript JSX", 0, 76, 0, 9, 85
+"/home/kingsley/Documents/mploi/src/app/admin/index.tsx", "TypeScript JSX", 0, 135, 1, 14, 150
+"/home/kingsley/Documents/mploi/src/app/admin/jobs/[id].tsx", "TypeScript JSX", 0, 454, 1, 28, 483
+"/home/kingsley/Documents/mploi/src/app/admin/jobs/_layout.tsx", "TypeScript JSX", 0, 20, 0, 3, 23
+"/home/kingsley/Documents/mploi/src/app/admin/jobs/add.tsx", "TypeScript JSX", 0, 175, 0, 16, 191
+"/home/kingsley/Documents/mploi/src/app/admin/products.tsx", "TypeScript JSX", 0, 346, 25, 25, 396
+"/home/kingsley/Documents/mploi/src/app/cv/components/plans.tsx", "TypeScript JSX", 0, 226, 2, 19, 247
+"/home/kingsley/Documents/mploi/src/app/cv/index.tsx", "TypeScript JSX", 0, 109, 15, 18, 142
+"/home/kingsley/Documents/mploi/src/app/image/index.tsx", "TypeScript JSX", 0, 13, 0, 6, 19
+"/home/kingsley/Documents/mploi/src/app/index.tsx", "TypeScript JSX", 0, 31, 0, 8, 39
+"/home/kingsley/Documents/mploi/src/app/notifications/index.tsx", "TypeScript JSX", 0, 24, 0, 10, 34
+"/home/kingsley/Documents/mploi/src/app/products/[id].tsx", "TypeScript JSX", 0, 201, 1, 17, 219
+"/home/kingsley/Documents/mploi/src/app/products/_layout.tsx", "TypeScript JSX", 0, 26, 0, 4, 30
+"/home/kingsley/Documents/mploi/src/app/products/add.tsx", "TypeScript JSX", 0, 337, 0, 19, 356
+"/home/kingsley/Documents/mploi/src/app/products/images.tsx", "TypeScript JSX", 0, 136, 20, 27, 183
+"/home/kingsley/Documents/mploi/src/app/profile/[id].tsx", "TypeScript JSX", 0, 45, 0, 9, 54
+"/home/kingsley/Documents/mploi/src/app/profile/edit.tsx", "TypeScript JSX", 0, 10, 0, 4, 14
+"/home/kingsley/Documents/mploi/src/app/profile/index.tsx", "TypeScript JSX", 0, 8, 0, 8, 16
+"/home/kingsley/Documents/mploi/src/app/rooms/[roomId].tsx", "TypeScript JSX", 0, 313, 0, 27, 340
+"/home/kingsley/Documents/mploi/src/app/rooms/index.tsx", "TypeScript JSX", 0, 84, 7, 12, 103
+"/home/kingsley/Documents/mploi/src/app/service/[id].tsx", "TypeScript JSX", 0, 26, 0, 8, 34
+"/home/kingsley/Documents/mploi/src/app/service/index.tsx", "TypeScript JSX", 0, 12, 0, 3, 15
+"/home/kingsley/Documents/mploi/src/app/service/requests.tsx", "TypeScript JSX", 0, 89, 0, 17, 106
+"/home/kingsley/Documents/mploi/src/app/settings/index.tsx", "TypeScript JSX", 0, 24, 0, 12, 36
+"/home/kingsley/Documents/mploi/src/app/suspended/index.tsx", "TypeScript JSX", 0, 66, 0, 10, 76
+"/home/kingsley/Documents/mploi/src/app/wallet/index.tsx", "TypeScript JSX", 0, 207, 0, 19, 226
+"/home/kingsley/Documents/mploi/src/components/AboutUser.tsx", "TypeScript JSX", 0, 183, 3, 22, 208
+"/home/kingsley/Documents/mploi/src/components/BlurView.tsx", "TypeScript JSX", 0, 86, 10, 1, 97
+"/home/kingsley/Documents/mploi/src/components/BookService.tsx", "TypeScript JSX", 0, 64, 0, 10, 74
+"/home/kingsley/Documents/mploi/src/components/Carousel.tsx", "TypeScript JSX", 0, 31, 0, 6, 37
+"/home/kingsley/Documents/mploi/src/components/Categories.tsx", "TypeScript JSX", 0, 262, 61, 22, 345
+"/home/kingsley/Documents/mploi/src/components/Collapsible.tsx", "TypeScript JSX", 0, 37, 0, 5, 42
+"/home/kingsley/Documents/mploi/src/components/CustomHeader.tsx", "TypeScript JSX", 0, 21, 1, 10, 32
+"/home/kingsley/Documents/mploi/src/components/CustomModal.tsx", "TypeScript JSX", 0, 21, 0, 8, 29
+"/home/kingsley/Documents/mploi/src/components/EditProfile.tsx", "TypeScript JSX", 0, 165, 0, 24, 189
+"/home/kingsley/Documents/mploi/src/components/ExternalLink.tsx", "TypeScript JSX", 0, 20, 2, 3, 25
+"/home/kingsley/Documents/mploi/src/components/FloatingButton.tsx", "TypeScript JSX", 0, 56, 1, 8, 65
+"/home/kingsley/Documents/mploi/src/components/JobRenterItem.tsx", "TypeScript JSX", 0, 75, 0, 11, 86
+"/home/kingsley/Documents/mploi/src/components/Login.tsx", "TypeScript JSX", 0, 164, 0, 24, 188
+"/home/kingsley/Documents/mploi/src/components/Map.tsx", "TypeScript JSX", 0, 116, 0, 10, 126
+"/home/kingsley/Documents/mploi/src/components/ParallaxScrollView.tsx", "TypeScript JSX", 0, 69, 0, 8, 77
+"/home/kingsley/Documents/mploi/src/components/PhotosCard.tsx", "TypeScript JSX", 0, 23, 1, 6, 30
+"/home/kingsley/Documents/mploi/src/components/ProductCard.tsx", "TypeScript JSX", 0, 53, 0, 7, 60
+"/home/kingsley/Documents/mploi/src/components/ProductsPage.tsx", "TypeScript JSX", 0, 41, 0, 7, 48
+"/home/kingsley/Documents/mploi/src/components/Profile.tsx", "TypeScript JSX", 0, 204, 21, 23, 248
+"/home/kingsley/Documents/mploi/src/components/ProgressBar.tsx", "TypeScript JSX", 0, 32, 0, 3, 35
+"/home/kingsley/Documents/mploi/src/components/Reviews.tsx", "TypeScript JSX", 0, 275, 0, 24, 299
+"/home/kingsley/Documents/mploi/src/components/Signup.tsx", "TypeScript JSX", 0, 231, 0, 28, 259
+"/home/kingsley/Documents/mploi/src/components/Slider.tsx", "TypeScript JSX", 0, 69, 0, 10, 79
+"/home/kingsley/Documents/mploi/src/components/ThemedText.tsx", "TypeScript JSX", 0, 55, 0, 6, 61
+"/home/kingsley/Documents/mploi/src/components/ThemedView.tsx", "TypeScript JSX", 0, 10, 0, 5, 15
+"/home/kingsley/Documents/mploi/src/components/TransactionsPage.tsx", "TypeScript JSX", 0, 49, 0, 12, 61
+"/home/kingsley/Documents/mploi/src/components/UserCard.tsx", "TypeScript JSX", 0, 25, 0, 3, 28
+"/home/kingsley/Documents/mploi/src/components/UserPhotos.tsx", "TypeScript JSX", 0, 271, 10, 30, 311
+"/home/kingsley/Documents/mploi/src/components/ValidatedInput.tsx", "TypeScript JSX", 0, 50, 0, 8, 58
+"/home/kingsley/Documents/mploi/src/components/ViewImage.tsx", "TypeScript JSX", 0, 31, 0, 5, 36
+"/home/kingsley/Documents/mploi/src/components/__tests__/ThemedText-test.tsx", "TypeScript JSX", 0, 7, 0, 4, 11
+"/home/kingsley/Documents/mploi/src/components/navigation/TabBarIcon.tsx", "TypeScript JSX", 0, 6, 1, 3, 10
+"/home/kingsley/Documents/mploi/src/constants/Colors.ts", "TypeScript", 88, 0, 4, 3, 95
+"/home/kingsley/Documents/mploi/src/constants/HelloWave.tsx", "TypeScript JSX", 0, 31, 0, 7, 38
+"/home/kingsley/Documents/mploi/src/hooks/useColorScheme.ts", "TypeScript", 1, 0, 0, 1, 2
+"/home/kingsley/Documents/mploi/src/hooks/usePushNotifications.ts", "TypeScript", 68, 0, 0, 24, 92
+"/home/kingsley/Documents/mploi/src/hooks/useTheme.ts", "TypeScript", 21, 0, 0, 8, 29
+"/home/kingsley/Documents/mploi/src/hooks/useThemeColor.ts", "TypeScript", 14, 0, 4, 5, 23
+"/home/kingsley/Documents/mploi/src/hooks/useWarmUpBrowser.tsx", "TypeScript JSX", 0, 10, 0, 2, 12
+"/home/kingsley/Documents/mploi/src/state/store.ts", "TypeScript", 441, 0, 7, 71, 519
+"/home/kingsley/Documents/mploi/src/utils/data.ts", "TypeScript", 249, 0, 20, 78, 347
+"/home/kingsley/Documents/mploi/src/utils/firebaseConfig.ts", "TypeScript", 37, 0, 0, 22, 59
+"/home/kingsley/Documents/mploi/src/utils/paystack.ts", "TypeScript", 92, 0, 5, 38, 135
+"/home/kingsley/Documents/mploi/src/utils/types.ts", "TypeScript", 200, 0, 0, 32, 232
+"/home/kingsley/Documents/mploi/src/utils/userActions.ts", "TypeScript", 139, 0, 9, 52, 200
+"Total", "-", 1350, 8011, 249, 1230, 10840
