@@ -38,13 +38,14 @@ const EditProfile = () => {
   const { user, storeUser } = useUserStore();
 
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
 
   const updateProfile = async () => {
-    setLoading(true);
+    setSaving(true);
 
     const userRef = doc(firestoreDB, "users", user._id);
 
@@ -54,16 +55,19 @@ const EditProfile = () => {
       phone: phone !== "" ? phone : user?.phone,
     };
 
-    updateDoc(userRef, data).then(async () => {
-      const user = await getDoc(userRef);
+    updateDoc(userRef, data)
+      .then(async () => {
+        const user = await getDoc(userRef);
 
-      storeUser(user.data()!);
-      router.push("/profile");
-      CustomToast("Profile updated Successfully");
-      setLoading(false);
-    });
-
-    setLoading(false);
+        storeUser(user.data()!);
+        router.push("/profile");
+        CustomToast("Profile updated Successfully");
+        setSaving(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setSaving(false);
+      });
   };
 
   const updateLocation = () => {
@@ -72,20 +76,23 @@ const EditProfile = () => {
     const userRef = doc(firestoreDB, "users", user._id);
 
     const data = {
-      location: location[0].regionName,
+      location: location[0],
       coordinates: location[0].coordinates,
     };
 
-    updateDoc(userRef, data).then(async () => {
-      const user = await getDoc(userRef);
+    updateDoc(userRef, data)
+      .then(async () => {
+        const user = await getDoc(userRef);
 
-      storeUser(user.data()!);
-      router.push("/profile");
-      CustomToast("Profile updated Successfully");
-      setLoading(false);
-    });
-
-    setLoading(false);
+        storeUser(user.data()!);
+        router.push("/profile");
+        CustomToast("Profile updated Successfully");
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
   };
 
   return (
@@ -159,7 +166,7 @@ const EditProfile = () => {
             style={{ marginTop: 10 }}
             onPress={() => updateProfile()}
           >
-            {!loading ? "Save Change" : "Saving"}
+            {!saving ? "Save Change" : "Saving"}
           </Button>
           <Text
             style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
@@ -169,7 +176,11 @@ const EditProfile = () => {
           <View>
             <TextInput
               disabled
-              value={user?.location?.region + ", " + user?.location?.country}
+              value={
+                user?.location?.regionName?.city +
+                ", " +
+                user?.location?.regionName?.country
+              }
             />
           </View>
           <Button

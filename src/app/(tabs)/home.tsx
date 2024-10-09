@@ -32,7 +32,7 @@ const Home = () => {
   const serviceProviderChats = chats.map((c) => c.serviceProvider._id);
 
   const topUsers = users.filter((usr) => {
-    return serviceProviderChats.indexOf(usr._id) > 0;
+    return serviceProviderChats.includes(usr._id) && usr.skills?.length > 0;
   });
 
   const ShopItem = ({ item }: { item: DocumentData }) => {

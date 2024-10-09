@@ -67,12 +67,10 @@ const Categories = () => {
     });
 
   const recommendedUsers = users.filter((user) => {
-    const distance = distanceToUser(location[0].coordinates, user);
-
     return (
       user._id !== loggedUser?._id &&
-      user.skills.includes(selectedService[0]) &&
-      distance <= 10000
+      user.skills &&
+      user.skills.includes(selectedService[0])
     );
   });
 

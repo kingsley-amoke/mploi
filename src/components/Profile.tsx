@@ -159,7 +159,9 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
             <Ionicons name="location" color={iconColor} />
             <Text>
-              {user?.location?.region + ", " + user?.location?.country}
+              {user?.location?.regionName?.city +
+                ", " +
+                user?.location?.regionName?.country}
             </Text>
           </View>
         </View>

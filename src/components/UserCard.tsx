@@ -17,9 +17,9 @@ const UserCard = ({ user }: { user: DocumentData }) => (
         {user.firstName} {user.lastName[0]}
       </Text>
       <Text variant="bodyMedium" style={{ fontSize: 12, fontStyle: "italic" }}>
-        {user.skills[0]}
+        {user?.skills ? user.skills[0] : "Client"}
       </Text>
-      <Text style={{ fontSize: 10 }}>{user.location.subregion}</Text>
+      <Text style={{ fontSize: 10 }}>{user?.location?.regionName?.city}</Text>
     </Card.Content>
   </Card>
 );

@@ -22,7 +22,7 @@ export default function AboutUser({ user }: { user: DocumentData | null }) {
   const { user: loggedUser, storeUser } = useUserStore();
   const { categories } = useCategoryStore();
 
-  const [selectedItems, setSelectedItems] = useState(user?.skills || "");
+  const [selectedItems, setSelectedItems] = useState(user?.skills || [""]);
 
   const [loading, setLoading] = useState(false);
 
