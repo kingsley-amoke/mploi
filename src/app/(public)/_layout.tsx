@@ -1,65 +1,112 @@
 import { StyleSheet, useColorScheme, View } from "react-native";
 import React from "react";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { Text } from "react-native-paper";
 import { Colors } from "@/src/constants/Colors";
 import useTheme from "@/src/hooks/useTheme";
 import { StatusBar } from "expo-status-bar";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const PublicLayout = () => {
-
-  const colorScheme = useColorScheme()
-
+  const colorScheme = useColorScheme();
 
   const bgColor =
-    colorScheme === "dark" ? Colors.dark.primary: Colors.light.primary;
+    colorScheme === "dark" ? Colors.dark.primary : Colors.light.primary;
 
   return (
     <>
-    <StatusBar style="light"/>
-    <Stack>
-      <Stack.Screen
-        name="login"
-        options={{
-          header: () => (
-            <View
-              style={{
-                backgroundColor: bgColor,
-                height: 200,
-                justifyContent: "center",
-                alignItems: "center",
-                borderBottomRightRadius: 100,
-                position: "absolute",
-                left: 0,
-                right: 0,
-                top: 0,
-              }}
-            >
-              <Text style={{fontSize: 30, fontWeight: "bold", marginTop:10, color:'white'}}>MyPlug</Text>
-            </View>
-          ),
-        }}
+      <StatusBar style="light" />
+      <Stack>
+        <Stack.Screen
+          name="login"
+          options={{
+            header: () => (
+              <LinearGradient
+                colors={[Colors.primary, Colors.secondary]}
+                start={{ x: 0, y: 0.75 }}
+                end={{ x: 1, y: 0.25 }}
+                style={{
+                  height: 200,
+                  borderBottomRightRadius: 100,
+                  justifyContent: "center",
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingHorizontal: 20,
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="arrow-left"
+                    size={20}
+                    color="white"
+                    onPress={() => router.back()}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 30,
+                      fontWeight: "bold",
+
+                      color: "white",
+                    }}
+                  >
+                    MyPlug
+                  </Text>
+                </View>
+              </LinearGradient>
+            ),
+          }}
         />
-      <Stack.Screen
-        name="register"
-        options={{
-          header: () => (
-            <View style={{backgroundColor: bgColor,
-              height: 200,
-              justifyContent: "center",
-              alignItems: "center",
-              borderBottomRightRadius: 100,
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: 0,}}>
-              <Text style={{ fontSize: 30, fontWeight: "bold", marginTop:10, color:'white' }}> MyPlug</Text>
-            </View>
-          ),
-        }}
-      />
-    </Stack>
-              </>
+        <Stack.Screen
+          name="register"
+          options={{
+            header: () => (
+              <LinearGradient
+                colors={[Colors.primary, Colors.secondary]}
+                start={{ x: 0, y: 0.75 }}
+                end={{ x: 1, y: 0.25 }}
+                style={{
+                  height: 200,
+                  justifyContent: "center",
+
+                  borderBottomRightRadius: 100,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingHorizontal: 20,
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="arrow-left"
+                    size={20}
+                    color="white"
+                    onPress={() => router.back()}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 30,
+                      fontWeight: "bold",
+
+                      color: "white",
+                    }}
+                  >
+                    MyPlug
+                  </Text>
+                </View>
+              </LinearGradient>
+            ),
+          }}
+        />
+      </Stack>
+    </>
   );
 };
 

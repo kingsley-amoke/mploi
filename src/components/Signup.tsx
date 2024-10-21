@@ -127,7 +127,7 @@ const Signup = () => {
           </Text>
         )}
         <Text style={{ color: "red", fontSize: 16 }}>{errorMsg}</Text>
-        <View style={{ marginVertical: 22 }}>
+        <View>
           <Text
             style={{
               fontSize: 22,

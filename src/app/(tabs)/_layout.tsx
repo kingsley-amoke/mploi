@@ -1,23 +1,8 @@
-import { StyleSheet, Platform, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import { Tabs, useRouter } from "expo-router";
-import {
-  Feather,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
-import { useLocationStore, useUserStore } from "@/src/state/store";
-import { Text } from "react-native-paper";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const TabLayout = () => {
-  const { user } = useUserStore();
-  const router = useRouter();
-  const { location: userLocation } = useLocationStore();
-
-  const location =
-    userLocation[0]?.regionName.subregion +
-      ", " +
-      userLocation[0]?.regionName.city || "Loading...";
-
   return (
     <Tabs
       screenOptions={{
@@ -34,39 +19,13 @@ const TabLayout = () => {
       }}
     >
       <Tabs.Screen
-        name="home"
+        name="index"
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" size={20} color={color} />
           ),
-          header: () => (
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginVertical: 20,
-                marginHorizontal: 20,
-                paddingTop: 20,
-              }}
-            >
-              <TouchableOpacity onPress={() => router.push("/profile/edit")}>
-                <Text style={{ fontWeight: "bold", marginLeft: 20 }}>
-                  Hi {user.lastName}
-                </Text>
-                <Text>
-                  {" "}
-                  <MaterialIcons name="location-pin" /> {location}
-                </Text>
-              </TouchableOpacity>
-              <MaterialIcons
-                name="person"
-                size={20}
-                onPress={() => router.push("/profile")}
-              />
-            </View>
-          ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -81,7 +40,7 @@ const TabLayout = () => {
       <Tabs.Screen
         name="career"
         options={{
-          title: "Career",
+          title: "Jobs",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="briefcase-clock"
@@ -92,9 +51,9 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="shop"
+        name="notifications"
         options={{
-          title: "Shop",
+          title: "Notifications",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="shopping" size={20} color={color} />
           ),

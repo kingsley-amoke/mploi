@@ -63,7 +63,7 @@ export default function Shop() {
         paddingHorizontal: 10,
       }}
     >
-      <View
+      {/* <View
         style={{
           marginVertical: 10,
           position: "relative",
@@ -85,8 +85,8 @@ export default function Shop() {
           color={textColor}
           style={{ position: "absolute", left: 35 }}
         />
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      </View> */}
+      {/* <ScrollView showsVerticalScrollIndicator={false}>
         {promoted.length > 0 && (
           <>
             <View style={{ width: "100%", paddingHorizontal: 20 }}>
@@ -119,7 +119,7 @@ export default function Shop() {
             <Text>No products today...</Text>
           </View>
         )}
-      </ScrollView>
+      </ScrollView> */}
     </SafeAreaView>
   );
 }
