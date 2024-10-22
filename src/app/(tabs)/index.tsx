@@ -16,6 +16,7 @@ import { CustomToast, formatPrice, shopAvatar } from "@/src/utils/data";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { DocumentData } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
@@ -57,7 +58,8 @@ const Home = () => {
     return serviceProviderChats.includes(usr._id) && usr.skills?.length > 0;
   });
 
-  const topCategories = categories.splice(0, 10);
+  const topCategories = categories.splice(0, 15);
+  const topShops = shops.slice(0, 15);
 
   useEffect(() => {
     if (user.suspended) {
@@ -194,8 +196,8 @@ const Home = () => {
                   key={index}
                   asChild
                 >
-                  <TouchableOpacity style={{ width: "17%" }}>
-                    <CategoryCard />
+                  <TouchableOpacity>
+                    <CategoryCard category={category} />
                   </TouchableOpacity>
                 </Link>
               ))}
@@ -241,7 +243,7 @@ const Home = () => {
         </View>
 
         <View>
-          {shops.length > 0 && (
+          {topShops.length > 0 && (
             <View
               style={{
                 width: "100%",
@@ -252,7 +254,7 @@ const Home = () => {
                 gap: 15,
               }}
             >
-              {shops.map((category, index) => (
+              {topShops.map((shop, index) => (
                 <Link
                   href={{
                     pathname: `/profile/[id]`,
@@ -261,8 +263,8 @@ const Home = () => {
                   key={index}
                   asChild
                 >
-                  <TouchableOpacity style={{ width: "17%" }}>
-                    <CategoryCard />
+                  <TouchableOpacity>
+                    <CategoryCard category={shop} />
                   </TouchableOpacity>
                 </Link>
               ))}
@@ -274,12 +276,5 @@ const Home = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-  },
-});
 
 export default Home;
