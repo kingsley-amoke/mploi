@@ -14,7 +14,7 @@ import {
   useUserStore,
 } from "@/src/state/store";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { doc, setDoc } from "firebase/firestore";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
 import { ProductTypes } from "@/src/utils/types";
@@ -22,6 +22,7 @@ import { useRouter } from "expo-router";
 import { CustomModal } from "@/src/components/CustomModal";
 import { Colors } from "@/src/constants/Colors";
 import { CustomToast, deduct } from "@/src/utils/data";
+import { LinearGradient } from "expo-linear-gradient";
 
 const add = () => {
   const router = useRouter();
@@ -271,7 +272,38 @@ const add = () => {
   );
 
   return (
-    <ScrollView style={{ flex: 1, paddingBottom: 30, marginVertical: 20 }}>
+    <ScrollView style={{ flex: 1, paddingBottom: 30 }}>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: 120,
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
+      >
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color="white"
+          size={30}
+          onPress={() => router.back()}
+        />
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          Add Product
+        </Text>
+      </LinearGradient>
       <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
         <TextInput
           label="Name"
@@ -337,7 +369,7 @@ const add = () => {
         </View>
       </View>
 
-      <View style={{ marginVertical: 10 }}>
+      <View style={{ marginVertical: 10, paddingVertical: 10 }}>
         <CustomModal
           content={modalContent}
           triggerText="Post"

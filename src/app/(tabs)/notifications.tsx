@@ -14,6 +14,8 @@ import { DocumentData } from "firebase/firestore";
 import { formatPrice, shopAvatar } from "@/src/utils/data";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "@/src/constants/Colors";
 
 export default function Shop() {
   const { products, promoted } = useProductsStore();
@@ -55,14 +57,36 @@ export default function Shop() {
   };
 
   return (
-    <SafeAreaView
+    <ScrollView
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 10,
       }}
     >
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: 120,
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          Notifications
+        </Text>
+      </LinearGradient>
       {/* <View
         style={{
           marginVertical: 10,
@@ -120,6 +144,6 @@ export default function Shop() {
           </View>
         )}
       </ScrollView> */}
-    </SafeAreaView>
+    </ScrollView>
   );
 }

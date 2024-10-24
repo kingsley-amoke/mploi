@@ -1,27 +1,73 @@
 import { DocumentData } from "firebase/firestore";
 import React from "react";
-import { Card, Text } from "react-native-paper";
+import { View } from "react-native";
+import { Button, Card, Text } from "react-native-paper";
+import { Colors } from "../constants/Colors";
+import { useRouter } from "expo-router";
 
-const UserCard = ({ user }: { user: DocumentData }) => (
-  <Card style={{ height: 200 }}>
-    <Card.Cover source={{ uri: user.image }} style={{ height: 100 }} />
-    <Card.Content style={{ marginVertical: 10 }}>
-      <Text
-        variant="titleLarge"
+const UserCard = ({ user }: { user: DocumentData }) => {
+  const router = useRouter();
+
+  return (
+    <Card style={{ paddingVertical: 10, margin: 10 }}>
+      <Card.Cover source={{ uri: user.image }} resizeMode="contain" />
+      <Card.Content
         style={{
-          fontWeight: "bold",
-          fontSize: 16,
-          textTransform: "capitalize",
+          marginVertical: 10,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          marginHorizontal: 10,
         }}
       >
-        {user.firstName} {user.lastName[0]}
-      </Text>
-      <Text variant="bodyMedium" style={{ fontSize: 12, fontStyle: "italic" }}>
-        {user?.skills ? user.skills[0] : "Client"}
-      </Text>
-      <Text style={{ fontSize: 10 }}>{user?.location?.regionName?.city}</Text>
-    </Card.Content>
-  </Card>
-);
+        <View style={{ width: "40%" }}>
+          <Text
+            variant="titleLarge"
+            style={{
+              fontWeight: "bold",
+              fontSize: 16,
+              textTransform: "capitalize",
+            }}
+          >
+            {user.firstName} {user.lastName}
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <Text
+              variant="bodyMedium"
+              style={{
+                fontSize: 12,
+                fontStyle: "italic",
+                flex: 1,
+                flexWrap: "wrap",
+              }}
+            >
+              {user?.skills ? user.skills[0] : "Client"}
+            </Text>
+          </View>
+          <Text style={{ fontSize: 10 }}>
+            {user?.location?.regionName?.city}
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", gap: 20 }}>
+          <Button
+            mode="contained"
+            icon="eye"
+            buttonColor={Colors.secondary}
+            onPress={() => router.push(`/profile/${user._id}`)}
+          >
+            Profile
+          </Button>
+          <Button
+            mode="contained"
+            icon="book"
+            onPress={() => router.push(`/service/${user._id}`)}
+          >
+            Book
+          </Button>
+        </View>
+      </Card.Content>
+    </Card>
+  );
+};
 
 export default UserCard;

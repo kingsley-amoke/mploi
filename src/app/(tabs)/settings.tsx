@@ -8,7 +8,11 @@ import {
 } from "react-native";
 import React from "react";
 import { useRouter } from "expo-router";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import { Text } from "react-native-paper";
 import { signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,6 +21,8 @@ import { ExternalLink } from "@/src/components/ExternalLink";
 import { useUserStore } from "@/src/state/store";
 import { socialLinks } from "@/src/utils/data";
 import WhatsappFAB from "@/src/components/WhatsappFAB";
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "@/src/constants/Colors";
 
 const settings = () => {
   // const {user} = useUserStore()
@@ -197,10 +203,32 @@ const settings = () => {
         flex: 1,
       }}
     >
-      <ScrollView
-        style={{ marginHorizontal: 12 }}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <LinearGradient
+          colors={[Colors.primary, Colors.secondary]}
+          start={{ x: 0, y: 0.75 }}
+          end={{ x: 1, y: 0.25 }}
+          style={{
+            height: 120,
+            paddingHorizontal: 20,
+            paddingBottom: 30,
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignItems: "flex-end",
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              fontSize: 20,
+              fontWeight: "800",
+              textAlign: "center",
+              flex: 1,
+            }}
+          >
+            Settings
+          </Text>
+        </LinearGradient>
         {/* Account Settings */}
         <View style={{ marginBottom: 12 }}>
           <Text

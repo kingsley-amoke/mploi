@@ -6,9 +6,14 @@ import { useReviewsStore, useUsersStore, useUserStore } from "../state/store";
 import { Avatar, Divider, Text, TextInput } from "react-native-paper";
 import { firestoreDB } from "../utils/firebaseConfig";
 
-const Reviews = ({ itemID, item }: { itemID: string | string[] | undefined, item:string }) => {
-
-    const colorScheme = useColorScheme();
+const Reviews = ({
+  itemID,
+  item,
+}: {
+  itemID: string | string[] | undefined;
+  item: string;
+}) => {
+  const colorScheme = useColorScheme();
 
   const { users } = useUsersStore();
   const { user } = useUserStore();
@@ -21,7 +26,7 @@ const Reviews = ({ itemID, item }: { itemID: string | string[] | undefined, item
 
   const itemReviews = reviews.filter((review) => review.productID === itemID);
 
-  const textColor = colorScheme === 'dark' ? 'white' : 'black';
+  const textColor = colorScheme === "dark" ? "white" : "black";
 
   const ReviewRenderItem = ({ item }: { item: DocumentData }) => {
     const reviewer = users.find((user) => user?._id === item.userID);
@@ -152,142 +157,149 @@ const Reviews = ({ itemID, item }: { itemID: string | string[] | undefined, item
   };
 
   return (
-    <View style={{marginVertical:10}} >
-      <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center' , marginHorizontal:20,   marginTop:10}}>
-
-      <Text >Rate this {item}.</Text>
+    <View style={{ marginVertical: 10 }}>
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "center",
+          justifyContent: "space-between",
           alignItems: "center",
-          gap: 5,
-       
+          marginHorizontal: 20,
+          marginTop: 10,
         }}
       >
-      
+        <Text>Rate this {item}.</Text>
         <View
           style={{
-            borderWidth: 1,
-            borderColor: "grey",
-            padding: 3,
-            borderRadius: 5,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 5,
           }}
         >
-          <MaterialIcons
-            name="star"
-            color={star > 0 ? "green" : "grey"}
-            size={20}
-            onPress={() => setStar(1)}
-          />
-        </View>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: "grey",
-            padding: 3,
-            borderRadius: 5,
-          }}
-        >
-          <MaterialIcons
-            name="star"
-            color={star > 1 ? "green" : "grey"}
-            size={20}
-            onPress={() => setStar(2)}
-          />
-        </View>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: "grey",
-            padding: 3,
-            borderRadius: 5,
-          }}
-        >
-          <MaterialIcons
-            name="star"
-            color={star > 2 ? "green" : "grey"}
-            size={20}
-            onPress={() => setStar(3)}
-          />
-        </View>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: "grey",
-            padding: 3,
-            borderRadius: 5,
-          }}
-        >
-          <MaterialIcons
-            name="star"
-            color={star > 3 ? "green" : "grey"}
-            size={20}
-            onPress={() => setStar(4)}
-          />
-        </View>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: "grey",
-            padding: 3,
-            borderRadius: 5,
-          }}
-        >
-          <MaterialIcons
-            name="star"
-            color={star === 5 ? "green" : "grey"}
-            size={20}
-            onPress={() => setStar(5)}
-          />
-        </View>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: "grey",
+              padding: 3,
+              borderRadius: 5,
+            }}
+          >
+            <MaterialIcons
+              name="star"
+              color={star > 0 ? "green" : "grey"}
+              size={20}
+              onPress={() => setStar(1)}
+            />
+          </View>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: "grey",
+              padding: 3,
+              borderRadius: 5,
+            }}
+          >
+            <MaterialIcons
+              name="star"
+              color={star > 1 ? "green" : "grey"}
+              size={20}
+              onPress={() => setStar(2)}
+            />
+          </View>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: "grey",
+              padding: 3,
+              borderRadius: 5,
+            }}
+          >
+            <MaterialIcons
+              name="star"
+              color={star > 2 ? "green" : "grey"}
+              size={20}
+              onPress={() => setStar(3)}
+            />
+          </View>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: "grey",
+              padding: 3,
+              borderRadius: 5,
+            }}
+          >
+            <MaterialIcons
+              name="star"
+              color={star > 3 ? "green" : "grey"}
+              size={20}
+              onPress={() => setStar(4)}
+            />
+          </View>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: "grey",
+              padding: 3,
+              borderRadius: 5,
+            }}
+          >
+            <MaterialIcons
+              name="star"
+              color={star === 5 ? "green" : "grey"}
+              size={20}
+              onPress={() => setStar(5)}
+            />
+          </View>
         </View>
       </View>
-     { itemID !== user?._id && <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
-          marginVertical: 20,
-        }}
-      >
-        <TextInput
-          mode="outlined"
-          label="write a review..."
-          style={{ width: 300 }}
-          value={review}
-          onChangeText={(value) => setReview(value)}
-        />
-        {submitting ? (
-          <Feather name="loader" color={textColor} size={30} />
-        ) : (
-          <MaterialIcons
-            name="send"
-            color={textColor}
-            size={30}
-            onPress={handleSubmitReviews}
+      {itemID !== user?._id && (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            marginVertical: 20,
+            marginHorizontal: 10,
+          }}
+        >
+          <TextInput
+            mode="outlined"
+            label="write a review..."
+            style={{ flex: 1 }}
+            value={review}
+            onChangeText={(value) => setReview(value)}
           />
-        )}
-      </View>
-}
+          {submitting ? (
+            <Feather name="loader" color={textColor} size={30} />
+          ) : (
+            <MaterialIcons
+              name="send"
+              color={textColor}
+              size={30}
+              onPress={handleSubmitReviews}
+            />
+          )}
+        </View>
+      )}
       {submitting && (
         <Text style={{ color: "grey", textAlign: "center", marginBottom: 10 }}>
           Submitting...
         </Text>
       )}
-      <View style={{ marginBottom: 50, marginTop:20,gap: 20 }}>
-        {itemReviews.length > 0 ?(
-
+      <View style={{ marginBottom: 50, marginTop: 20, gap: 20 }}>
+        {itemReviews.length > 0 ? (
           <>
-          <Divider bold horizontalInset style={{ borderColor: "grey" }} />
-          {itemReviews.map((review) => (
-            <ReviewRenderItem key={review._id} item={review} />
-          ))}
+            <Divider bold horizontalInset style={{ borderColor: "grey" }} />
+            {itemReviews.map((review) => (
+              <ReviewRenderItem key={review._id} item={review} />
+            ))}
           </>
-        ):(
-          <Text style={{textAlign:'center', fontStyle:'italic'}}>No reviews</Text>
-        )
-      }
+        ) : (
+          <Text style={{ textAlign: "center", fontStyle: "italic" }}>
+            No reviews
+          </Text>
+        )}
       </View>
     </View>
   );

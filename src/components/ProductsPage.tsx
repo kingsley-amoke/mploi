@@ -6,24 +6,9 @@ import ProductCard from "@/src/components/ProductCard";
 import { Text } from "react-native-paper";
 import { DocumentData } from "firebase/firestore";
 
-const ProductsPage = ({products}: {products: DocumentData[]}) => {
-
-
+const ProductsPage = ({ products }: { products: DocumentData[] }) => {
   return (
     <View>
-       <View style={{ width: "100%", paddingHorizontal: 20 }}>
-        <Text
-          style={{
-            textAlign: "left",
-            fontSize: 18,
-            fontWeight: "700",
-            marginVertical: 10,
-          }}
-        >
-          Latest Products
-        </Text>
-      </View>
-
       <View
         style={{
           width: "100%",

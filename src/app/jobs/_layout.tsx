@@ -1,27 +1,15 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
+import { Colors } from "@/src/constants/Colors";
 
-const ProductLayout = () => {
+const JobLayout = () => {
   return (
     <Stack>
       <Stack.Screen
         name="add"
         options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="images"
-        options={{
-          title: "Add Images",
-          headerTitleAlign: "center",
-        }}
-      />
-      <Stack.Screen
-        name="index"
-        options={{
-          headerShown: false,
+          title: "Add Job",
         }}
       />
       <Stack.Screen name="[id]" options={{ headerShown: false }} />
@@ -29,6 +17,6 @@ const ProductLayout = () => {
   );
 };
 
-export default ProductLayout;
+export default JobLayout;
 
 const styles = StyleSheet.create({});

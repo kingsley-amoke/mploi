@@ -222,7 +222,26 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
+              name="jobs"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
               name="products"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="shop/index"
+              options={{
+                headerShown: false,
+              }}
+            />
+
+            <Stack.Screen
+              name="shop/[id]"
               options={{
                 headerShown: false,
               }}
@@ -246,7 +265,7 @@ export default function RootLayout() {
                     name="home"
                     size={20}
                     color={iconColor}
-                    onPress={() => router.push("/home")}
+                    onPress={() => router.push("/")}
                   />
                 ),
               }}
@@ -254,12 +273,17 @@ export default function RootLayout() {
             <Stack.Screen
               name="service/index"
               options={{
-                title: "All Services",
-                headerTitleAlign: "center",
+                headerShown: false,
               }}
             />
             <Stack.Screen
               name="service/[id]"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="service/providers/[id]"
               options={{
                 headerShown: false,
               }}

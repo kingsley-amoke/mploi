@@ -38,6 +38,7 @@ import {
 import { Colors } from "@/src/constants/Colors";
 import Reviews from "@/src/components/Reviews";
 import { ref } from "firebase/database";
+import { LinearGradient } from "expo-linear-gradient";
 
 const ProductDetails = () => {
   const { id: productID } = useLocalSearchParams();
@@ -111,23 +112,48 @@ const ProductDetails = () => {
   };
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: product?.name.substring(0, 25),
-      headerTitleAlign: "left",
-      headerRight: () => (
-        <MaterialCommunityIcons
-          name="share-variant-outline"
-          size={20}
-          onPress={onShare}
-        />
-      ),
-      headerTitleStyle: { fontSize: 14 },
-    });
     updateImage(product?.images[0]);
   }, []);
 
   return (
-    <ScrollView style={{ padding: 10, paddingVertical: 30 }}>
+    <ScrollView>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: 120,
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
+      >
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color="white"
+          size={30}
+          onPress={() => router.back()}
+        />
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          {product?.name.substring(0, 25)}
+        </Text>
+        <MaterialCommunityIcons
+          name="share-variant-outline"
+          size={20}
+          onPress={onShare}
+          color="white"
+        />
+      </LinearGradient>
       <View>
         <View
           style={{
@@ -168,13 +194,13 @@ const ProductDetails = () => {
           horizontalInset
           style={{ borderColor: "grey", marginTop: 20 }}
         />
-        <View style={{ marginVertical: 20 }}>
+        <View style={{ margin: 20 }}>
           <Text
             style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}
           >
             Product Details
           </Text>
-          <View style={{ gap: 10 }}>
+          <View style={{ gap: 10, marginTop: 10 }}>
             <Text>Name: {product?.name}</Text>
             <Text>Description: {product?.description}</Text>
             <Text>Location: {product?.location}</Text>
@@ -188,12 +214,17 @@ const ProductDetails = () => {
         horizontalInset
         style={{ borderColor: "grey", marginVertical: 20 }}
       />
-      <View>
-        <Button mode="contained" onPress={contactSeller}>
+      <View style={{ marginHorizontal: 10 }}>
+        <Button
+          mode="contained"
+          onPress={contactSeller}
+          style={{ paddingVertical: 10 }}
+          labelStyle={{ fontSize: 19 }}
+        >
           Contact Seller
         </Button>
       </View>
-      <View style={{ marginBottom: 40 }}>
+      <View style={{ marginBottom: 40, marginHorizontal: 10 }}>
         <View style={{ marginVertical: 30 }}>
           <Text
             style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}

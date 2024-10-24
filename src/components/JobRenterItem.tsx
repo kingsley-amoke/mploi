@@ -73,7 +73,7 @@ export const JobRenderItem = ({ item }: { item: DocumentData }) => {
       <View style={{ justifyContent: "flex-end", alignItems: "flex-end" }}>
         <Button
           mode="outlined"
-          onPress={() => router.push(`admin/jobs/${item._id}`)}
+          onPress={() => router.push(`/jobs/${item._id}`)}
         >
           See Details
         </Button>

@@ -29,15 +29,9 @@ const FloatingButton = () => {
               label: "Add product",
               style: { backgroundColor: Colors.light.primary },
               labelTextColor: "white",
-              onPress: () => router.push("products/add"),
+              onPress: () => router.push("/products/add"),
             },
-            {
-              icon: "account-search-outline",
-              style: { backgroundColor: Colors.light.primary },
-              label: "Request a service",
-              labelTextColor: "white",
-              onPress: () => router.push("/service"),
-            },
+
             {
               icon: "file-eye-outline",
               style: { backgroundColor: Colors.light.primary },

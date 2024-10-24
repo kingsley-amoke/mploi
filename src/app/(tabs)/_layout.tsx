@@ -33,7 +33,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="messages"
           options={{
-            title: "Messages",
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="message-outline"
@@ -46,7 +46,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="career"
           options={{
-            title: "Jobs",
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="briefcase-clock"
@@ -59,7 +59,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="notifications"
           options={{
-            title: "Notifications",
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="bell-outline"
@@ -72,14 +72,14 @@ const TabLayout = () => {
         <Tabs.Screen
           name="settings"
           options={{
-            title: "Settings",
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Feather name="settings" size={20} color={color} />
             ),
           }}
         />
       </Tabs>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </>
   );
 };

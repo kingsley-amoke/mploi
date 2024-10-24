@@ -3,13 +3,13 @@ import { Drawer } from "expo-router/drawer";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 
 export default function Layout() {
   const router = useRouter();
 
   const exit = () => {
-    router.replace("/home");
+    router.replace("/");
   };
 
   return (
@@ -91,13 +91,6 @@ export default function Layout() {
                 onPress={() => exit()}
               />
             ),
-          }}
-        />
-        <Drawer.Screen
-          name="jobs" // This is the name of the page and must match the url from root
-          options={{
-            drawerLabel: () => null,
-            title: undefined,
           }}
         />
       </Drawer>

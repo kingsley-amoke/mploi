@@ -1,20 +1,21 @@
 import { ScrollView, StyleSheet, useColorScheme, View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import React, { useState } from "react";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { doc, setDoc } from "firebase/firestore";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
 import { useRouter } from "expo-router";
 import { Colors } from "@/src/constants/Colors";
 import { useJobsStore } from "@/src/state/store";
 import { CustomToast } from "@/src/utils/data";
+import { LinearGradient } from "expo-linear-gradient";
 
 const add = () => {
   const router = useRouter();
-  const { addJob} = useJobsStore()
+  const { addJob } = useJobsStore();
 
-const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
 
   const iconColor = colorScheme === "dark" ? "white" : "black";
 
@@ -94,7 +95,7 @@ const colorScheme = useColorScheme();
     const jobRef = doc(firestoreDB, "jobs", _doc._id);
 
     setDoc(jobRef, _doc).then(() => {
-      addJob(doc)
+      addJob(doc);
       router.back();
       CustomToast("Job added Successfully");
       setPosting(false);
@@ -103,6 +104,37 @@ const colorScheme = useColorScheme();
 
   return (
     <ScrollView style={{ flex: 1, marginVertical: 10 }}>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: 120,
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
+      >
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color="white"
+          size={30}
+          onPress={() => router.back()}
+        />
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          Add Product
+        </Text>
+      </LinearGradient>
       <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
         <TextInput
           label="Position"
@@ -178,7 +210,12 @@ const colorScheme = useColorScheme();
           onChangeText={(value) => setOthers(value)}
         />
       </View>
-      <Button icon="post" mode="contained" onPress={handlePostJob} style={{marginHorizontal:20}}>
+      <Button
+        icon="post"
+        mode="contained"
+        onPress={handlePostJob}
+        style={{ marginHorizontal: 20 }}
+      >
         {posting ? "Posting..." : "Post"}
       </Button>
     </ScrollView>

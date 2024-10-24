@@ -41,11 +41,13 @@ import {
 import { Colors } from "@/src/constants/Colors";
 import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import { CustomModal } from "@/src/components/CustomModal";
-import { ref } from "firebase/database";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
+import { LinearGradient } from "expo-linear-gradient";
 
 const JobPage = () => {
   const { id } = useLocalSearchParams();
+
+  const router = useRouter();
 
   const navigation = useNavigation();
 
@@ -307,17 +309,40 @@ const JobPage = () => {
     </View>
   );
 
-  useEffect(() => {
-    navigation.setOptions({
-      title: job.title + " " + "at" + " " + job.company,
-      headerTitleAlign: "center",
-      headerTitleStyle: { fontSize: 14 },
-    });
-  }, [id]);
-
   return (
-    <SafeAreaView>
-      <ScrollView style={{ paddingHorizontal: 24 }}>
+    <ScrollView>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: 120,
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
+      >
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color="white"
+          size={30}
+          onPress={() => router.back()}
+        />
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          {job.title}
+        </Text>
+      </LinearGradient>
+      <View style={{ paddingHorizontal: 24, marginTop: 10 }}>
         <Text style={styles.jobTime}>
           Posted: {daysAgo < 1 ? "Today" : daysAgo + " days ago"}
         </Text>
@@ -325,7 +350,7 @@ const JobPage = () => {
           style={{ marginHorizontal: 20, marginVertical: 10 }}
           showsVerticalScrollIndicator={false}
         >
-          <View
+          {/* <View
             style={{
               justifyContent: "center",
               alignItems: "center",
@@ -333,7 +358,7 @@ const JobPage = () => {
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: "bold" }}>MyPlug</Text>
-          </View>
+          </View> */}
           <Divider bold horizontalInset style={{ marginBottom: 10 }} />
           <View>
             <Text>Experience Level: {job.experience}</Text>
@@ -425,8 +450,8 @@ const JobPage = () => {
             <Text>Read our Privacy Policy.</Text>
           </View>
         </ScrollView>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScrollView>
   );
 };
 

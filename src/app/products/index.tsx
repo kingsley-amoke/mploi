@@ -1,31 +1,22 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import Categories from "@/src/components/Categories";
-import { useCategoryStore } from "@/src/state/store";
-import SubShop from "@/src/components/SubShop";
+import { useProductsStore } from "@/src/state/store";
+import ProductsPage from "@/src/components/ProductsPage";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import Services from "@/src/components/Services";
 
 const index = () => {
-  const { categories } = useCategoryStore();
+  const shop = useGlobalSearchParams().category;
 
+  const { products } = useProductsStore();
   const router = useRouter();
 
-  const filteredCategories = categories.sort(function (a, b) {
-    if (a.name < b.name) {
-      return -1;
-    }
-    if (a.name > b.name) {
-      return 1;
-    }
-    return 0;
-  });
+  const filteredproducts = products.filter((p) => p.category == shop);
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
@@ -54,12 +45,10 @@ const index = () => {
             flex: 1,
           }}
         >
-          All Services
+          {shop}
         </Text>
       </LinearGradient>
-      {filteredCategories.map((category, index) => (
-        <Services service={category} key={index} />
-      ))}
+      <ProductsPage products={filteredproducts} />
     </ScrollView>
   );
 };

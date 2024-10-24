@@ -5,20 +5,48 @@ import { Link, useRouter } from "expo-router";
 import { useChatStore, useRequestStore, useUserStore } from "@/src/state/store";
 import { Ionicons } from "@expo/vector-icons";
 import { DocumentData } from "firebase/firestore";
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "@/src/constants/Colors";
 
 const index = () => {
-
   const { chats } = useChatStore();
   const { requests } = useRequestStore();
-  const {user} = useUserStore();
+  const { user } = useUserStore();
 
-  const myRequests = requests.filter(req => req.serviceProvider?._id === user?._id)
-  const myChats = chats.filter(c => c.serviceProvider._id === user?._id || c.client._id === user?._id);
-
-
+  const myRequests = requests.filter(
+    (req) => req.serviceProvider?._id === user?._id
+  );
+  const myChats = chats.filter(
+    (c) => c.serviceProvider._id === user?._id || c.client._id === user?._id
+  );
 
   return (
     <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: 120,
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          Messages
+        </Text>
+      </LinearGradient>
       <SafeAreaView>
         {myRequests.length > 0 && (
           <Link href={"/service/requests"} asChild>
@@ -89,7 +117,6 @@ const index = () => {
 const MessageCard = ({ room }: { room: DocumentData }) => {
   const { user } = useUserStore();
 
-
   const chatName =
     user?._id === room.client._id
       ? room.serviceProvider.firstName + " " + room.serviceProvider.lastName
@@ -100,8 +127,7 @@ const MessageCard = ({ room }: { room: DocumentData }) => {
       ? room.serviceProvider.image
       : room.client.image;
 
-      if(!room.messages) return
-
+  if (!room.messages) return;
 
   const lastMessageId = Object.keys(room.messages).pop()!;
 
@@ -129,11 +155,11 @@ const MessageCard = ({ room }: { room: DocumentData }) => {
             >
               {chatName}
             </Text>
-            <Text style={{fontSize:12}}>{lastMessage?.text}</Text>
+            <Text style={{ fontSize: 12 }}>{lastMessage?.text}</Text>
           </View>
         </View>
         <View>
-          <Text style={{fontSize:8, fontStyle: 'italic'}}>
+          <Text style={{ fontSize: 8, fontStyle: "italic" }}>
             {new Date(lastMessage?.timeStamp).toLocaleTimeString("en-US", {
               hour: "numeric",
               minute: "numeric",

@@ -58,7 +58,17 @@ const Home = () => {
     return serviceProviderChats.includes(usr._id) && usr.skills?.length > 0;
   });
 
-  const topCategories = categories.splice(0, 15);
+  const filteredCategories = categories.sort(function (a, b) {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
+  });
+
+  const topCategories = filteredCategories.slice(0, 15);
   const topShops = shops.slice(0, 15);
 
   useEffect(() => {
@@ -160,7 +170,10 @@ const Home = () => {
           >
             Services
           </Text>
-          <View style={{ flexDirection: "row", gap: 10 }}>
+          <TouchableOpacity
+            style={{ flexDirection: "row", gap: 10 }}
+            onPress={() => router.push("/service")}
+          >
             <Text
               style={{
                 textAlign: "left",
@@ -172,7 +185,7 @@ const Home = () => {
               See all
             </Text>
             <MaterialCommunityIcons name="arrow-right-box" size={20} />
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View>
@@ -190,8 +203,8 @@ const Home = () => {
               {topCategories.map((category, index) => (
                 <Link
                   href={{
-                    pathname: `/profile/[id]`,
-                    params: { id: user._id },
+                    pathname: `/service/providers/[id]`,
+                    params: { id: category._id },
                   }}
                   key={index}
                   asChild
@@ -227,7 +240,10 @@ const Home = () => {
           >
             Market Place
           </Text>
-          <View style={{ flexDirection: "row", gap: 10 }}>
+          <TouchableOpacity
+            style={{ flexDirection: "row", gap: 10 }}
+            onPress={() => router.push("/shop")}
+          >
             <Text
               style={{
                 textAlign: "left",
@@ -239,7 +255,7 @@ const Home = () => {
               See all
             </Text>
             <MaterialCommunityIcons name="arrow-right-box" size={20} />
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View>
@@ -257,8 +273,8 @@ const Home = () => {
               {topShops.map((shop, index) => (
                 <Link
                   href={{
-                    pathname: `/profile/[id]`,
-                    params: { id: user._id },
+                    pathname: `/shop/[id]`,
+                    params: { id: shop._id },
                   }}
                   key={index}
                   asChild

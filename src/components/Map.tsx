@@ -30,7 +30,7 @@ const Map = ({
   };
 
   const handleCancelService = () => {
-    router.replace("/home");
+    router.replace("/");
     CustomToast("Service cancelled Successfully");
     handleDeleteRequest();
   };

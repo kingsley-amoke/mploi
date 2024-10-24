@@ -310,7 +310,7 @@ export const getCV = async () => {
 
   const querySnapshot = await getDocs(cvRef);
   querySnapshot.forEach((doc) => {
-  cvs.push(doc.data());
+    cvs.push(doc.data());
   });
   return cvs;
 };
@@ -331,6 +331,13 @@ export const distanceToUser = (
   // console.log(distance);
 
   return distance;
+};
+
+export const createQueryString = (name: string, value: string) => {
+  const params = new URLSearchParams();
+  params.set(name, value);
+
+  return params.toString();
 };
 
 export const exitApp = () => {
