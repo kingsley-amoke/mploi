@@ -79,7 +79,6 @@ const TabLayout = () => {
           }}
         />
       </Tabs>
-      <StatusBar style="light" />
     </>
   );
 };

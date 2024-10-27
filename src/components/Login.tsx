@@ -13,12 +13,8 @@ import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { AuthRequestPromptOptions, AuthSessionResult } from "expo-auth-session";
 import { useUserStore } from "@/src/state/store";
-import { fetchUser } from "@/src/utils/userActions";
-import useTheme from "../hooks/useTheme";
 import { Colors } from "../constants/Colors";
 import { doc, getDoc } from "firebase/firestore";
 import { firestoreDB } from "../utils/firebaseConfig";
@@ -49,16 +45,10 @@ const Login = () => {
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then(async ({ user }) => {
-        const userRef = doc(firestoreDB, "users", user.uid);
-
-        const docSnap = await getDoc(userRef);
-        storeUser(docSnap.data()!);
-
-        router.replace("/home");
+        router.replace("/");
         CustomToast("Logged in Successfully");
 
         setLoading(false);
-        AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
       })
       .catch((error) => {
         setError(error);
@@ -135,7 +125,9 @@ const Login = () => {
           style={{
             marginTop: 18,
             marginBottom: 4,
+            paddingVertical: 10,
           }}
+          labelStyle={{ fontSize: 20 }}
           onPress={(e: GestureResponderEvent) => handleLogin(e)}
         >
           {loading ? (

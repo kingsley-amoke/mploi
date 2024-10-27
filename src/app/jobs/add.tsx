@@ -132,7 +132,7 @@ const add = () => {
             flex: 1,
           }}
         >
-          Add Product
+          Add Job
         </Text>
       </LinearGradient>
       <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>

@@ -10,42 +10,10 @@ import { useColorScheme } from "react-native";
 
 const UserProfile = () => {
   const { users } = useUsersStore();
-  const navigation = useNavigation();
-  const router = useRouter();
 
   const { id } = useLocalSearchParams();
 
-  const [user, setUser] = useState<DocumentData | null>(null);
-
-  const colorScheme = useColorScheme();
-
-  const iconColor = colorScheme === "dark" ? "#fff" : "#000";
-
-  useLayoutEffect(() => {
-    if (!id) {
-      navigation.goBack();
-    } else {
-      const user = fetchUserById(users, id.toLocaleString());
-      if (!user) {
-        navigation.goBack();
-      } else {
-        navigation.setOptions({
-          title: user?.firstName + " " + user?.lastName,
-          headerLeft: null,
-          headerRight: () => (
-            <MaterialCommunityIcons
-              name="home"
-              color={iconColor}
-              size={20}
-              style={{ paddingRight: 10 }}
-              onPress={() => router.replace("/home")}
-            />
-          ),
-        });
-        setUser(user);
-      }
-    }
-  }, [id]);
+  const user = fetchUserById(users, id.toLocaleString())!;
 
   return <Profile user={user} />;
 };

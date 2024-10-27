@@ -6,8 +6,13 @@ import { Button } from "react-native-paper";
 
 import * as MailComposer from "expo-mail-composer";
 import Plans from "./components/plans";
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "@/src/constants/Colors";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const index = () => {
+  const router = useRouter();
   //   const handleSelectCV = async (isResume: boolean) => {
   //     setLoading(true);
   //     DocumentPicker.getDocumentAsync().then(async (document) => {
@@ -75,16 +80,39 @@ const index = () => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        margin: 20,
-      }}
-    >
-      <ScrollView
-        style={{ paddingBottom: 20 }}
-        showsVerticalScrollIndicator={false}
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: 120,
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
       >
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color="white"
+          size={30}
+          onPress={() => router.back()}
+        />
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          CV Review
+        </Text>
+      </LinearGradient>
+      <View style={{ paddingBottom: 20, marginHorizontal: 20 }}>
         <View>
           <Text>
             Get your desired job, leave your employer with no options than to
@@ -131,8 +159,8 @@ const index = () => {
           />
           <View style={{ marginVertical: 10 }} />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScrollView>
   );
 };
 

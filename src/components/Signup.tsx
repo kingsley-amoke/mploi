@@ -109,10 +109,10 @@ const Signup = () => {
 
           storeUser(docSnap.data()!);
 
-          router.push("/home");
+          router.push("/");
           CustomToast("Please update profile to continue");
           setLoading(false);
-          AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
+          // AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
         });
       }
     );

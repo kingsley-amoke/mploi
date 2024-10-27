@@ -219,7 +219,11 @@ const Plans = ({
             </View>
           </Dialog>
         </Portal>
-        <Button mode="contained" onPress={showModal}>
+        <Button
+          mode="contained"
+          labelStyle={{ paddingVertical: 10 }}
+          onPress={showModal}
+        >
           Checkout
         </Button>
 

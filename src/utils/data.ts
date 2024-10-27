@@ -351,3 +351,9 @@ export const extractImagePath = (url: string): string => {
 export const getImageUrl = (filename: string, folder: string): string => {
   return `https://firebasestorage.googleapis.com/v0/b/mploi247.appspot.com/o/${folder}/${filename}?alt=media&token=18367db0-dd5a-4d14-bb89-844f2c67ff11`;
 };
+
+export const findArrayItem = (array: DocumentData[], search: string) => {
+  const item = array.find((i) => i.toLowerCase().includes(search));
+
+  return item;
+};

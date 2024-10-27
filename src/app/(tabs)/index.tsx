@@ -12,32 +12,20 @@ import {
   useUsersStore,
   useUserStore,
 } from "@/src/state/store";
-import { CustomToast, formatPrice, shopAvatar } from "@/src/utils/data";
+import { createQueryString, getUsers } from "@/src/utils/data";
+import { auth } from "@/src/utils/firebaseConfig";
+
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { DocumentData } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import {
-  Text,
-  ActivityIndicator,
-  Card,
-  Button,
-  TextInput,
-} from "react-native-paper";
+
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { SafeAreaView, TouchableOpacity, View } from "react-native";
+import { Text, TextInput } from "react-native-paper";
 
 const Home = () => {
-  const { users } = useUsersStore();
-  const { user } = useUserStore();
+  const { users, storeUsers } = useUsersStore();
+  const { user, storeUser } = useUserStore();
   const { chats } = useChatStore();
   const { categories } = useCategoryStore();
   const { shops } = useShopsStore();
@@ -71,10 +59,26 @@ const Home = () => {
   const topCategories = filteredCategories.slice(0, 15);
   const topShops = shops.slice(0, 15);
 
-  useEffect(() => {
-    if (user.suspended) {
-      router.replace("/suspended");
+  const handleSubmitSearch = ({
+    nativeEvent: { key },
+  }: {
+    nativeEvent: { key: string };
+  }) => {
+    if (key === "Enter" && search !== "") {
+      router.push(`/search?${createQueryString("search", search)}`);
     }
+  };
+
+  useLayoutEffect(() => {
+    getUsers().then((users) => {
+      storeUsers(users);
+
+      const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
+      storeUser(user);
+      if (user?.suspended) {
+        router.replace("/suspended");
+      }
+    });
   }, [user]);
 
   return (
@@ -99,8 +103,14 @@ const Home = () => {
           }}
         >
           <TouchableOpacity onPress={() => router.push("/profile/edit")}>
-            <Text style={{ fontWeight: "bold", color: "white" }}>
-              Hi {user.lastName ? user.lastName : "Anonymous"}
+            <Text
+              style={{
+                fontWeight: "bold",
+                color: "white",
+                textTransform: "capitalize",
+              }}
+            >
+              Hi {auth.currentUser ? user?.lastName : "Anonymous"}
             </Text>
             <Text style={{ color: "white" }}>
               <MaterialIcons name="location-pin" color="white" />
@@ -111,7 +121,9 @@ const Home = () => {
             name="person"
             size={20}
             color="white"
-            onPress={() => router.push(user._id ? "/profile" : "/login")}
+            onPress={() =>
+              router.push(auth.currentUser ? "/profile" : "/login")
+            }
           />
         </View>
         <Text
@@ -139,6 +151,7 @@ const Home = () => {
               fontSize: 14,
             }}
             onChangeText={(value) => setSearch(value)}
+            onKeyPress={handleSubmitSearch}
           />
           <MaterialIcons
             name="search"

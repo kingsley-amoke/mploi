@@ -369,7 +369,7 @@ const add = () => {
         </View>
       </View>
 
-      <View style={{ marginVertical: 10, paddingVertical: 10 }}>
+      <View style={{ marginVertical: 10 }}>
         <CustomModal
           content={modalContent}
           triggerText="Post"

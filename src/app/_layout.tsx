@@ -28,9 +28,10 @@ import {
   useShopsStore,
   useTransactionsStore,
   useUsersStore,
+  useUserStore,
 } from "../state/store";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { realtimeDB } from "../utils/firebaseConfig";
+import { auth, realtimeDB } from "../utils/firebaseConfig";
 import {
   CustomToast,
   exitApp,
@@ -61,14 +62,9 @@ const CombinedDarkTheme = merge(DarkTheme, customDarkTheme);
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
-  const router = useRouter();
-
-  const iconColor = colorScheme === "dark" ? "white" : "black";
-
   const paperTheme =
     colorScheme === "dark" ? CombinedDarkTheme : CombinedDefaultTheme;
 
-  const { storeUsers } = useUsersStore();
   const { storeJobs } = useJobsStore();
   const { storeCategory } = useCategoryStore();
   const { storeChats } = useChatStore();
@@ -81,9 +77,6 @@ export default function RootLayout() {
   const { storeCV } = useCVStore();
 
   const fetchAllUsers = async () => {
-    getUsers().then((users) => {
-      storeUsers(users);
-    });
     getTransactions().then((transactions) => {
       storeTransactions(transactions);
     });
@@ -234,6 +227,12 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
+              name="search/index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
               name="shop/index"
               options={{
                 headerShown: false,
@@ -248,6 +247,12 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
+              name="portfolio/index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
               name="profile/edit"
               options={{
                 title: "Edit Profile",
@@ -257,17 +262,13 @@ export default function RootLayout() {
             <Stack.Screen
               name="profile/index"
               options={{
-                title: "My Profile",
-                headerTitleStyle: { fontSize: 14 },
-
-                headerRight: () => (
-                  <MaterialCommunityIcons
-                    name="home"
-                    size={20}
-                    color={iconColor}
-                    onPress={() => router.push("/")}
-                  />
-                ),
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="profile/[id]"
+              options={{
+                headerShown: false,
               }}
             />
             <Stack.Screen
@@ -325,14 +326,13 @@ export default function RootLayout() {
             <Stack.Screen
               name="cv/index"
               options={{
-                title: "Review CV",
-                headerTitleAlign: "center",
+                headerShown: false,
               }}
             />
           </Stack>
         </ThemeProvider>
       </PaperProvider>
-      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+      <StatusBar style="light" />
     </RootSiblingParent>
   );
 }
