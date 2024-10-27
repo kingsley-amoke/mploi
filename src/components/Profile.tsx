@@ -1,13 +1,8 @@
-import {
-  ScrollView,
-  View,
-  TouchableOpacity,
-  useColorScheme,
-  FlatList,
-} from "react-native";
+import { View, TouchableOpacity, useColorScheme, FlatList } from "react-native";
 import {
   Avatar,
   Button,
+  Card,
   Dialog,
   Divider,
   Portal,
@@ -17,11 +12,7 @@ import {
 import React, { useState } from "react";
 
 import { Colors } from "@/src/constants/Colors";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { doc, DocumentData, getDoc, updateDoc } from "firebase/firestore";
 import { useRouter } from "expo-router";
 import {
@@ -36,9 +27,10 @@ import { auth, firestoreDB, storage } from "../utils/firebaseConfig";
 import * as ImagePicker from "expo-image-picker";
 import { ref } from "firebase/storage";
 import { getDownloadURL, uploadBytes } from "firebase/storage";
-import { getBlobFroUri, getUsers } from "../utils/data";
+import { getBlobFroUri, getUsers, shopAvatar } from "../utils/data";
 import { LinearGradient } from "expo-linear-gradient";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
+import { Image } from "expo-image";
 
 const Profile = ({ user }: { user: DocumentData | null }) => {
   const router = useRouter();
@@ -60,8 +52,11 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
 
   const [bioVisible, setBioVisible] = useState(false);
   const [skillsVisible, setSkillsVisible] = useState(false);
+  const [testimonialVisible, setTestimonialVisible] = useState(false);
+  const [name, setName] = useState("");
 
   const [bio, setBio] = useState("");
+  const [testimonial, setTestimonial] = useState("");
 
   const showBioDialog = () => setBioVisible(true);
 
@@ -69,6 +64,9 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
   const showSkillsDialog = () => setSkillsVisible(true);
 
   const hideSkillsDialog = () => setSkillsVisible(false);
+  const showTestimonialDialog = () => setTestimonialVisible(true);
+
+  const hideTestimonialDialog = () => setTestimonialVisible(false);
 
   const filteredCategories = categories.sort(function (a, b) {
     if (a.name < b.name) {
@@ -145,20 +143,37 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
   };
 
   const handleUpdateBio = () => {
+    setLoading(true);
     const userRef = doc(firestoreDB, "users", auth.currentUser?.uid!);
-    updateDoc(userRef, { bio: bio }).then(() => {
-      hideBioDialog();
-    });
+    updateDoc(userRef, { bio: bio });
+    hideBioDialog();
+    setLoading(false);
   };
 
   const handleUpdateSkills = () => {
+    setLoading(true);
     const userRef = doc(firestoreDB, "users", auth.currentUser?.uid!);
-    updateDoc(userRef, { skills: selectedService }).then(() => {
-      hideSkillsDialog();
+    updateDoc(userRef, { skills: selectedService }).catch(() => {
       getUsers().then((users) => {
         storeUsers(users);
       });
     });
+    hideSkillsDialog();
+    setLoading(false);
+  };
+
+  const handleUpdateTestimonial = () => {
+    const newTestimonial = {
+      name,
+      testimonial,
+    };
+    setLoading(true);
+    const userRef = doc(firestoreDB, "users", auth.currentUser?.uid!);
+    updateDoc(userRef, {
+      testimonials: [...user?.testimonials, newTestimonial],
+    });
+    hideTestimonialDialog();
+    setLoading(false);
   };
 
   // const userSkill = user?.skills?.shift();
@@ -219,10 +234,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
             onPress={() => handleViewImage()}
             style={{ position: "relative" }}
           >
-            <Avatar.Image
-              size={80}
-              source={{ uri: loading ? profileImage : user?.image }}
-            />
+            <Avatar.Image size={80} source={{ uri: user?.image }} />
           </TouchableOpacity>
           <Text
             style={{
@@ -362,9 +374,9 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
             <FlatList
               horizontal
               showsHorizontalScrollIndicator={false}
-              data={[1, 2, 3, 4, 5]}
+              data={user?.portfolio}
               renderItem={({ item, index }) => (
-                <View>
+                <View style={{ width: 160, marginRight: 10 }}>
                   <View
                     style={{
                       width: 150,
@@ -372,15 +384,27 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
                       borderWidth: 1,
                       borderRadius: 4,
                       margin: 5,
+                    }}
+                  >
+                    <Card>
+                      <Card.Cover
+                        source={{ uri: item.image }}
+                        style={{ height: "100%" }}
+                      />
+                    </Card>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flexShrink: 1,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
                   >
-                    <Text>{index}</Text>
+                    <Text style={{ flexShrink: 1, textAlign: "center" }}>
+                      {item.description}
+                    </Text>
                   </View>
-                  <Text style={{ textAlign: "center", marginVertical: 5 }}>
-                    {user?.portfolio[0]?.description}
-                  </Text>
                 </View>
               )}
             />
@@ -389,26 +413,61 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
       </View>
       <Divider horizontalInset style={{ marginVertical: 10 }} />
       <View style={{ margin: 10 }}>
-        <Text
+        <View
           style={{
-            fontSize: 18,
-            fontWeight: "semibold",
-            textAlign: "center",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingHorizontal: 10,
           }}
         >
-          Testimonials
-        </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "semibold",
+              textAlign: "center",
+            }}
+          >
+            Testimonials
+          </Text>
+          <LinearGradient
+            colors={[Colors.primary, Colors.secondary]}
+            start={{ x: 0, y: 0.75 }}
+            end={{ x: 1, y: 0.25 }}
+            style={{
+              borderRadius: 15,
+              paddingHorizontal: 20,
+
+              paddingVertical: 7,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <MaterialCommunityIcons
+              name="plus"
+              size={20}
+              color="white"
+              onPress={showTestimonialDialog}
+            />
+          </LinearGradient>
+        </View>
 
         <FlatList
           showsVerticalScrollIndicator={false}
           scrollEnabled
-          data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-          renderItem={() => (
+          data={user?.testimonials?.slice(0, 10)}
+          renderItem={({ item, index }) => (
             <View style={{ marginVertical: 10 }}>
-              <Text style={{ fontSize: 18 }}>Raymond</Text>
-              <Text style={{ fontSize: 16 }}>
-                Kelvin delivered the resume that got me my current job.
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  textTransform: "capitalize",
+                }}
+              >
+                {item.name}
               </Text>
+              <Text style={{ fontSize: 16 }}>{item.testimonial}</Text>
             </View>
           )}
         />
@@ -417,10 +476,15 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
         <Dialog visible={bioVisible} onDismiss={hideBioDialog}>
           <Dialog.Title>Update Bio</Dialog.Title>
           <Dialog.Content>
-            <TextInput onChangeText={(value) => setBio(value)} />
+            <TextInput
+              mode="outlined"
+              onChangeText={(value) => setBio(value)}
+            />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={handleUpdateBio}>Done</Button>
+            <Button onPress={handleUpdateBio}>
+              {loading ? "Please Wait..." : "Done"}
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -464,7 +528,32 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
             />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={handleUpdateSkills}>Done</Button>
+            <Button onPress={handleUpdateSkills}>
+              {loading ? "Please Wait..." : "Done"}
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+      <Portal>
+        <Dialog visible={testimonialVisible} onDismiss={hideTestimonialDialog}>
+          <Dialog.Title>Add Testimmonial</Dialog.Title>
+          <Dialog.Content style={{ gap: 25 }}>
+            <TextInput
+              label="Name"
+              mode="outlined"
+              onChangeText={(value) => setName(value)}
+            />
+            <TextInput
+              label="Your Testimonial"
+              multiline
+              mode="outlined"
+              onChangeText={(value) => setTestimonial(value)}
+            />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={handleUpdateTestimonial}>
+              {loading ? "Please Wait..." : "Done"}
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

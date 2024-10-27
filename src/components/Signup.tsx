@@ -100,6 +100,8 @@ const Signup = () => {
           isAdmin: false,
           coordinates: location[0].coordinates,
           suspended: false,
+          testimonials: [],
+          portfolio: [],
         };
 
         const userRef = doc(firestoreDB, "users", newUser._id);
