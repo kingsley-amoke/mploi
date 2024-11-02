@@ -247,7 +247,7 @@ const index = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={() => selectImage(false)}
+              onPress={() => selectImage(true)}
             >
               {image ? (
                 <Card style={{ width: 150, height: 150 }}>

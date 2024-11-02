@@ -26,7 +26,7 @@ const CareerPage = () => {
     }).format(item.salary);
 
     const handleViewJob = ({}) => {
-      router.push(`admin/jobs/${item._id}`);
+      router.push(`/jobs/${item._id}`);
     };
 
     const handleDeleteJob = () => {
@@ -43,7 +43,7 @@ const CareerPage = () => {
     return (
       <>
         <View style={{ marginVertical: 10 }}>
-          <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
             Company: {item.company}
           </Text>
           <View
@@ -66,7 +66,7 @@ const CareerPage = () => {
               <TouchableOpacity onPress={handleViewJob}>
                 <MaterialCommunityIcons
                   name="eye"
-                  size={20}
+                  size={30}
                   color={iconColor}
                 />
               </TouchableOpacity>
@@ -74,7 +74,7 @@ const CareerPage = () => {
               <TouchableOpacity onPress={handleDeleteJob}>
                 <MaterialCommunityIcons
                   name="trash-can-outline"
-                  size={20}
+                  size={30}
                   color={iconColor}
                 />
               </TouchableOpacity>

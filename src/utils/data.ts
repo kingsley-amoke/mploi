@@ -4,6 +4,8 @@ import {
   DocumentData,
   getDoc,
   getDocs,
+  onSnapshot,
+  query,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -202,15 +204,17 @@ export const getShops = async () => {
 //fetch all products
 
 export const getProducts = async () => {
-  const productsRef = collection(firestoreDB, "products");
+  // const productsRef = collection(firestoreDB, "products");
+  const productsRef = query(collection(firestoreDB, "products"));
 
-  const products: DocumentData[] = [];
+  onSnapshot(productsRef, (querySnapshot) => {
+    const products: DocumentData[] = [];
+    querySnapshot.forEach((doc) => {
+      products.push(doc.data());
+    });
 
-  const querySnapshot = await getDocs(productsRef);
-  querySnapshot.forEach((doc) => {
-    products.push(doc.data());
+    return products;
   });
-  return products;
 };
 
 //fetch all reviews

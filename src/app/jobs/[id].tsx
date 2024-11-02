@@ -392,7 +392,12 @@ const JobPage = () => {
                 setVisible={setVisible}
               />
             ) : (
-              <Button mode="contained" onPress={handleJobStatus}>
+              <Button
+                mode="contained"
+                contentStyle={{ marginVertical: 10 }}
+                labelStyle={{ fontSize: 18 }}
+                onPress={handleJobStatus}
+              >
                 {loading
                   ? "Please wait..."
                   : job.taken

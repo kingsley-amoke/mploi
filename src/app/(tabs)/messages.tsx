@@ -7,17 +7,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { DocumentData } from "firebase/firestore";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
+import { auth } from "@/src/utils/firebaseConfig";
 
 const index = () => {
   const { chats } = useChatStore();
   const { requests } = useRequestStore();
-  const { user } = useUserStore();
 
   const myRequests = requests.filter(
-    (req) => req.serviceProvider?._id === user?._id
+    (req) => req.serviceProvider?._id === auth.currentUser?.uid
   );
   const myChats = chats.filter(
-    (c) => c.serviceProvider._id === user?._id || c.client._id === user?._id
+    (c) =>
+      c.serviceProvider._id === auth.currentUser?.uid ||
+      c.client._id === auth.currentUser?.uid
   );
 
   return (
@@ -59,7 +61,7 @@ const index = () => {
                 marginVertical: 20,
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 20 }}>
                 Service requests{" "}
               </Text>
               <Badge style={{ color: "#fff", fontWeight: "bold" }}>
@@ -86,7 +88,7 @@ const index = () => {
               </TouchableOpacity>
             </View>
 
-            {myChats.length === 0 ? (
+            {myChats.length < 1 ? (
               <>
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
@@ -96,15 +98,11 @@ const index = () => {
               </>
             ) : (
               <>
-                {chats && myChats?.length > 0 ? (
-                  <>
-                    {chats?.map((room) => (
-                      <View key={room._id}>
-                        <MessageCard room={room} />
-                      </View>
-                    ))}
-                  </>
-                ) : null}
+                {myChats?.map((room) => (
+                  <View key={room._id}>
+                    <MessageCard room={room} />
+                  </View>
+                ))}
               </>
             )}
           </View>
@@ -115,23 +113,29 @@ const index = () => {
 };
 
 const MessageCard = ({ room }: { room: DocumentData }) => {
-  const { user } = useUserStore();
-
   const chatName =
-    user?._id === room.client._id
+    auth.currentUser?.uid === room.client._id
       ? room.serviceProvider.firstName + " " + room.serviceProvider.lastName
       : room.client.firstName + " " + room.client.lastName;
 
   const chatImage =
-    user?._id === room.client._id
+    auth.currentUser?.uid === room.client._id
       ? room.serviceProvider.image
       : room.client.image;
 
-  if (!room.messages) return;
+  let lastMessage = { text: "New message" };
+  let lastMessageId = "1";
+  let messageDate = "";
 
-  const lastMessageId = Object.keys(room.messages).pop()!;
-
-  const lastMessage = room?.messages[lastMessageId];
+  if (room.messages) {
+    lastMessageId = Object.keys(room.messages).pop()!;
+    lastMessage = room.messages[lastMessageId];
+    messageDate = new Date(lastMessage?.timeStamp).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+  }
 
   return (
     <Link href={{ pathname: `/rooms/${room._id}` }} asChild>
@@ -144,27 +148,25 @@ const MessageCard = ({ room }: { room: DocumentData }) => {
         }}
       >
         <View style={{ flexDirection: "row", gap: 20 }}>
-          <Avatar.Image source={{ uri: chatImage }} size={40} />
+          <Avatar.Image source={{ uri: chatImage }} size={50} />
           <View style={{ alignItems: "flex-start", justifyContent: "center" }}>
             <Text
               style={{
                 fontWeight: "bold",
                 textTransform: "capitalize",
-                fontSize: 16,
+                fontSize: 22,
               }}
             >
               {chatName}
             </Text>
-            <Text style={{ fontSize: 12 }}>{lastMessage?.text}</Text>
+            <Text style={{ fontSize: 16 }}>
+              {lastMessage.text.slice(0, 20) + "..."}
+            </Text>
           </View>
         </View>
         <View>
-          <Text style={{ fontSize: 8, fontStyle: "italic" }}>
-            {new Date(lastMessage?.timeStamp).toLocaleTimeString("en-US", {
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            })}
+          <Text style={{ fontSize: 12, fontStyle: "italic" }}>
+            {messageDate}
           </Text>
         </View>
       </TouchableOpacity>

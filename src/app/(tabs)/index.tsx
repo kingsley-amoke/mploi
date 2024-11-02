@@ -108,6 +108,7 @@ const Home = () => {
                 fontWeight: "bold",
                 color: "white",
                 textTransform: "capitalize",
+                fontSize: 18,
               }}
             >
               Hi {auth.currentUser ? user?.lastName : "Anonymous"}
@@ -119,7 +120,7 @@ const Home = () => {
           </TouchableOpacity>
           <MaterialIcons
             name="person"
-            size={20}
+            size={30}
             color="white"
             onPress={() =>
               router.push(auth.currentUser ? "/profile" : "/login")

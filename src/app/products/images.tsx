@@ -1,38 +1,36 @@
 import { TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, Button, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 import { firestoreDB, storage } from "@/src/utils/firebaseConfig";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { doc, DocumentData, updateDoc } from "firebase/firestore";
-import { getBlobFroUri } from "@/src/utils/data";
+  collection,
+  doc,
+  DocumentData,
+  onSnapshot,
+  query,
+  updateDoc,
+} from "firebase/firestore";
 import { PhotosCard } from "@/src/components/PhotosCard";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useProductsStore, useUserStore } from "@/src/state/store";
-import useTheme from "@/src/hooks/useTheme";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Colors } from "@/src/constants/Colors";
+import ProgressBar from "@/src/components/ProgressBar";
 
 const images = () => {
   const { id } = useLocalSearchParams();
 
   const router = useRouter();
 
-  const { products, updateProductImages } = useProductsStore();
+  const [products, setProducts] = useState<DocumentData[]>([]);
+  const [product, setProduct] = useState<DocumentData>();
+  const [progress, setProgress] = useState(0);
 
-  const [images, setImages] = useState<string[]>([]);
-  const [product, setProduct] = useState<DocumentData | undefined>();
-  const [loading, setLoading] = useState(false);
-
-  const loadProduct = async () => {
-    const product = products.find((product) => product._id === id);
-
+  const loadProduct = () => {
+    const product = products.find((product) => product._id === id)!;
     setProduct(product);
   };
 
@@ -59,9 +57,6 @@ const images = () => {
 
   const uploadImage = async (uri: string) => {
     const filename = new Date().getTime() + ".jpg";
-
-    setLoading(true);
-
     const response = await fetch(uri);
     const blob = await response.blob();
 
@@ -74,49 +69,19 @@ const images = () => {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        // setProgress(Math.floor(progress));
-      },
-      (error) => {
-        // handle error
+        setProgress(Math.floor(progress));
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log("File available at", downloadURL);
-          // save record
-
-          await updateDoc(productRef, {
-            images:
-              images.length > 0 ? [...images, downloadURL] : [downloadURL],
+          console.log(downloadURL);
+          updateDoc(productRef, {
+            images: [...product?.images, downloadURL],
+          }).then(async () => {
+            setProgress(0);
           });
-          setImages(
-            images.length > 0 ? [...images, downloadURL] : [downloadURL]
-          );
         });
       }
     );
-
-    // uploadBytes(storageRef, blob)
-    //   .then((snapshot) => {
-    //     getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
-    //       setImages([...images, url]);
-    //       updateProductImages(product!, url);
-
-    //       const productRef = doc(firestoreDB, "products", id?.toString()!);
-
-    //       // updates user images array
-    //       updateDoc(productRef, {
-    //         images: [...images, url],
-    //       });
-    //     });
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log("Upload failed!", error);
-    //     setLoading(false);
-    //   });
-
-    setLoading(false);
   };
 
   const productPrice = new Intl.NumberFormat("en-UK", {
@@ -124,14 +89,28 @@ const images = () => {
     currency: "NGN",
   }).format(product?.price);
 
-  useEffect(() => {
-    loadProduct();
-  }, [id]);
+  useLayoutEffect(() => {
+    const productsRef = query(collection(firestoreDB, "products"));
+    onSnapshot(productsRef, (querySnapshot) => {
+      const products: DocumentData[] = [];
+      querySnapshot.forEach((doc) => {
+        products.push(doc.data());
+      });
+
+      setProducts(products);
+      loadProduct();
+    });
+  }, []);
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <View style={{ marginVertical: 20 }}>
-        <Button mode="outlined" onPress={() => router.push("/shop")}>
+        <Button
+          mode="outlined"
+          contentStyle={{ marginVertical: 10 }}
+          labelStyle={{ fontSize: 18 }}
+          onPress={() => router.replace("/")}
+        >
           Continue to shop
         </Button>
       </View>
@@ -144,7 +123,7 @@ const images = () => {
       <View style={{ marginVertical: 5 }}>
         <Text>Select images for this product (Max: 4)</Text>
       </View>
-      {!loading ? (
+      {progress < 1 ? (
         <TouchableOpacity
           style={{
             padding: 30,
@@ -157,7 +136,10 @@ const images = () => {
           <MaterialCommunityIcons name="plus" size={100} color="grey" />
         </TouchableOpacity>
       ) : (
-        <ActivityIndicator size="large" color="grey" />
+        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+          <ProgressBar progress={progress} barWidth={100} />
+          <Text>{progress + "%"}</Text>
+        </View>
       )}
       <View
         style={{
@@ -168,8 +150,8 @@ const images = () => {
           flexWrap: "wrap",
         }}
       >
-        {images.length > 0 &&
-          images.map((image, index) => (
+        {product?.images?.length > 0 &&
+          product?.images?.map((image, index) => (
             <View style={{ marginHorizontal: 10 }} key={index}>
               <PhotosCard item={image} />
             </View>

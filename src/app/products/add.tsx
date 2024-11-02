@@ -29,7 +29,7 @@ const add = () => {
   const colorScheme = useColorScheme();
   const { user, decreaseUserBalance } = useUserStore();
   const { shops } = useShopsStore();
-  const { addProduct, addPromoted } = useProductsStore();
+  const { addProduct } = useProductsStore();
   const { location: userLocation } = useLocationStore();
 
   const [name, setName] = useState("");
@@ -72,20 +72,12 @@ const add = () => {
 
     const productRef = doc(firestoreDB, "products", data._id);
     setDoc(productRef, data).then(() => {
-      addProduct(data);
-      if (active !== 1) {
-        addPromoted(data);
+      // addProduct(data);
 
-        router.push(`/products/images?id=${data._id}`);
-        CustomToast("Please upload images and continue");
-        setVisible(false);
-        setPosting(false);
-      } else {
-        router.push(`/products/images?id=${data._id}`);
-        CustomToast("Please upload images and continue");
-        setVisible(false);
-        setPosting(false);
-      }
+      router.push(`/products/images?id=${data._id}`);
+      CustomToast("Please upload images and continue");
+      setVisible(false);
+      setPosting(false);
     });
   };
 
@@ -103,6 +95,7 @@ const add = () => {
   };
 
   const payment = () => {
+    setVisible(true);
     switch (active) {
       case 1:
         handleSubmitProduct();
@@ -261,10 +254,20 @@ const add = () => {
           marginBottom: 10,
         }}
       >
-        <Button mode="outlined" onPress={() => setVisible(false)}>
+        <Button
+          mode="outlined"
+          contentStyle={{ paddingVertical: 10 }}
+          labelStyle={{ fontSize: 18 }}
+          onPress={() => setVisible(false)}
+        >
           Cancel
         </Button>
-        <Button mode="contained" onPress={payment}>
+        <Button
+          mode="contained"
+          contentStyle={{ paddingVertical: 10 }}
+          labelStyle={{ fontSize: 18 }}
+          onPress={payment}
+        >
           {posting ? "Please wait..." : "Proceed"}
         </Button>
       </View>

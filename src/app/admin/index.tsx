@@ -6,12 +6,17 @@ import {
   View,
 } from "react-native";
 import { Avatar, Divider, Text, TextInput } from "react-native-paper";
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { useUsersStore, useUserStore } from "@/src/state/store";
 import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
-import { createChat, CustomToast, getUsers } from "@/src/utils/data";
+import {
+  createChat,
+  CustomToast,
+  getProducts,
+  getUsers,
+} from "@/src/utils/data";
 import { useRouter } from "expo-router";
 const UsersPage = () => {
   const colorScheme = useColorScheme();
@@ -68,12 +73,18 @@ const UsersPage = () => {
           }}
         >
           <View style={{ flexDirection: "row", gap: 20, alignItems: "center" }}>
-            <Avatar.Image source={{ uri: item.image }} size={30} />
+            <Avatar.Image source={{ uri: item.image }} size={40} />
             <View style={{ justifyContent: "center" }}>
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  textTransform: "capitalize",
+                }}
+              >
                 {item.firstName} {item.lastName}
               </Text>
-              <Text style={{ fontSize: 10 }}>
+              <Text style={{ fontSize: 18 }}>
                 {user?.skills ? user?.skills[0] : "Client"}
               </Text>
             </View>
@@ -84,7 +95,7 @@ const UsersPage = () => {
               style={{ justifyContent: "center" }}
               onPress={handleMessageUser}
             >
-              <MaterialIcons name="message" size={20} color={iconColor} />
+              <MaterialIcons name="message" size={30} color={iconColor} />
             </TouchableOpacity>
             {item.suspended ? (
               <TouchableOpacity
@@ -93,8 +104,8 @@ const UsersPage = () => {
               >
                 <FontAwesome6
                   name="person-circle-check"
-                  size={20}
-                  color={iconColor}
+                  size={30}
+                  color="grey"
                 />
               </TouchableOpacity>
             ) : (
@@ -104,8 +115,8 @@ const UsersPage = () => {
               >
                 <FontAwesome6
                   name="person-circle-xmark"
-                  size={20}
-                  color={iconColor}
+                  size={30}
+                  color="maroon"
                 />
               </TouchableOpacity>
             )}

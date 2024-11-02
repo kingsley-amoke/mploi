@@ -11,9 +11,9 @@ const TabLayout = () => {
           headerTitleAlign: "left",
           tabBarStyle:
             Platform.OS === "android"
-              ? { height: 50, padding: 10 }
+              ? { height: 70, padding: 10 }
               : { height: 100 },
-          tabBarLabelStyle: { fontSize: 10, marginBottom: 5 },
+          tabBarLabelStyle: { fontSize: 14, marginBottom: 5 },
 
           headerTransparent: false,
           headerTitleStyle: { fontSize: 14, marginTop: 10 },
@@ -25,7 +25,7 @@ const TabLayout = () => {
           options={{
             tabBarLabel: "Home",
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="home" size={20} color={color} />
+              <MaterialCommunityIcons name="home" size={30} color={color} />
             ),
             headerShown: false,
           }}
@@ -37,7 +37,7 @@ const TabLayout = () => {
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="message-outline"
-                size={20}
+                size={30}
                 color={color}
               />
             ),
@@ -50,7 +50,7 @@ const TabLayout = () => {
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="briefcase-clock"
-                size={20}
+                size={30}
                 color={color}
               />
             ),
@@ -63,7 +63,7 @@ const TabLayout = () => {
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="bell-outline"
-                size={20}
+                size={30}
                 color={color}
               />
             ),
@@ -74,7 +74,7 @@ const TabLayout = () => {
           options={{
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
-              <Feather name="settings" size={20} color={color} />
+              <Feather name="settings" size={30} color={color} />
             ),
           }}
         />

@@ -26,7 +26,7 @@ export default function Layout() {
             headerRight: () => (
               <MaterialCommunityIcons
                 name="exit-to-app"
-                size={20}
+                size={30}
                 style={{ marginRight: 15 }}
                 onPress={() => exit()}
               />
@@ -44,7 +44,7 @@ export default function Layout() {
             headerRight: () => (
               <MaterialCommunityIcons
                 name="exit-to-app"
-                size={20}
+                size={30}
                 style={{ marginRight: 15 }}
                 onPress={() => exit()}
               />
@@ -65,7 +65,7 @@ export default function Layout() {
             headerRight: () => (
               <MaterialCommunityIcons
                 name="exit-to-app"
-                size={20}
+                size={30}
                 style={{ marginRight: 15 }}
                 onPress={() => exit()}
               />

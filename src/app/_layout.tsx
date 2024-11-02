@@ -117,9 +117,10 @@ export default function RootLayout() {
 
   const fetchProducts = async () => {
     const products = await getProducts();
-    const promo = products.filter((p) => p.promo !== "free");
-    storeProducts(products);
-    storePromoted(promo);
+    // const promo = products.filter((p) => p.promo !== "free");
+    // storeProducts(products);
+    // storePromoted(promo);
+    // console.log(products);
   };
 
   const fetchAllChats = () => {
@@ -255,8 +256,7 @@ export default function RootLayout() {
             <Stack.Screen
               name="profile/edit"
               options={{
-                title: "Edit Profile",
-                headerTitleAlign: "center",
+                headerShown: false,
               }}
             />
             <Stack.Screen

@@ -5,8 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
-import { Link, useRouter } from "expo-router";
+import React, { useLayoutEffect, useState } from "react";
 import { useProductsStore, useUsersStore } from "@/src/state/store";
 import {
   ActivityIndicator,
@@ -17,21 +16,26 @@ import {
   Text,
 } from "react-native-paper";
 import {
+  collection,
   deleteDoc,
   doc,
   DocumentData,
   getDoc,
+  onSnapshot,
+  query,
   updateDoc,
 } from "firebase/firestore";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
-import { CustomToast } from "@/src/utils/data";
+import { CustomToast, getProducts } from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
 
 const ProductsPage = () => {
   const { users } = useUsersStore();
-  const { products, deleteProduct, deletePromoted, addPromoted } =
-    useProductsStore();
+  // const { products, deleteProduct, storeProducts, addPromoted } =
+  //   useProductsStore();
+
+  const [products, setProducts] = useState<DocumentData[]>([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -58,7 +62,7 @@ const ProductsPage = () => {
       const productRef = doc(firestoreDB, "products", item._id);
 
       deleteDoc(productRef).then(() => {
-        deleteProduct(item);
+        // deleteProduct(item);
         setLoading(false);
         CustomToast("Product deleted Successfully");
       });
@@ -67,14 +71,15 @@ const ProductsPage = () => {
     const cancelPromo = () => {
       const productRef = doc(firestoreDB, "products", item._id);
 
-      updateDoc(productRef, { promo: "free" }).then(async () => {
-        const docSnap = await getDoc(productRef);
-        deletePromoted(docSnap.data()!);
+      updateDoc(productRef, { promo: "free" }).then(() => {
+        // const docSnap = await getDoc(productRef);
+        // deletePromoted(docSnap.data()!);
         CustomToast("Successful");
       });
     };
 
     const handleSubmitProduct = () => {
+      setPosting(true);
       const promo =
         active === 2
           ? "7 days"
@@ -85,49 +90,12 @@ const ProductsPage = () => {
           : "free";
 
       const productRef = doc(firestoreDB, "products", item._id);
-      updateDoc(productRef, { promo: promo }).then(async () => {
-        const docSnap = await getDoc(productRef);
-        addPromoted(docSnap.data()!);
+      updateDoc(productRef, { promo: promo }).then(() => {
+        // const docSnap = await getDoc(productRef);
+        // addPromoted(docSnap.data()!);
         setPosting(false);
         hideModal();
       });
-    };
-
-    const handleProcessPayment = (active: number) => {
-      setPosting(true);
-      handleSubmitProduct();
-
-      // if (active > parseInt(user?.walletBalance)) {
-      //   CustomToast("Please fund your wallet to continue.");
-      //   setPosting(false);
-      // } else {
-      //   decreaseUserBalance(active);
-      //   deduct(user, active).then(() => {
-      //   });
-      // }
-    };
-
-    const payment = () => {
-      // console.log(item._id);
-      switch (active) {
-        case 1:
-          handleSubmitProduct();
-
-          break;
-        case 2:
-          handleProcessPayment(600);
-
-          break;
-        case 3:
-          handleProcessPayment(5000);
-          break;
-        case 4:
-          handleProcessPayment(10000);
-          break;
-        default:
-          handleSubmitProduct();
-          break;
-      }
     };
 
     return (
@@ -288,10 +256,20 @@ const ProductsPage = () => {
                   marginBottom: 10,
                 }}
               >
-                <Button mode="outlined" onPress={() => setVisible(false)}>
+                <Button
+                  mode="outlined"
+                  contentStyle={{ marginVertical: 10 }}
+                  labelStyle={{ fontSize: 18 }}
+                  onPress={() => setVisible(false)}
+                >
                   Cancel
                 </Button>
-                <Button mode="contained" onPress={payment}>
+                <Button
+                  mode="contained"
+                  contentStyle={{ marginVertical: 10 }}
+                  labelStyle={{ fontSize: 18 }}
+                  onPress={handleSubmitProduct}
+                >
                   {posting ? "Please wait..." : "Proceed"}
                 </Button>
               </View>
@@ -299,7 +277,7 @@ const ProductsPage = () => {
           </Dialog>
         </Portal>
         <View style={{ marginVertical: 10 }}>
-          <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
             Title: {item.name}
           </Text>
           <View
@@ -324,7 +302,7 @@ const ProductsPage = () => {
                   <MaterialCommunityIcons
                     name="cancel"
                     color="orange"
-                    size={20}
+                    size={30}
                   />
                 </TouchableOpacity>
               ) : (
@@ -332,7 +310,7 @@ const ProductsPage = () => {
                   <MaterialCommunityIcons
                     name="bookmark-check"
                     color="green"
-                    size={20}
+                    size={30}
                     onPress={showModal}
                   />
                 </TouchableOpacity>
@@ -341,7 +319,7 @@ const ProductsPage = () => {
                 <MaterialCommunityIcons
                   name="trash-can-outline"
                   color="red"
-                  size={20}
+                  size={30}
                 />
               </TouchableOpacity>
             </View>
@@ -351,6 +329,19 @@ const ProductsPage = () => {
       </>
     );
   };
+
+  useLayoutEffect(() => {
+    const productsRef = query(collection(firestoreDB, "products"));
+
+    onSnapshot(productsRef, (querySnapshot) => {
+      const products: DocumentData[] = [];
+      querySnapshot.forEach((doc) => {
+        products.push(doc.data());
+      });
+
+      setProducts(products);
+    });
+  }, [products]);
 
   return loading || products.length < 1 ? (
     <View
@@ -382,7 +373,6 @@ const ProductsPage = () => {
     >
       <FlatList
         data={products}
-        style={{ marginBottom: 90 }}
         renderItem={({ item }) => ProductRenderItem(item)}
         showsVerticalScrollIndicator={false}
       />

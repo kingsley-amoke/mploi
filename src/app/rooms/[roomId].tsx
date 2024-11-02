@@ -9,15 +9,21 @@ import {
 } from "react-native";
 import { TextInput, Text, Avatar } from "react-native-paper";
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
+import {
+  Entypo,
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { DocumentData } from "firebase/firestore";
-import { realtimeDB } from "@/src/utils/firebaseConfig";
+import { auth, realtimeDB } from "@/src/utils/firebaseConfig";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 
 import { useChatStore, useUserStore } from "@/src/state/store";
 import { onValue, ref, set, serverTimestamp } from "firebase/database";
 import useTheme from "@/src/hooks/useTheme";
 import { Colors } from "@/src/constants/Colors";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Room = () => {
   const { roomId } = useLocalSearchParams();
@@ -28,10 +34,6 @@ const Room = () => {
 
   const textColor = colorScheme === "dark" ? "#fff" : "#000";
 
-  const userChatBg = Colors.light.primary;
-  const clientChatBg = Colors.light.secondary;
-
-  const { user } = useUserStore();
   const { chats } = useChatStore();
 
   const room = chats.find((chat) => chat._id === roomId);
@@ -50,7 +52,7 @@ const Room = () => {
       _id: id,
       roomId: roomId,
       text: message,
-      senderId: user?._id,
+      senderId: auth.currentUser?.uid,
       timeStamp: timeStamp,
     };
     setMessage("");
@@ -72,44 +74,51 @@ const Room = () => {
   };
 
   const chatName =
-    user?._id === room.client._id
+    auth.currentUser?.uid === room.client._id
       ? room.serviceProvider.firstName + " " + room.serviceProvider.lastName
       : room.client.firstName + " " + room.client.lastName;
 
   const chatImage =
-    user?._id === room.client._id
+    auth.currentUser?.uid === room.client._id
       ? room.serviceProvider.image
       : room.client.image;
 
   const ChatHeader = () => {
     return (
-      <View
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
         style={{
+          height: 120,
+          paddingHorizontal: 20,
+          paddingBottom: 30,
           flexDirection: "row",
-          height: 80,
+          justifyContent: "flex-start",
           alignItems: "flex-end",
-          gap: 40,
-          paddingBottom: 15,
-          paddingLeft: 10,
-          backgroundColor:
-            colorScheme === "dark"
-              ? Colors.dark.background
-              : Colors.light.background,
         }}
       >
-        <Ionicons
-          name="chevron-back"
-          size={20}
-          color={textColor}
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color="white"
+          size={30}
           onPress={() => navigation.goBack()}
         />
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-          <Avatar.Image source={{ uri: chatImage }} size={20} />
-          <Text style={{ fontSize: 14, fontWeight: "bold", color: textColor }}>
-            {chatName}
-          </Text>
-        </View>
-      </View>
+
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+            textTransform: "capitalize",
+          }}
+        >
+          {chatName}
+        </Text>
+        <Avatar.Image source={{ uri: chatImage }} size={30} />
+      </LinearGradient>
     );
   };
 
@@ -144,7 +153,7 @@ const Room = () => {
             >
               {messages &&
                 messages?.map((msg: DocumentData, index: number) =>
-                  msg.senderId === user?._id ? (
+                  msg.senderId === auth.currentUser?.uid ? (
                     <View
                       key={index}
                       style={{
@@ -161,8 +170,8 @@ const Room = () => {
                           alignItems: "center",
                           gap: 10,
                           marginBottom: 10,
-                          backgroundColor: userChatBg,
-                          borderRadius: 20,
+                          backgroundColor: Colors.primary,
+                          borderRadius: 10,
                           borderBottomRightRadius: 1,
                         }}
                         key={index}
@@ -181,7 +190,7 @@ const Room = () => {
                             <Text
                               style={{
                                 fontWeight: "bold",
-                                fontSize: 14,
+                                fontSize: 20,
                                 color: "white",
                               }}
                             >
@@ -200,7 +209,7 @@ const Room = () => {
                               <Text
                                 style={{
                                   fontWeight: "bold",
-                                  fontSize: 8,
+                                  fontSize: 12,
                                   color: "white",
                                   fontStyle: "italic",
                                 }}
@@ -218,7 +227,7 @@ const Room = () => {
                             <Text>
                               <Ionicons
                                 name="checkmark-done-outline"
-                                size={15}
+                                size={17}
                                 color="white"
                               />
                             </Text>
@@ -243,8 +252,8 @@ const Room = () => {
                           alignItems: "center",
                           gap: 10,
                           marginBottom: 10,
-                          backgroundColor: clientChatBg,
-                          borderRadius: 20,
+                          backgroundColor: Colors.secondary,
+                          borderRadius: 10,
                           borderBottomLeftRadius: 1,
                         }}
                       >
@@ -261,7 +270,7 @@ const Room = () => {
                             <Text
                               style={{
                                 fontWeight: "bold",
-                                fontSize: 14,
+                                fontSize: 20,
                                 color: "white",
                               }}
                             >
@@ -273,7 +282,7 @@ const Room = () => {
                               <Text
                                 style={{
                                   fontWeight: "300",
-                                  fontSize: 8,
+                                  fontSize: 12,
                                   color: "white",
                                   fontStyle: "italic",
                                 }}
@@ -295,7 +304,7 @@ const Room = () => {
                   )
                 )}
             </ScrollView>
-            {!room?.client?.isAdmin && (
+            {!!room?.client?.isAdmin && (
               <View
                 style={{
                   flexDirection: "row",

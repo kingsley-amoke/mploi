@@ -1,4 +1,10 @@
-import { View, TouchableOpacity, useColorScheme, FlatList } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  useColorScheme,
+  FlatList,
+  ScrollView,
+} from "react-native";
 import {
   Avatar,
   Button,
@@ -17,9 +23,7 @@ import { doc, DocumentData, getDoc, updateDoc } from "firebase/firestore";
 import { useRouter } from "expo-router";
 import {
   useCategoryStore,
-  useChatStore,
   useImageStore,
-  useReviewsStore,
   useUsersStore,
   useUserStore,
 } from "../state/store";
@@ -30,21 +34,16 @@ import { getDownloadURL, uploadBytes } from "firebase/storage";
 import { getBlobFroUri, getUsers, shopAvatar } from "../utils/data";
 import { LinearGradient } from "expo-linear-gradient";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import { Image } from "expo-image";
 
 const Profile = ({ user }: { user: DocumentData | null }) => {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+
   const { updateImage } = useImageStore();
-  const { reviews } = useReviewsStore();
   const { storeUser } = useUserStore();
   const { storeUsers } = useUsersStore();
-  const { chats } = useChatStore();
   const { categories } = useCategoryStore();
 
   const [loading, setLoading] = useState(false);
-
-  const [profileImage, setProfileImage] = useState("");
 
   const [selectedService, setSelectedService] = useState<string[]>(
     user?.skills
@@ -78,20 +77,13 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
     return 0;
   });
 
-  const iconColor = colorScheme === "dark" ? "white" : "black";
+  // const userReviews = reviews.filter(
+  //   (review) => review.productID === user?._id
+  // );
 
-  const borderColor =
-    colorScheme === "dark"
-      ? Colors.dark.onSurfaceDisabled
-      : Colors.light.onSurfaceDisabled;
-
-  const userReviews = reviews.filter(
-    (review) => review.productID === user?._id
-  );
-
-  const engagements = chats.filter(
-    (c) => c.serviceProvider._id === user?._id || c.client._id === user?._id
-  ).length;
+  // const engagements = chats.filter(
+  //   (c) => c.serviceProvider._id === user?._id || c.client._id === user?._id
+  // ).length;
 
   //view image fullscreen
 
@@ -179,7 +171,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
   // const userSkill = user?.skills?.shift();
 
   return (
-    <View>
+    <ScrollView>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
@@ -340,7 +332,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           >
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 22,
                 fontWeight: "semibold",
                 textAlign: "center",
               }}
@@ -376,7 +368,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
               showsHorizontalScrollIndicator={false}
               data={user?.portfolio}
               renderItem={({ item, index }) => (
-                <View style={{ width: 160, marginRight: 10 }}>
+                <View style={{ width: 160, marginRight: 10 }} key={index}>
                   <View
                     style={{
                       width: 150,
@@ -422,7 +414,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
         >
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 22,
               fontWeight: "semibold",
               textAlign: "center",
             }}
@@ -454,10 +446,11 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
 
         <FlatList
           showsVerticalScrollIndicator={false}
-          scrollEnabled
+          scrollEnabled={false}
           data={user?.testimonials?.slice(0, 10)}
+          keyExtractor={(item) => item._name}
           renderItem={({ item, index }) => (
-            <View style={{ marginVertical: 10 }}>
+            <View style={{ marginVertical: 10 }} key={index}>
               <Text
                 style={{
                   fontSize: 22,
@@ -470,6 +463,9 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
               <Text style={{ fontSize: 16 }}>{item.testimonial}</Text>
             </View>
           )}
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
         />
       </View>
       <Portal>
@@ -557,7 +553,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-    </View>
+    </ScrollView>
   );
 };
 

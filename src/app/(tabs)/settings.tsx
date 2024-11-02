@@ -189,7 +189,7 @@ const settings = () => {
         style={{
           marginLeft: 36,
           fontWeight: 600,
-          fontSize: 14,
+          fontSize: 18,
         }}
       >
         {text}{" "}
@@ -301,7 +301,7 @@ const settings = () => {
                     style={{
                       marginLeft: 36,
                       fontWeight: 600,
-                      fontSize: 14,
+                      fontSize: 18,
                     }}
                   >
                     {item.text}{" "}
@@ -341,7 +341,7 @@ const settings = () => {
                     style={{
                       marginLeft: 36,
                       fontWeight: 600,
-                      fontSize: 14,
+                      fontSize: 18,
                     }}
                   >
                     {item.text}{" "}
