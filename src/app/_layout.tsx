@@ -117,10 +117,8 @@ export default function RootLayout() {
 
   const fetchProducts = async () => {
     const products = await getProducts();
-    // const promo = products.filter((p) => p.promo !== "free");
-    // storeProducts(products);
-    // storePromoted(promo);
-    // console.log(products);
+
+    storeProducts(products);
   };
 
   const fetchAllChats = () => {

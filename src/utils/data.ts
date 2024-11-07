@@ -204,17 +204,15 @@ export const getShops = async () => {
 //fetch all products
 
 export const getProducts = async () => {
-  // const productsRef = collection(firestoreDB, "products");
-  const productsRef = query(collection(firestoreDB, "products"));
+  const productsRef = collection(firestoreDB, "products");
 
-  onSnapshot(productsRef, (querySnapshot) => {
-    const products: DocumentData[] = [];
-    querySnapshot.forEach((doc) => {
-      products.push(doc.data());
-    });
-
-    return products;
+  const querySnapshot = await getDocs(productsRef);
+  const products: DocumentData[] = [];
+  querySnapshot.forEach((doc) => {
+    products.push(doc.data());
   });
+
+  return products;
 };
 
 //fetch all reviews

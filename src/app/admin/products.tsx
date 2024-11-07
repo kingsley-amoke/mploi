@@ -286,7 +286,7 @@ const ProductsPage = () => {
         </Portal>
         <View style={{ marginVertical: 10 }}>
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            Title: {item.name}
+            Title: {item.name.slice(0, 20) + "..."}
           </Text>
           <View
             style={{
@@ -338,7 +338,9 @@ const ProductsPage = () => {
     );
   };
 
-  useLayoutEffect(() => {}, [products]);
+  useLayoutEffect(() => {
+    refreshProducts();
+  }, []);
 
   return loading || products.length < 1 ? (
     <View

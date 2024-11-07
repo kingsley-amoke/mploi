@@ -82,7 +82,7 @@ const UsersPage = () => {
                   textTransform: "capitalize",
                 }}
               >
-                {item.firstName} {item.lastName}
+                {item.firstName} {item.lastName.slice(0, 5) + "..."}
               </Text>
               <Text style={{ fontSize: 18 }}>
                 {user?.skills ? user?.skills[0] : "Client"}
