@@ -140,7 +140,7 @@ const UsersPage = () => {
       >
         <TextInput
           mode="outlined"
-          placeholder="Search services"
+          placeholder="Search users"
           style={{ width: "95%", height: 40 }}
           outlineStyle={{ width: 1 }}
           onChangeText={(value) => setSearch(value)}

@@ -117,7 +117,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
         .then((snapshot) => {
           getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then(
             (url) => {
-              setProfileImage(url);
+              // setProfileImage(url);
               updateDoc(userRef, { image: url }).then(async () => {
                 const user = await getDoc(userRef);
 
@@ -367,6 +367,8 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
               horizontal
               showsHorizontalScrollIndicator={false}
               data={user?.portfolio}
+              keyExtractor={(item) => item.description}
+              key="1"
               renderItem={({ item, index }) => (
                 <View style={{ width: 160, marginRight: 10 }} key={index}>
                   <View

@@ -1,13 +1,10 @@
-import Categories from "@/src/components/Categories";
 import CategoryCard from "@/src/components/CategoryCard";
 import FloatingButton from "@/src/components/FloatingButton";
-import UserCard from "@/src/components/UserCard";
 import { Colors } from "@/src/constants/Colors";
 import {
   useCategoryStore,
   useChatStore,
   useLocationStore,
-  useProductsStore,
   useShopsStore,
   useUsersStore,
   useUserStore,
@@ -19,8 +16,8 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { SafeAreaView, TouchableOpacity, View } from "react-native";
+import React, { useLayoutEffect, useState } from "react";
+import { SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 
 const Home = () => {
@@ -146,8 +143,8 @@ const Home = () => {
             mode="outlined"
             placeholder="Type what you are searching for here"
             style={{
-              width: 350,
-              height: 52,
+              width: "80%",
+              height: 40,
               paddingLeft: 18,
               fontSize: 14,
             }}
@@ -158,150 +155,151 @@ const Home = () => {
             name="search"
             size={20}
             color="black"
-            style={{ position: "absolute", left: 10, top: 15 }}
+            style={{ position: "absolute", left: 10, top: 10 }}
           />
         </View>
       </LinearGradient>
-
-      <View
-        style={{ width: "100%", paddingHorizontal: 20, marginVertical: 20 }}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View
-          style={{
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexDirection: "row",
-            marginBottom: 10,
-          }}
+          style={{ width: "100%", paddingHorizontal: 20, marginVertical: 20 }}
         >
-          <Text
+          <View
             style={{
-              textAlign: "left",
-              fontSize: 20,
-              fontWeight: "700",
-              color: Colors.grey,
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "row",
+              marginBottom: 10,
             }}
-          >
-            Services
-          </Text>
-          <TouchableOpacity
-            style={{ flexDirection: "row", gap: 10 }}
-            onPress={() => router.push("/service")}
           >
             <Text
               style={{
                 textAlign: "left",
-
+                fontSize: 20,
                 fontWeight: "700",
                 color: Colors.grey,
               }}
             >
-              See all
+              Services
             </Text>
-            <MaterialCommunityIcons name="arrow-right-box" size={20} />
-          </TouchableOpacity>
-        </View>
-
-        <View>
-          {topCategories.length > 0 && (
-            <View
-              style={{
-                width: "100%",
-                marginVertical: 10,
-                flexDirection: "row",
-                marginHorizontal: "auto",
-                flexWrap: "wrap",
-                gap: 15,
-              }}
+            <TouchableOpacity
+              style={{ flexDirection: "row", gap: 10 }}
+              onPress={() => router.push("/service")}
             >
-              {topCategories.map((category, index) => (
-                <Link
-                  href={{
-                    pathname: `/service/providers/[id]`,
-                    params: { id: category._id },
-                  }}
-                  key={index}
-                  asChild
-                >
-                  <TouchableOpacity>
-                    <CategoryCard category={category} />
-                  </TouchableOpacity>
-                </Link>
-              ))}
-            </View>
-          )}
-        </View>
-      </View>
+              <Text
+                style={{
+                  textAlign: "left",
 
-      <View
-        style={{ width: "100%", paddingHorizontal: 20, marginVertical: 20 }}
-      >
+                  fontWeight: "700",
+                  color: Colors.grey,
+                }}
+              >
+                See all
+              </Text>
+              <MaterialCommunityIcons name="arrow-right-box" size={20} />
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            {topCategories.length > 0 && (
+              <View
+                style={{
+                  width: "100%",
+                  marginVertical: 10,
+                  flexDirection: "row",
+                  marginHorizontal: "auto",
+                  flexWrap: "wrap",
+                  gap: 12,
+                }}
+              >
+                {topCategories.map((category, index) => (
+                  <Link
+                    href={{
+                      pathname: `/service/providers/[id]`,
+                      params: { id: category._id },
+                    }}
+                    key={index}
+                    asChild
+                  >
+                    <TouchableOpacity>
+                      <CategoryCard category={category} />
+                    </TouchableOpacity>
+                  </Link>
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
+
         <View
-          style={{
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexDirection: "row",
-            marginBottom: 10,
-          }}
+          style={{ width: "100%", paddingHorizontal: 20, marginVertical: 20 }}
         >
-          <Text
+          <View
             style={{
-              textAlign: "left",
-              fontSize: 20,
-              fontWeight: "700",
-              color: Colors.grey,
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "row",
+              marginBottom: 10,
             }}
-          >
-            Market Place
-          </Text>
-          <TouchableOpacity
-            style={{ flexDirection: "row", gap: 10 }}
-            onPress={() => router.push("/shop")}
           >
             <Text
               style={{
                 textAlign: "left",
-
+                fontSize: 20,
                 fontWeight: "700",
                 color: Colors.grey,
               }}
             >
-              See all
+              Market Place
             </Text>
-            <MaterialCommunityIcons name="arrow-right-box" size={20} />
-          </TouchableOpacity>
-        </View>
-
-        <View>
-          {topShops.length > 0 && (
-            <View
-              style={{
-                width: "100%",
-                marginVertical: 10,
-                flexDirection: "row",
-                marginHorizontal: "auto",
-                flexWrap: "wrap",
-                gap: 15,
-              }}
+            <TouchableOpacity
+              style={{ flexDirection: "row", gap: 10 }}
+              onPress={() => router.push("/shop")}
             >
-              {topShops.map((shop, index) => (
-                <Link
-                  href={{
-                    pathname: `/shop/[id]`,
-                    params: { id: shop._id },
-                  }}
-                  key={index}
-                  asChild
-                >
-                  <TouchableOpacity>
-                    <CategoryCard category={shop} />
-                  </TouchableOpacity>
-                </Link>
-              ))}
-            </View>
-          )}
+              <Text
+                style={{
+                  textAlign: "left",
+
+                  fontWeight: "700",
+                  color: Colors.grey,
+                }}
+              >
+                See all
+              </Text>
+              <MaterialCommunityIcons name="arrow-right-box" size={20} />
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            {topShops.length > 0 && (
+              <View
+                style={{
+                  width: "100%",
+                  marginVertical: 10,
+                  flexDirection: "row",
+                  marginHorizontal: "auto",
+                  flexWrap: "wrap",
+                  gap: 12,
+                }}
+              >
+                {topShops.map((shop, index) => (
+                  <Link
+                    href={{
+                      pathname: `/shop/[id]`,
+                      params: { id: shop._id },
+                    }}
+                    key={index}
+                    asChild
+                  >
+                    <TouchableOpacity>
+                      <CategoryCard category={shop} />
+                    </TouchableOpacity>
+                  </Link>
+                ))}
+              </View>
+            )}
+          </View>
         </View>
-      </View>
+      </ScrollView>
       <FloatingButton />
     </SafeAreaView>
   );

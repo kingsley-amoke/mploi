@@ -27,9 +27,8 @@ import { LinearGradient } from "expo-linear-gradient";
 const add = () => {
   const router = useRouter();
   const colorScheme = useColorScheme();
-  const { user, decreaseUserBalance } = useUserStore();
+  const { user } = useUserStore();
   const { shops } = useShopsStore();
-  const { addProduct } = useProductsStore();
   const { location: userLocation } = useLocationStore();
 
   const [name, setName] = useState("");
@@ -72,22 +71,18 @@ const add = () => {
 
     const productRef = doc(firestoreDB, "products", data._id);
     setDoc(productRef, data).then(() => {
-      // addProduct(data);
-
       router.push(`/products/images?id=${data._id}`);
-      CustomToast("Please upload images and continue");
       setVisible(false);
       setPosting(false);
     });
   };
 
   const handleProcessPayment = (active: number) => {
-    setPosting(true);
     if (active > parseInt(user?.walletBalance)) {
       CustomToast("Please fund your wallet to continue.");
       setPosting(false);
     } else {
-      decreaseUserBalance(active);
+      // decreaseUserBalance(active);
       deduct(user, active).then(() => {
         handleSubmitProduct();
       });
@@ -96,6 +91,7 @@ const add = () => {
 
   const payment = () => {
     setVisible(true);
+    setPosting(true);
     switch (active) {
       case 1:
         handleSubmitProduct();
@@ -365,6 +361,7 @@ const add = () => {
             uniqueKey="name"
             single
             subKey="subshops"
+            readOnlyHeadings
             selectText={category}
             colors={{ selectToggleTextColor: textColor }}
             onSelectedItemsChange={(item) => setCategory(item[0])}

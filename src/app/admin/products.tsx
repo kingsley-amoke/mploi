@@ -32,8 +32,6 @@ import { Colors } from "@/src/constants/Colors";
 
 const ProductsPage = () => {
   const { users } = useUsersStore();
-  // const { products, deleteProduct, storeProducts, addPromoted } =
-  //   useProductsStore();
 
   const [products, setProducts] = useState<DocumentData[]>([]);
 
@@ -45,6 +43,19 @@ const ProductsPage = () => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  const refreshProducts = () => {
+    const productsRef = query(collection(firestoreDB, "products"));
+
+    onSnapshot(productsRef, (querySnapshot) => {
+      const products: DocumentData[] = [];
+      querySnapshot.forEach((doc) => {
+        products.push(doc.data());
+      });
+
+      setProducts(products);
+    });
+  };
 
   const ProductRenderItem = (item: DocumentData) => {
     const seller = users.find((user) => user._id === item.sellerID);
@@ -62,7 +73,7 @@ const ProductsPage = () => {
       const productRef = doc(firestoreDB, "products", item._id);
 
       deleteDoc(productRef).then(() => {
-        // deleteProduct(item);
+        refreshProducts();
         setLoading(false);
         CustomToast("Product deleted Successfully");
       });
@@ -72,8 +83,7 @@ const ProductsPage = () => {
       const productRef = doc(firestoreDB, "products", item._id);
 
       updateDoc(productRef, { promo: "free" }).then(() => {
-        // const docSnap = await getDoc(productRef);
-        // deletePromoted(docSnap.data()!);
+        refreshProducts();
         CustomToast("Successful");
       });
     };
@@ -91,8 +101,6 @@ const ProductsPage = () => {
 
       const productRef = doc(firestoreDB, "products", item._id);
       updateDoc(productRef, { promo: promo }).then(() => {
-        // const docSnap = await getDoc(productRef);
-        // addPromoted(docSnap.data()!);
         setPosting(false);
         hideModal();
       });
@@ -330,18 +338,7 @@ const ProductsPage = () => {
     );
   };
 
-  useLayoutEffect(() => {
-    const productsRef = query(collection(firestoreDB, "products"));
-
-    onSnapshot(productsRef, (querySnapshot) => {
-      const products: DocumentData[] = [];
-      querySnapshot.forEach((doc) => {
-        products.push(doc.data());
-      });
-
-      setProducts(products);
-    });
-  }, [products]);
+  useLayoutEffect(() => {}, [products]);
 
   return loading || products.length < 1 ? (
     <View

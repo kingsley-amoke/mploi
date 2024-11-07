@@ -14,13 +14,11 @@ const UserCard = ({ user }: { user: DocumentData }) => {
       <Card.Content
         style={{
           marginVertical: 10,
-          flexDirection: "row",
           justifyContent: "space-between",
-          alignItems: "flex-end",
           marginHorizontal: 10,
         }}
       >
-        <View style={{ width: "40%" }}>
+        <View style={{ marginBottom: 10 }}>
           <Text
             variant="titleLarge"
             style={{
@@ -48,21 +46,21 @@ const UserCard = ({ user }: { user: DocumentData }) => {
             {user?.location?.regionName?.city}
           </Text>
         </View>
-        <View style={{ flexDirection: "row", gap: 20 }}>
+        <View style={{ flexDirection: "row", gap: 10 }}>
           <Button
             mode="contained"
             icon="eye"
             buttonColor={Colors.secondary}
             onPress={() => router.push(`/profile/${user._id}`)}
           >
-            Profile
+            View
           </Button>
           <Button
             mode="contained"
             icon="book"
             onPress={() => router.push(`/service/${user._id}`)}
           >
-            Book
+            Hire
           </Button>
         </View>
       </Card.Content>

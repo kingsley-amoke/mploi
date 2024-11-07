@@ -33,6 +33,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="messages"
           options={{
+            tabBarLabel: "Messages",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
@@ -46,6 +47,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="career"
           options={{
+            tabBarLabel: "Jobs",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
@@ -59,6 +61,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="notifications"
           options={{
+            tabBarLabel: "Notiications",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
@@ -72,6 +75,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="settings"
           options={{
+            tabBarLabel: "Settings",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Feather name="settings" size={30} color={color} />

@@ -22,17 +22,13 @@ import ProgressBar from "@/src/components/ProgressBar";
 
 const images = () => {
   const { id } = useLocalSearchParams();
+  const { products } = useProductsStore();
 
   const router = useRouter();
 
-  const [products, setProducts] = useState<DocumentData[]>([]);
   const [product, setProduct] = useState<DocumentData>();
   const [progress, setProgress] = useState(0);
-
-  const loadProduct = () => {
-    const product = products.find((product) => product._id === id)!;
-    setProduct(product);
-  };
+  const [image, setImage] = useState("");
 
   const selectImage = async (useLibrary: boolean) => {
     let result;
@@ -71,12 +67,15 @@ const images = () => {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setProgress(Math.floor(progress));
       },
+      (error) => {
+        // handle error
+      },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log(downloadURL);
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           updateDoc(productRef, {
             images: [...product?.images, downloadURL],
-          }).then(async () => {
+          }).then(() => {
+            setImage(downloadURL);
             setProgress(0);
           });
         });
@@ -92,14 +91,15 @@ const images = () => {
   useLayoutEffect(() => {
     const productsRef = query(collection(firestoreDB, "products"));
     onSnapshot(productsRef, (querySnapshot) => {
-      const products: DocumentData[] = [];
       querySnapshot.forEach((doc) => {
-        products.push(doc.data());
+        setProduct(doc.data());
       });
-
-      setProducts(products);
-      loadProduct();
     });
+  }, [image]);
+
+  useEffect(() => {
+    const currentProduct = products.find((product) => product._id === id)!;
+    setProduct(currentProduct);
   }, []);
 
   return (
@@ -151,7 +151,7 @@ const images = () => {
         }}
       >
         {product?.images?.length > 0 &&
-          product?.images?.map((image, index) => (
+          product?.images?.map((image: string, index: number) => (
             <View style={{ marginHorizontal: 10 }} key={index}>
               <PhotosCard item={image} />
             </View>
