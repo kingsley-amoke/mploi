@@ -16,13 +16,13 @@ const index = () => {
   const filteredproducts = products.filter((p) => p.category == shop);
 
   return (
-    <ScrollView>
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
         end={{ x: 1, y: 0.25 }}
         style={{
-          height: 120,
+          height: "12%",
           paddingHorizontal: 20,
           paddingBottom: 30,
           flexDirection: "row",
@@ -49,7 +49,7 @@ const index = () => {
         </Text>
       </LinearGradient>
       <ProductsPage products={filteredproducts} />
-    </ScrollView>
+    </View>
   );
 };
 

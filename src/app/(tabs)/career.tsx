@@ -10,13 +10,13 @@ const career = () => {
   const { jobs } = useJobsStore();
 
   return (
-    <ScrollView style={{ flex: 1, width: "100%" }}>
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
         end={{ x: 1, y: 0.25 }}
         style={{
-          height: 120,
+          height: "12%",
           paddingHorizontal: 20,
           paddingBottom: 30,
           flexDirection: "row",
@@ -36,14 +36,16 @@ const career = () => {
           Jobs
         </Text>
       </LinearGradient>
-      {jobs ? (
-        jobs.map((job) => <JobRenderItem item={job} key={job._id} />)
-      ) : (
-        <View>
-          <ActivityIndicator color={Colors.light.primary} size="large" />
-        </View>
-      )}
-    </ScrollView>
+      <ScrollView>
+        {jobs ? (
+          jobs.map((job) => <JobRenderItem item={job} key={job._id} />)
+        ) : (
+          <View>
+            <ActivityIndicator color={Colors.light.primary} size="large" />
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 

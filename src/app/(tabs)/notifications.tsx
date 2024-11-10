@@ -1,63 +1,37 @@
-import { useProductsStore } from "@/src/state/store";
-import React, { useState } from "react";
-import {
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  useColorScheme,
-  View,
-} from "react-native";
-import { Card, Text, TextInput } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+import { ScrollView, View } from "react-native";
+import { Switch, Text } from "react-native-paper";
 
-import ProductsPage from "@/src/components/ProductsPage";
-import { DocumentData } from "firebase/firestore";
-import { formatPrice, shopAvatar } from "@/src/utils/data";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
+import * as Notifications from "expo-notifications";
 
 export default function Shop() {
-  const { products, promoted } = useProductsStore();
+  const [notificationStatus, setNotificationStatus] = useState("denied");
 
-  const router = useRouter();
-  const colorScheme = useColorScheme();
-
-  const [search, setSearch] = useState("");
-
-  const textColor = colorScheme === "light" ? "#000" : "#fff";
-
-  const filteredProducts = products.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.location.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const ShopItem = ({ item }: { item: DocumentData }) => {
-    return (
-      <Card
-        style={{ width: 150, marginLeft: 10, marginBottom: 10 }}
-        onPress={() => router.push(`/products/${item._id}`)}
-      >
-        <Card.Cover
-          source={{ uri: item.images[0] || shopAvatar }}
-          style={{ height: 150 }}
-        />
-        <Card.Content style={{ marginVertical: 5 }}>
-          <Text style={{ fontWeight: "bold" }}>
-            {item.name.length > 20
-              ? item.name.substring(0, 14) + "..."
-              : item.name}
-          </Text>
-          <Text style={{ fontSize: 10 }}>{formatPrice(item.price)}</Text>
-        </Card.Content>
-      </Card>
-    );
+  const getNotification = async () => {
+    Notifications.getPermissionsAsync().then((status) => {
+      setNotificationStatus(status.status);
+    });
   };
 
+  const requestPermission = async () => {
+    if (notificationStatus === "granted") {
+      setNotificationStatus("denied");
+      return;
+    }
+    Notifications.requestPermissionsAsync({}).then((data) => {
+      console.log(data);
+      getNotification();
+    });
+  };
+
+  useEffect(() => {
+    getNotification();
+  }, [notificationStatus]);
+
   return (
-    <ScrollView
+    <View
       style={{
         flex: 1,
       }}
@@ -67,7 +41,7 @@ export default function Shop() {
         start={{ x: 0, y: 0.75 }}
         end={{ x: 1, y: 0.25 }}
         style={{
-          height: 120,
+          height: "12%",
           paddingHorizontal: 20,
           paddingBottom: 30,
           flexDirection: "row",
@@ -87,63 +61,24 @@ export default function Shop() {
           Notifications
         </Text>
       </LinearGradient>
-      {/* <View
-        style={{
-          marginVertical: 10,
-          position: "relative",
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <TextInput
-          mode="outlined"
-          placeholder="Search"
-          style={{ width: 300, paddingLeft: 20, height: 40 }}
-          outlineStyle={{ width: 1 }}
-          onChangeText={(value) => setSearch(value)}
-        />
-        <MaterialIcons
-          name="search"
-          size={20}
-          color={textColor}
-          style={{ position: "absolute", left: 35 }}
-        />
-      </View> */}
-      {/* <ScrollView showsVerticalScrollIndicator={false}>
-        {promoted.length > 0 && (
-          <>
-            <View style={{ width: "100%", paddingHorizontal: 20 }}>
-              <Text
-                style={{
-                  textAlign: "left",
-                  fontSize: 18,
-                  fontWeight: "700",
-                  marginVertical: 10,
-                }}
-              >
-                Best Selling Deals
-              </Text>
-            </View>
-            <FlatList
-              data={promoted}
-              renderItem={(item) => ShopItem(item)}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={{ marginBottom: 10, height: 200 }}
-            />
-          </>
-        )}
-        {products.length > 0 ? (
-          <ProductsPage products={filteredProducts} />
-        ) : (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Text>No products today...</Text>
-          </View>
-        )}
-      </ScrollView> */}
-    </ScrollView>
+      <ScrollView>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            itemsAlign: "center",
+            margin: 10,
+          }}
+        >
+          <Text style={{ fontSize: 20 }}>Allow Notifications?</Text>
+
+          <Switch
+            value={notificationStatus === "granted" ? true : false}
+            onValueChange={() => requestPermission()}
+            color={Colors.primary}
+          />
+        </View>
+      </ScrollView>
+    </View>
   );
 }

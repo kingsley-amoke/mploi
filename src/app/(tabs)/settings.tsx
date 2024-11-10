@@ -198,37 +198,37 @@ const settings = () => {
   );
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
       }}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <LinearGradient
-          colors={[Colors.primary, Colors.secondary]}
-          start={{ x: 0, y: 0.75 }}
-          end={{ x: 1, y: 0.25 }}
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: "12%",
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
+      >
+        <Text
           style={{
-            height: 120,
-            paddingHorizontal: 20,
-            paddingBottom: 30,
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            alignItems: "flex-end",
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
           }}
         >
-          <Text
-            style={{
-              color: "white",
-              fontSize: 20,
-              fontWeight: "800",
-              textAlign: "center",
-              flex: 1,
-            }}
-          >
-            Settings
-          </Text>
-        </LinearGradient>
+          Settings
+        </Text>
+      </LinearGradient>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* Account Settings */}
         <View style={{ marginBottom: 12 }}>
           <Text
@@ -373,7 +373,7 @@ const settings = () => {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

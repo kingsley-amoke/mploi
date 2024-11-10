@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   GestureResponderEvent,
   useColorScheme,
+  ScrollView,
 } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import React, { useState } from "react";
@@ -19,6 +20,7 @@ import { Colors } from "../constants/Colors";
 import { doc, getDoc } from "firebase/firestore";
 import { firestoreDB } from "../utils/firebaseConfig";
 import { CustomToast } from "../utils/data";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Login = () => {
   const auth = getAuth();
@@ -57,116 +59,149 @@ const Login = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, marginHorizontal: 22 }}>
-        {error && (
-          <Text style={{ color: "red", fontSize: 18 }}>
-            Invalid Email or password
-          </Text>
-        )}
-        <View style={{ marginVertical: 22 }}>
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: "bold",
-              marginVertical: 12,
-            }}
-          >
-            Hi Welcome Back ! 👋
-          </Text>
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: "12%",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
 
-          <Text
-            style={{
-              fontSize: 16,
-            }}
-          >
-            Login to start working
-          </Text>
-        </View>
-
-        <View style={{ marginBottom: 12 }}>
-          <TextInput
-            mode="outlined"
-            label="Email address"
-            placeholder="Enter your email address"
-            placeholderTextColor={placeholderColor}
-            keyboardType="email-address"
-            onChangeText={(value) => setEmail(value)}
-          />
-        </View>
-
-        <View style={{ marginBottom: 12 }}>
-          <TextInput
-            mode="outlined"
-            label="Password"
-            placeholder="Enter your password"
-            placeholderTextColor={placeholderColor}
-            onChangeText={(value) => setPassword(value)}
-          />
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            marginVertical: 6,
-          }}
-        >
-          <Checkbox
-            style={{ marginRight: 8 }}
-            value={isChecked}
-            onValueChange={setIsChecked}
-          />
-          <Text>Remember Me</Text>
-        </View>
-
+          flexDirection: "row",
+          paddingBottom: 10,
+        }}
+      >
         <Button
-          mode="contained"
-          disabled={loading}
-          style={{
-            marginTop: 18,
-            marginBottom: 4,
-            paddingVertical: 10,
-          }}
-          labelStyle={{ fontSize: 20 }}
-          onPress={(e: GestureResponderEvent) => handleLogin(e)}
+          mode="outlined"
+          style={{ borderRadius: 2, marginLeft: 10 }}
+          labelStyle={{ color: "white", fontWeight: "bold" }}
+          onPress={() => router.back()}
         >
-          {loading ? (
-            <Text style={{ color: "#ffffff" }}>Please wait...</Text>
-          ) : (
-            <Text style={{ color: "#ffffff", fontWeight: "800" }}>Login</Text>
-          )}
+          BACK
         </Button>
-
-        <View
+        <Text
           style={{
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-        ></View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginVertical: 22,
+            fontSize: 30,
+            fontWeight: "bold",
+            textAlign: "center",
+            color: "white",
+            position: "absolute",
+            left: "40%",
+            bottom: "10%",
           }}
         >
-          <Text style={{ fontSize: 16 }}>Don't have an account ? </Text>
-          <Pressable onPress={() => router.replace("/register")}>
+          MyPlug
+        </Text>
+      </LinearGradient>
+      <ScrollView
+        style={{ marginHorizontal: 10 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{ flex: 1, marginHorizontal: 10 }}>
+          {error && (
+            <Text style={{ color: "red", fontSize: 18 }}>
+              Invalid Email or password
+            </Text>
+          )}
+          <View style={{ marginVertical: 22 }}>
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "bold",
+                marginVertical: 12,
+              }}
+            >
+              Hi Welcome Back ! 👋
+            </Text>
+
             <Text
               style={{
                 fontSize: 16,
-
-                fontWeight: "bold",
-                marginLeft: 6,
               }}
             >
-              Register
+              Login to start working
             </Text>
-          </Pressable>
+          </View>
+
+          <View style={{ marginBottom: 12 }}>
+            <TextInput
+              mode="outlined"
+              label="Email address"
+              placeholder="Enter your email address"
+              placeholderTextColor={placeholderColor}
+              keyboardType="email-address"
+              onChangeText={(value) => setEmail(value)}
+            />
+          </View>
+
+          <View style={{ marginBottom: 12 }}>
+            <TextInput
+              mode="outlined"
+              label="Password"
+              placeholder="Enter your password"
+              placeholderTextColor={placeholderColor}
+              onChangeText={(value) => setPassword(value)}
+            />
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              marginVertical: 6,
+            }}
+          >
+            <Checkbox
+              style={{ marginRight: 8 }}
+              value={isChecked}
+              onValueChange={setIsChecked}
+            />
+            <Text>Remember Me</Text>
+          </View>
+
+          <Button
+            mode="contained"
+            disabled={loading}
+            style={{
+              marginTop: 18,
+              marginBottom: 4,
+              paddingVertical: 10,
+            }}
+            labelStyle={{ fontSize: 20 }}
+            onPress={(e: GestureResponderEvent) => handleLogin(e)}
+          >
+            {loading ? (
+              <Text style={{ color: "#ffffff" }}>Please wait...</Text>
+            ) : (
+              <Text style={{ color: "#ffffff", fontWeight: "800" }}>Login</Text>
+            )}
+          </Button>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              marginVertical: 22,
+            }}
+          >
+            <Text style={{ fontSize: 16 }}>Don't have an account ? </Text>
+            <Pressable onPress={() => router.push("/register")}>
+              <Text
+                style={{
+                  fontSize: 16,
+
+                  fontWeight: "bold",
+                  marginLeft: 6,
+                }}
+              >
+                Register
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </ScrollView>
+    </View>
   );
 };
 

@@ -171,13 +171,13 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
   // const userSkill = user?.skills?.shift();
 
   return (
-    <ScrollView>
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
         end={{ x: 1, y: 0.25 }}
         style={{
-          height: 120,
+          height: "12%",
           paddingHorizontal: 20,
           paddingBottom: 30,
           flexDirection: "row",
@@ -214,57 +214,75 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
           />
         )}
       </LinearGradient>
-      <View style={{ margin: 10 }}>
-        <View
-          style={{
-            width: "100%",
-            gap: 6,
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => handleViewImage()}
-            style={{ position: "relative" }}
-          >
-            <Avatar.Image size={80} source={{ uri: user?.image }} />
-          </TouchableOpacity>
-          <Text
+      <ScrollView>
+        <View style={{ margin: 10 }}>
+          <View
             style={{
-              textTransform: "capitalize",
-              fontWeight: "bold",
-              fontSize: 22,
+              width: "100%",
+              gap: 6,
+              alignItems: "center",
             }}
-          >{`${user?.firstName} ${user?.lastName}`}</Text>
-          <Text style={{ fontSize: 16, fontWeight: "600" }}>
-            {user?.location?.regionName?.region}
-          </Text>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <Text style={{ fontSize: 18 }}>{user?.bio}</Text>
+          >
+            <TouchableOpacity
+              onPress={() => handleViewImage()}
+              style={{ position: "relative" }}
+            >
+              <Avatar.Image size={80} source={{ uri: user?.image }} />
+            </TouchableOpacity>
+            <Text
+              style={{
+                textTransform: "capitalize",
+                fontWeight: "bold",
+                fontSize: 22,
+              }}
+            >{`${user?.firstName} ${user?.lastName}`}</Text>
+            <Text style={{ fontSize: 16, fontWeight: "600" }}>
+              {user?.location?.regionName?.region}
+            </Text>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+            >
+              <Text style={{ fontSize: 18 }}>{user?.bio}</Text>
 
-            <MaterialCommunityIcons
-              name="pencil"
-              size={20}
-              onPress={showBioDialog}
-            />
-          </View>
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            {user?.skills?.length > 0 && (
-              <>
-                {/* <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                  {userSkill}
-                </Text> */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 15,
-                    flexWrap: "wrap",
+              <MaterialCommunityIcons
+                name="pencil"
+                size={20}
+                onPress={showBioDialog}
+              />
+            </View>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              {user?.skills?.length > 0 && (
+                <>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 15,
+                      flexWrap: "wrap",
 
-                    alignItems: "center",
-                    marginVertical: 10,
-                    paddingHorizontal: 10,
-                  }}
-                >
-                  {user?.skills?.map((skill: string, index: number) => (
+                      alignItems: "center",
+                      marginVertical: 10,
+                      paddingHorizontal: 10,
+                    }}
+                  >
+                    {user?.skills?.map((skill: string, index: number) => (
+                      <LinearGradient
+                        colors={[Colors.primary, Colors.secondary]}
+                        start={{ x: 0, y: 0.75 }}
+                        end={{ x: 1, y: 0.25 }}
+                        style={{
+                          borderRadius: 15,
+                          paddingHorizontal: 20,
+
+                          paddingVertical: 7,
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        key={index}
+                      >
+                        <Text style={{ color: "white" }}>{skill}</Text>
+                      </LinearGradient>
+                    ))}
                     <LinearGradient
                       colors={[Colors.primary, Colors.secondary]}
                       start={{ x: 0, y: 0.75 }}
@@ -278,51 +296,107 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
                         justifyContent: "center",
                         alignItems: "center",
                       }}
-                      key={index}
                     >
-                      <Text style={{ color: "white" }}>{skill}</Text>
+                      <MaterialCommunityIcons
+                        name="plus"
+                        size={20}
+                        color="white"
+                        onPress={showSkillsDialog}
+                      />
                     </LinearGradient>
-                  ))}
-                  <LinearGradient
-                    colors={[Colors.primary, Colors.secondary]}
-                    start={{ x: 0, y: 0.75 }}
-                    end={{ x: 1, y: 0.25 }}
-                    style={{
-                      borderRadius: 15,
-                      paddingHorizontal: 20,
-
-                      paddingVertical: 7,
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                      name="plus"
-                      size={20}
-                      color="white"
-                      onPress={showSkillsDialog}
-                    />
-                  </LinearGradient>
-                </View>
-              </>
-            )}
+                  </View>
+                </>
+              )}
+            </View>
           </View>
-          {/* {loggedUser._id === user?._id && (
-            <MaterialCommunityIcons
-              name="upload"
-              size={30}
+          <Divider horizontalInset style={{ marginVertical: 10 }} />
+          <View style={{ marginVertical: 10 }}>
+            <View
               style={{
-                position: "absolute",
-                bottom: -4,
-                color: Colors.light.primary,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingHorizontal: 10,
               }}
-              onPress={handleProfileImageSelection}
-            />
-          )} */}
+            >
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "semibold",
+                  textAlign: "center",
+                }}
+              >
+                Portfolio
+              </Text>
+              <LinearGradient
+                colors={[Colors.primary, Colors.secondary]}
+                start={{ x: 0, y: 0.75 }}
+                end={{ x: 1, y: 0.25 }}
+                style={{
+                  borderRadius: 15,
+                  paddingHorizontal: 20,
+
+                  paddingVertical: 7,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="shuffle-variant"
+                  size={20}
+                  color="white"
+                  onPress={() => router.push("/portfolio")}
+                />
+              </LinearGradient>
+            </View>
+
+            <View>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={user?.portfolio}
+                keyExtractor={(item) => item.description}
+                renderItem={({ item }) => (
+                  <View
+                    style={{ width: 160, marginRight: 10 }}
+                    key={item.description}
+                  >
+                    <View
+                      style={{
+                        width: 150,
+                        height: 150,
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        margin: 5,
+                      }}
+                    >
+                      <Card>
+                        <Card.Cover
+                          source={{ uri: item.image }}
+                          style={{ height: "100%" }}
+                        />
+                      </Card>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        flexShrink: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={{ flexShrink: 1, textAlign: "center" }}>
+                        {item.description}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+              />
+            </View>
+          </View>
         </View>
         <Divider horizontalInset style={{ marginVertical: 10 }} />
-        <View style={{ marginVertical: 10 }}>
+        <View style={{ margin: 10 }}>
           <View
             style={{
               flexDirection: "row",
@@ -337,7 +411,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
                 textAlign: "center",
               }}
             >
-              Portfolio
+              Testimonials
             </Text>
             <LinearGradient
               colors={[Colors.primary, Colors.secondary]}
@@ -354,208 +428,128 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
               }}
             >
               <MaterialCommunityIcons
-                name="shuffle-variant"
+                name="plus"
                 size={20}
                 color="white"
-                onPress={() => router.push("/portfolio")}
+                onPress={showTestimonialDialog}
               />
             </LinearGradient>
           </View>
 
-          <View>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={user?.portfolio}
-              keyExtractor={(item) => item.description}
-              key="1"
-              renderItem={({ item, index }) => (
-                <View style={{ width: 160, marginRight: 10 }} key={index}>
-                  <View
-                    style={{
-                      width: 150,
-                      height: 150,
-                      borderWidth: 1,
-                      borderRadius: 4,
-                      margin: 5,
-                    }}
-                  >
-                    <Card>
-                      <Card.Cover
-                        source={{ uri: item.image }}
-                        style={{ height: "100%" }}
-                      />
-                    </Card>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      flexShrink: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Text style={{ flexShrink: 1, textAlign: "center" }}>
-                      {item.description}
-                    </Text>
-                  </View>
-                </View>
-              )}
-            />
-          </View>
-        </View>
-      </View>
-      <Divider horizontalInset style={{ marginVertical: 10 }} />
-      <View style={{ margin: 10 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingHorizontal: 10,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: "semibold",
-              textAlign: "center",
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+            data={user?.testimonials?.slice(0, 10)}
+            keyExtractor={(item) => item.testimonial}
+            renderItem={({ item, index }) => (
+              <View style={{ marginVertical: 10 }} key={index}>
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {item.name}
+                </Text>
+                <Text style={{ fontSize: 16 }}>{item.testimonial}</Text>
+              </View>
+            )}
+            contentContainerStyle={{
+              flexGrow: 1,
             }}
-          >
-            Testimonials
-          </Text>
-          <LinearGradient
-            colors={[Colors.primary, Colors.secondary]}
-            start={{ x: 0, y: 0.75 }}
-            end={{ x: 1, y: 0.25 }}
-            style={{
-              borderRadius: 15,
-              paddingHorizontal: 20,
-
-              paddingVertical: 7,
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <MaterialCommunityIcons
-              name="plus"
-              size={20}
-              color="white"
-              onPress={showTestimonialDialog}
-            />
-          </LinearGradient>
+          />
         </View>
-
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={false}
-          data={user?.testimonials?.slice(0, 10)}
-          keyExtractor={(item) => item._name}
-          renderItem={({ item, index }) => (
-            <View style={{ marginVertical: 10 }} key={index}>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: "bold",
-                  textTransform: "capitalize",
+        <Portal>
+          <Dialog visible={bioVisible} onDismiss={hideBioDialog}>
+            <Dialog.Title>Update Bio</Dialog.Title>
+            <Dialog.Content>
+              <TextInput
+                mode="outlined"
+                onChangeText={(value) => setBio(value)}
+              />
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={handleUpdateBio}>
+                {loading ? "Please Wait..." : "Done"}
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        <Portal>
+          <Dialog visible={skillsVisible} onDismiss={hideSkillsDialog}>
+            <Dialog.Title>Update Skills</Dialog.Title>
+            <Dialog.Content>
+              <SectionedMultiSelect
+                items={filteredCategories}
+                IconRenderer={MaterialIcons}
+                uniqueKey="name"
+                subKey="subcategories"
+                onSelectedItemsChange={(item: string[]) => {
+                  setSelectedService(item);
+                  showSkillsDialog();
                 }}
-              >
-                {item.name}
-              </Text>
-              <Text style={{ fontSize: 16 }}>{item.testimonial}</Text>
-            </View>
-          )}
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
-        />
-      </View>
-      <Portal>
-        <Dialog visible={bioVisible} onDismiss={hideBioDialog}>
-          <Dialog.Title>Update Bio</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              mode="outlined"
-              onChangeText={(value) => setBio(value)}
-            />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={handleUpdateBio}>
-              {loading ? "Please Wait..." : "Done"}
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-      <Portal>
-        <Dialog visible={skillsVisible} onDismiss={hideSkillsDialog}>
-          <Dialog.Title>Update Skills</Dialog.Title>
-          <Dialog.Content>
-            <SectionedMultiSelect
-              items={filteredCategories}
-              IconRenderer={MaterialIcons}
-              uniqueKey="name"
-              subKey="subcategories"
-              onSelectedItemsChange={(item: string[]) => {
-                setSelectedService(item);
-                showSkillsDialog();
-              }}
-              selectedItems={selectedService}
-              expandDropDowns
-              selectText="Find your service..."
-              searchPlaceholderText="Search services..."
-              modalAnimationType="slide"
-              colors={{ primary: Colors.light.primary }}
-              styles={{
-                chipContainer: {
-                  borderWidth: 0,
-                  backgroundColor: "#ddd",
-                  borderRadius: 8,
-                },
-                chipText: {
-                  color: "#222",
-                  fontSize: 14.5,
-                },
-                selectToggle: {
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  borderColor: "#bbb",
-                  padding: 12,
-                  marginBottom: 12,
-                },
-              }}
-            />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={handleUpdateSkills}>
-              {loading ? "Please Wait..." : "Done"}
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-      <Portal>
-        <Dialog visible={testimonialVisible} onDismiss={hideTestimonialDialog}>
-          <Dialog.Title>Add Testimmonial</Dialog.Title>
-          <Dialog.Content style={{ gap: 25 }}>
-            <TextInput
-              label="Name"
-              mode="outlined"
-              onChangeText={(value) => setName(value)}
-            />
-            <TextInput
-              label="Your Testimonial"
-              multiline
-              mode="outlined"
-              onChangeText={(value) => setTestimonial(value)}
-            />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={handleUpdateTestimonial}>
-              {loading ? "Please Wait..." : "Done"}
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-    </ScrollView>
+                selectedItems={selectedService}
+                expandDropDowns
+                selectText="Find your service..."
+                searchPlaceholderText="Search services..."
+                modalAnimationType="slide"
+                colors={{ primary: Colors.light.primary }}
+                styles={{
+                  chipContainer: {
+                    borderWidth: 0,
+                    backgroundColor: "#ddd",
+                    borderRadius: 8,
+                  },
+                  chipText: {
+                    color: "#222",
+                    fontSize: 14.5,
+                  },
+                  selectToggle: {
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    borderColor: "#bbb",
+                    padding: 12,
+                    marginBottom: 12,
+                  },
+                }}
+              />
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={handleUpdateSkills}>
+                {loading ? "Please Wait..." : "Done"}
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        <Portal>
+          <Dialog
+            visible={testimonialVisible}
+            onDismiss={hideTestimonialDialog}
+          >
+            <Dialog.Title>Add Testimmonial</Dialog.Title>
+            <Dialog.Content style={{ gap: 25 }}>
+              <TextInput
+                label="Name"
+                mode="outlined"
+                onChangeText={(value) => setName(value)}
+              />
+              <TextInput
+                label="Your Testimonial"
+                multiline
+                mode="outlined"
+                onChangeText={(value) => setTestimonial(value)}
+              />
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={handleUpdateTestimonial}>
+                {loading ? "Please Wait..." : "Done"}
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      </ScrollView>
+    </View>
   );
 };
 

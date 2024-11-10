@@ -50,7 +50,7 @@ const index = () => {
   );
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
@@ -82,49 +82,51 @@ const index = () => {
           Search Results
         </Text>
       </LinearGradient>
-      {searchedProducts.length > 0 && (
-        <>
-          <Text
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {searchedProducts.length > 0 && (
+          <>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                marginLeft: 10,
+                marginVertical: 10,
+              }}
+            >
+              Products
+            </Text>
+            <ProductsPage products={searchedProducts} />
+          </>
+        )}
+        {searchedUsers.map((user, index) => (
+          <View key={index}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                marginLeft: 10,
+                marginVertical: 10,
+              }}
+            >
+              Service Providers
+            </Text>
+            <UserCard user={user} />
+          </View>
+        ))}
+        {searchedUsers.length < 1 && searchedProducts.length < 1 && (
+          <View
             style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              marginLeft: 10,
-              marginVertical: 10,
+              flex: 1,
+              height: 700,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            Products
-          </Text>
-          <ProductsPage products={searchedProducts} />
-        </>
-      )}
-      {searchedUsers.map((user, index) => (
-        <View key={index}>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              marginLeft: 10,
-              marginVertical: 10,
-            }}
-          >
-            Service Providers
-          </Text>
-          <UserCard user={user} />
-        </View>
-      ))}
-      {searchedUsers.length < 1 && searchedProducts.length < 1 && (
-        <View
-          style={{
-            flex: 1,
-            height: 700,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text>Search not found</Text>
-        </View>
-      )}
-    </ScrollView>
+            <Text>Search not found</Text>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 

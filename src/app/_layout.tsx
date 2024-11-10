@@ -15,7 +15,7 @@ import merge from "deepmerge";
 
 import { Colors } from "../constants/Colors";
 import { StatusBar } from "expo-status-bar";
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import {
   useCategoryStore,
   useChatStore,
@@ -47,6 +47,7 @@ import {
 import { onValue, ref } from "firebase/database";
 import { RootSiblingParent } from "react-native-root-siblings";
 import * as Location from "expo-location";
+import registerNNPushToken from "native-notify";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
 const customLightTheme = { ...MD3LightTheme, colors: Colors.light };
@@ -60,6 +61,7 @@ const CombinedDefaultTheme = merge(LightTheme, customLightTheme);
 const CombinedDarkTheme = merge(DarkTheme, customDarkTheme);
 
 export default function RootLayout() {
+  registerNNPushToken(24745, "yN3hxcW8jdGFZ7rIZfHwHq");
   const colorScheme = useColorScheme();
 
   const paperTheme =
@@ -70,11 +72,11 @@ export default function RootLayout() {
   const { storeChats } = useChatStore();
   const { storeRequests } = useRequestStore();
   const { storeShops } = useShopsStore();
-  const { storeProducts, storePromoted } = useProductsStore();
+  const { storeProducts } = useProductsStore();
   const { storeReviews } = useReviewsStore();
   const { storeTransactions } = useTransactionsStore();
-  const { storeLocation } = useLocationStore();
   const { storeCV } = useCVStore();
+  const { storeLocation } = useLocationStore();
 
   const fetchAllUsers = async () => {
     getTransactions().then((transactions) => {
@@ -82,29 +84,35 @@ export default function RootLayout() {
     });
   };
 
-  const userLocation = async () => {
+  const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
-    if (status !== "granted") {
+    if (status === "granted") {
+      Location.getCurrentPositionAsync({})
+        .then((data) => {
+          const coordinates = {
+            latitude: data.coords.latitude,
+            longitude: data.coords.longitude,
+          };
+
+          Location.reverseGeocodeAsync(coordinates).then((location) => {
+            const locationData = {
+              coordinates,
+              regionName: location[0],
+            };
+
+            storeLocation(locationData);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
       CustomToast("Permission to access location was denied");
       exitApp();
     }
-
-    let location = await Location.getCurrentPositionAsync({});
-
-    const coordinates = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
-
-    let regionName = await Location.reverseGeocodeAsync(coordinates);
-
-    const locationData = {
-      coordinates,
-      regionName: regionName[0],
-    };
-    storeLocation(locationData);
   };
+
   const fetchServices = async () => {
     const categories = await getServices();
     storeCategory(categories);
@@ -164,8 +172,8 @@ export default function RootLayout() {
     storeCV(cvs);
   };
 
-  useLayoutEffect(() => {
-    userLocation();
+  useEffect(() => {
+    getLocation();
     fetchServices();
     fetchAllChats();
     fetchAllRequests();

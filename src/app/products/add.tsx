@@ -60,7 +60,12 @@ const add = () => {
       _id: id,
       name,
       description,
-      location: location !== "" ? location : userLocation[0].regionName.city!,
+      location:
+        location !== ""
+          ? location
+          : userLocation.length > 0
+          ? userLocation[0].regionName?.city
+          : user?.location?.regionName?.city,
       price: parseFloat(price),
       negotiable,
       category,
@@ -271,13 +276,13 @@ const add = () => {
   );
 
   return (
-    <ScrollView style={{ flex: 1, paddingBottom: 30 }}>
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
         end={{ x: 1, y: 0.25 }}
         style={{
-          height: 120,
+          height: "12%",
           paddingHorizontal: 20,
           paddingBottom: 30,
           flexDirection: "row",
@@ -303,82 +308,92 @@ const add = () => {
           Add Product
         </Text>
       </LinearGradient>
-      <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
-        <TextInput
-          label="Name"
-          mode="outlined"
-          onChangeText={(value) => setName(value)}
-        />
-        <TextInput
-          label="Description"
-          mode="outlined"
-          multiline
-          numberOfLines={5}
-          onChangeText={(value) => setDescription(value)}
-        />
-        <TextInput
-          label="Location"
-          defaultValue={userLocation[0].regionName.region!}
-          mode="outlined"
-          onChangeText={(value) => setLocation(value)}
-        />
-        <TextInput
-          label="Price"
-          keyboardType="numeric"
-          mode="outlined"
-          onChangeText={(value) => setPrice(value)}
-        />
-        <View>
-          <Text style={{ marginBottom: 10, marginLeft: 10 }}>Negotiable?</Text>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <RadioButton
-                value="Yes"
-                status={negotiable ? "checked" : "unchecked"}
-                onPress={() => setNegotiable(true)}
-              />
-              <Text>Yes</Text>
-            </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <RadioButton
-                value="No"
-                status={!negotiable ? "checked" : "unchecked"}
-                onPress={() => setNegotiable(false)}
-              />
-              <Text>No</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
+          <TextInput
+            label="Name"
+            mode="outlined"
+            onChangeText={(value) => setName(value)}
+          />
+          <TextInput
+            label="Description"
+            mode="outlined"
+            multiline
+            numberOfLines={5}
+            onChangeText={(value) => setDescription(value)}
+          />
+          <TextInput
+            label="Location"
+            defaultValue={
+              userLocation.length > 0
+                ? userLocation[0].regionName?.region
+                : user?.location?.regionName?.region
+            }
+            mode="outlined"
+            onChangeText={(value) => setLocation(value)}
+          />
+          <TextInput
+            label="Price"
+            keyboardType="numeric"
+            mode="outlined"
+            onChangeText={(value) => setPrice(value)}
+          />
+          <View>
+            <Text style={{ marginBottom: 10, marginLeft: 10 }}>
+              Negotiable?
+            </Text>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 20 }}
+            >
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <RadioButton
+                  value="Yes"
+                  status={negotiable ? "checked" : "unchecked"}
+                  onPress={() => setNegotiable(true)}
+                />
+                <Text>Yes</Text>
+              </View>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <RadioButton
+                  value="No"
+                  status={!negotiable ? "checked" : "unchecked"}
+                  onPress={() => setNegotiable(false)}
+                />
+                <Text>No</Text>
+              </View>
             </View>
           </View>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderColor: textColor,
+            }}
+          >
+            <SectionedMultiSelect
+              items={shops}
+              IconRenderer={MaterialIcons}
+              uniqueKey="name"
+              single
+              subKey="subshops"
+              readOnlyHeadings
+              selectText={category}
+              colors={{ selectToggleTextColor: textColor }}
+              onSelectedItemsChange={(item) => setCategory(item[0])}
+            />
+          </View>
         </View>
-        <View
-          style={{
-            borderBottomWidth: 1,
-            borderColor: textColor,
-          }}
-        >
-          <SectionedMultiSelect
-            items={shops}
-            IconRenderer={MaterialIcons}
-            uniqueKey="name"
-            single
-            subKey="subshops"
-            readOnlyHeadings
-            selectText={category}
-            colors={{ selectToggleTextColor: textColor }}
-            onSelectedItemsChange={(item) => setCategory(item[0])}
+
+        <View style={{ marginVertical: 10 }}>
+          <CustomModal
+            content={modalContent}
+            triggerText="Post"
+            visible={visible}
+            setVisible={setVisible}
+            icon="cart"
           />
         </View>
-      </View>
-
-      <View style={{ marginVertical: 10 }}>
-        <CustomModal
-          content={modalContent}
-          triggerText="Post"
-          visible={visible}
-          setVisible={setVisible}
-          icon="cart"
-        />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

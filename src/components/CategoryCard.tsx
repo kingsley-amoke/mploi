@@ -17,10 +17,6 @@ const CategoryCard = ({ category }: DocumentData) => {
       }}
     >
       <View style={{ minHeight: "50%" }}>
-        {/* <Image
-          source={require("../../assets/images/services/salon.png")}
-          style={{ width: 25, height: 25 }}
-        /> */}
         <MaterialCommunityIcons
           name={category?.icon}
           size={30}

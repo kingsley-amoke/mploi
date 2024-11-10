@@ -18,14 +18,15 @@ const index = () => {
   const currentShop = shops.find((shop) => shop._id === shopID);
 
   return (
-    <ScrollView>
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
         end={{ x: 1, y: 0.25 }}
         style={{
-          height: 120,
+          height: "12%",
           paddingHorizontal: 20,
+
           flexDirection: "row",
           justifyContent: "flex-start",
           alignItems: "center",
@@ -49,13 +50,15 @@ const index = () => {
           {currentShop?.name}
         </Text>
       </LinearGradient>
-      {currentShop?.subshops.map((sub: { name: string }) => (
-        <View key={sub.name}>
-          <SubShop subshop={sub} />
-          <Divider bold />
-        </View>
-      ))}
-    </ScrollView>
+      <ScrollView>
+        {currentShop?.subshops.map((sub: { name: string }) => (
+          <View key={sub.name}>
+            <SubShop subshop={sub} />
+            <Divider bold />
+          </View>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 

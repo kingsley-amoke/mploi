@@ -3,11 +3,7 @@ import React from "react";
 import Login from "@/src/components/Login";
 
 const LoginPage = () => {
-  return (
-    <ScrollView style={{ minHeight: 1000 }}>
-      <Login />
-    </ScrollView>
-  );
+  return <Login />;
 };
 
 export default LoginPage;

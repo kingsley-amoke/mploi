@@ -80,13 +80,13 @@ const index = () => {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
         end={{ x: 1, y: 0.25 }}
         style={{
-          height: 120,
+          height: "12%",
           paddingHorizontal: 20,
           paddingBottom: 30,
           flexDirection: "row",
@@ -112,55 +112,57 @@ const index = () => {
           CV Review
         </Text>
       </LinearGradient>
-      <View style={{ paddingBottom: 20, marginHorizontal: 20 }}>
-        <View>
-          <Text>
-            Get your desired job, leave your employer with no options than to
-            hire you.
-          </Text>
-          <Text style={{ marginVertical: 10 }}>
-            Our CV experts can make you employable.
-          </Text>
-          <Text>Click on the link below to get started.</Text>
-        </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{ paddingBottom: 20, marginHorizontal: 20 }}>
+          <View>
+            <Text>
+              Get your desired job, leave your employer with no options than to
+              hire you.
+            </Text>
+            <Text style={{ marginVertical: 10 }}>
+              Our CV experts can make you employable.
+            </Text>
+            <Text>Click on the link below to get started.</Text>
+          </View>
 
-        <View style={{ marginVertical: 10 }}>
-          <Text
-            style={{
-              textAlign: "center",
-              fontWeight: "bold",
-              fontSize: 16,
-              marginVertical: 10,
-            }}
-          >
-            Pricing
-          </Text>
+          <View style={{ marginVertical: 10 }}>
+            <Text
+              style={{
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: 16,
+                marginVertical: 10,
+              }}
+            >
+              Pricing
+            </Text>
+          </View>
+          <View style={{ paddingHorizontal: 20 }}>
+            <Plans
+              title={firstTier.title}
+              description={firstTier.description}
+              price={firstTier.price}
+              details={firstTier.details}
+            />
+            <View style={{ marginVertical: 10 }} />
+            <Plans
+              title={secondTier.title}
+              description={secondTier.description}
+              price={secondTier.price}
+              details={secondTier.details}
+            />
+            <View style={{ marginVertical: 10 }} />
+            <Plans
+              title={thirdTier.title}
+              description={thirdTier.description}
+              price={thirdTier.price}
+              details={thirdTier.details}
+            />
+            <View style={{ marginVertical: 10 }} />
+          </View>
         </View>
-        <View style={{ paddingHorizontal: 20 }}>
-          <Plans
-            title={firstTier.title}
-            description={firstTier.description}
-            price={firstTier.price}
-            details={firstTier.details}
-          />
-          <View style={{ marginVertical: 10 }} />
-          <Plans
-            title={secondTier.title}
-            description={secondTier.description}
-            price={secondTier.price}
-            details={secondTier.details}
-          />
-          <View style={{ marginVertical: 10 }} />
-          <Plans
-            title={thirdTier.title}
-            description={thirdTier.description}
-            price={thirdTier.price}
-            details={thirdTier.details}
-          />
-          <View style={{ marginVertical: 10 }} />
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

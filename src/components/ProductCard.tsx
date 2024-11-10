@@ -24,7 +24,7 @@ const ProductCard = ({ product }: { product: DocumentData }) => {
   };
 
   return (
-    <Card style={{ height: 280, width: "48%" }}>
+    <Card style={{ height: 280, width: "100%" }}>
       <Card.Cover
         source={{ uri: product.images[0] || shopAvatar }}
         style={{ height: 140 }}

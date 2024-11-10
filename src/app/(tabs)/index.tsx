@@ -17,32 +17,28 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 
 import React, { useLayoutEffect, useState } from "react";
-import { SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, TouchableOpacity, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
-import { FlatGrid, SectionGrid } from "react-native-super-grid";
+import { SectionGrid } from "react-native-super-grid";
 
 const Home = () => {
-  const { users, storeUsers } = useUsersStore();
+  const { storeUsers } = useUsersStore();
   const { user, storeUser } = useUserStore();
-  const { chats } = useChatStore();
   const { categories } = useCategoryStore();
   const { shops } = useShopsStore();
   const router = useRouter();
-
-  const { location: userLocation } = useLocationStore();
+  const { location } = useLocationStore();
 
   const [search, setSearch] = useState("");
 
-  const location =
-    userLocation[0]?.regionName.subregion +
-      ", " +
-      userLocation[0]?.regionName.city || "Loading...";
-
-  const serviceProviderChats = chats.map((c) => c.serviceProvider._id);
-
-  const topUsers = users.filter((usr) => {
-    return serviceProviderChats.includes(usr._id) && usr.skills?.length > 0;
-  });
+  const userLocation =
+    location.length > 0
+      ? location[0]?.regionName.subregion +
+          ", " +
+          location[0]?.regionName.city || "Loading..."
+      : user?.location?.regionName?.subregion +
+        ", " +
+        user?.location?.regionName?.city;
 
   const filteredCategories = categories.sort(function (a, b) {
     if (a.name < b.name) {
@@ -62,6 +58,7 @@ const Home = () => {
   }: {
     nativeEvent: { key: string };
   }) => {
+    console.log(key);
     if (key === "Enter" && search !== "") {
       router.push(`/search?${createQueryString("search", search)}`);
     }
@@ -100,7 +97,11 @@ const Home = () => {
             paddingTop: 20,
           }}
         >
-          <TouchableOpacity onPress={() => router.push("/profile/edit")}>
+          <TouchableOpacity
+            onPress={() =>
+              router.push(auth.currentUser ? "/profile/edit" : "/")
+            }
+          >
             <Text
               style={{
                 fontWeight: "bold",
@@ -113,7 +114,7 @@ const Home = () => {
             </Text>
             <Text style={{ color: "white" }}>
               <MaterialIcons name="location-pin" color="white" />
-              {location}
+              {userLocation}
             </Text>
           </TouchableOpacity>
           <MaterialIcons

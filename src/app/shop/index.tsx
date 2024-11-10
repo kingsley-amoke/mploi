@@ -23,13 +23,13 @@ const index = () => {
     return 0;
   });
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
         end={{ x: 1, y: 0.25 }}
         style={{
-          height: 120,
+          height: "12%",
           paddingHorizontal: 20,
           paddingBottom: 30,
           flexDirection: "row",
@@ -55,10 +55,12 @@ const index = () => {
           All Shops
         </Text>
       </LinearGradient>
-      {sortedShops.map((shop, index) => (
-        <Shop shop={shop} key={index} />
-      ))}
-    </ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {sortedShops.map((shop, index) => (
+          <Shop shop={shop} key={index} />
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 

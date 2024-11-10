@@ -17,6 +17,8 @@ import { firestoreDB } from "../utils/firebaseConfig";
 import { useForm } from "react-hook-form";
 import ValidatedInput from "./ValidatedInput";
 import { CustomToast, noAvatar } from "../utils/data";
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "../constants/Colors";
 
 const Signup = () => {
   const auth = getAuth();
@@ -114,15 +116,52 @@ const Signup = () => {
           router.push("/");
           CustomToast("Please update profile to continue");
           setLoading(false);
-          // AsyncStorage.setItem("@user", JSON.stringify(docSnap.data()));
         });
       }
     );
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1, marginHorizontal: 22 }}>
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: "12%",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+
+          flexDirection: "row",
+          paddingBottom: 10,
+        }}
+      >
+        <Button
+          mode="outlined"
+          style={{ borderRadius: 2, marginLeft: 10 }}
+          labelStyle={{ color: "white", fontWeight: "bold" }}
+          onPress={() => router.back()}
+        >
+          BACK
+        </Button>
+        <Text
+          style={{
+            fontSize: 30,
+            fontWeight: "bold",
+            textAlign: "center",
+            color: "white",
+            position: "absolute",
+            left: "40%",
+            bottom: "10%",
+          }}
+        >
+          MyPlug
+        </Text>
+      </LinearGradient>
+      <ScrollView
+        style={{ marginHorizontal: 10 }}
+        showsVerticalScrollIndicator={false}
+      >
         {!isChecked && error && (
           <Text style={{ color: "red", fontSize: 16 }}>
             Please accept the terms and conditions
@@ -215,8 +254,9 @@ const Signup = () => {
           mode="contained"
           style={{
             marginTop: 18,
-            marginBottom: 4,
+            padding: 12,
           }}
+          labelStyle={{ fontSize: 20 }}
           disabled={loading}
           onPress={handleSubmit(onSubmit)}
         >
@@ -226,20 +266,12 @@ const Signup = () => {
         <View
           style={{
             flexDirection: "row",
-            alignItems: "center",
-            marginVertical: 20,
-          }}
-        ></View>
-
-        <View
-          style={{
-            flexDirection: "row",
             justifyContent: "center",
             marginVertical: 22,
           }}
         >
           <Text style={{ fontSize: 16 }}>Already have an account?</Text>
-          <Pressable onPress={() => router.replace("/login")}>
+          <Pressable onPress={() => router.push("/login")}>
             <Text
               style={{
                 fontSize: 16,
@@ -253,7 +285,7 @@ const Signup = () => {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

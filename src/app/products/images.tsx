@@ -19,6 +19,7 @@ import { useProductsStore, useUserStore } from "@/src/state/store";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Colors } from "@/src/constants/Colors";
 import ProgressBar from "@/src/components/ProgressBar";
+import { LinearGradient } from "expo-linear-gradient";
 
 const images = () => {
   const { id } = useLocalSearchParams();
@@ -103,59 +104,93 @@ const images = () => {
   }, []);
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <View style={{ marginVertical: 20 }}>
-        <Button
-          mode="outlined"
-          contentStyle={{ marginVertical: 10 }}
-          labelStyle={{ fontSize: 18 }}
-          onPress={() => router.replace("/")}
-        >
-          Continue to shop
-        </Button>
-      </View>
-      <View style={{ marginVertical: 10 }}>
-        <Text>Name: {product?.name}</Text>
-        <Text>Location: {product?.location}</Text>
-        <Text>Price: {productPrice}</Text>
-        <Text>Category: {product?.category}</Text>
-      </View>
-      <View style={{ marginVertical: 5 }}>
-        <Text>Select images for this product (Max: 4)</Text>
-      </View>
-      {progress < 1 ? (
-        <TouchableOpacity
-          style={{
-            padding: 30,
-            backgroundColor: Colors.dark.primary,
-            borderWidth: 1,
-            borderRadius: 10,
-          }}
-          onPress={() => selectImage(true)}
-        >
-          <MaterialCommunityIcons name="plus" size={100} color="grey" />
-        </TouchableOpacity>
-      ) : (
-        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-          <ProgressBar progress={progress} barWidth={100} />
-          <Text>{progress + "%"}</Text>
-        </View>
-      )}
-      <View
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
         style={{
-          marginVertical: 20,
-
+          height: "12%",
+          paddingHorizontal: 20,
+          paddingBottom: 30,
           flexDirection: "row",
-          gap: 5,
-          flexWrap: "wrap",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
         }}
       >
-        {product?.images?.length > 0 &&
-          product?.images?.map((image: string, index: number) => (
-            <View style={{ marginHorizontal: 10 }} key={index}>
-              <PhotosCard item={image} />
-            </View>
-          ))}
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color="white"
+          size={30}
+          onPress={() => router.back()}
+        />
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          Add Images
+        </Text>
+      </LinearGradient>
+
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View style={{ marginVertical: 20 }}>
+          <Button
+            mode="outlined"
+            contentStyle={{ marginVertical: 10 }}
+            labelStyle={{ fontSize: 18 }}
+            onPress={() => router.replace("/")}
+          >
+            Continue to shop
+          </Button>
+        </View>
+        <View style={{ marginVertical: 10 }}>
+          <Text>Name: {product?.name}</Text>
+          <Text>Location: {product?.location}</Text>
+          <Text>Price: {productPrice}</Text>
+          <Text>Category: {product?.category}</Text>
+        </View>
+        <View style={{ marginVertical: 5 }}>
+          <Text>Select images for this product (Max: 4)</Text>
+        </View>
+        {progress < 1 ? (
+          <TouchableOpacity
+            style={{
+              padding: 30,
+              backgroundColor: Colors.dark.primary,
+              borderWidth: 1,
+              borderRadius: 10,
+            }}
+            onPress={() => selectImage(true)}
+          >
+            <MaterialCommunityIcons name="plus" size={100} color="grey" />
+          </TouchableOpacity>
+        ) : (
+          <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+            <ProgressBar progress={progress} barWidth={100} />
+            <Text>{progress + "%"}</Text>
+          </View>
+        )}
+        <View
+          style={{
+            marginVertical: 20,
+
+            flexDirection: "row",
+            gap: 5,
+            flexWrap: "wrap",
+          }}
+        >
+          {product?.images?.length > 0 &&
+            product?.images?.map((image: string, index: number) => (
+              <View style={{ marginHorizontal: 10 }} key={index}>
+                <PhotosCard item={image} />
+              </View>
+            ))}
+        </View>
       </View>
     </View>
   );

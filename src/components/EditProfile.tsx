@@ -129,16 +129,13 @@ const EditProfile = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
-    >
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0.75 }}
         end={{ x: 1, y: 0.25 }}
         style={{
-          height: 120,
+          height: "12%",
           paddingHorizontal: 20,
           paddingBottom: 30,
           flexDirection: "row",
@@ -165,146 +162,156 @@ const EditProfile = () => {
           Edit Profile
         </Text>
       </LinearGradient>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          paddingHorizontal: 22,
-        }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Text
-            style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
-          >
-            Profile Photo
-          </Text>
-          <View>
-            {progress > 0 ? (
-              <View
-                style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
-              >
-                <ProgressBar progress={progress} barWidth={100} />
-                <Text>{progress + "%"}</Text>
-              </View>
-            ) : (
-              <Card.Cover source={{ uri: user?.image }}></Card.Cover>
-            )}
-            <View
-              style={{
-                justifyContent: "flex-end",
-                alignItems: "flex-end",
-                marginVertical: 10,
-              }}
+        <SafeAreaView
+          style={{
+            flex: 1,
+            paddingHorizontal: 22,
+          }}
+        >
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Text
+              style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
             >
-              <LinearGradient
-                colors={[Colors.primary, Colors.secondary]}
-                start={{ x: 0, y: 0.75 }}
-                end={{ x: 1, y: 0.25 }}
+              Profile Photo
+            </Text>
+            <View>
+              {progress > 0 ? (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 10,
+                    alignItems: "center",
+                  }}
+                >
+                  <ProgressBar progress={progress} barWidth={100} />
+                  <Text>{progress + "%"}</Text>
+                </View>
+              ) : (
+                <Card.Cover source={{ uri: user?.image }}></Card.Cover>
+              )}
+              <View
                 style={{
-                  borderRadius: 15,
-                  paddingHorizontal: 20,
-
-                  paddingVertical: 7,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  alignItems: "flex-end",
+                  marginVertical: 10,
                 }}
               >
-                <MaterialCommunityIcons
-                  name={loading ? "loading" : "shuffle-variant"}
-                  size={20}
-                  color="white"
-                  onPress={handleProfileImageSelection}
+                <LinearGradient
+                  colors={[Colors.primary, Colors.secondary]}
+                  start={{ x: 0, y: 0.75 }}
+                  end={{ x: 1, y: 0.25 }}
+                  style={{
+                    borderRadius: 15,
+                    paddingHorizontal: 20,
+
+                    paddingVertical: 7,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name={loading ? "loading" : "shuffle-variant"}
+                    size={20}
+                    color="white"
+                    onPress={handleProfileImageSelection}
+                  />
+                </LinearGradient>
+              </View>
+            </View>
+            <Text
+              style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
+            >
+              Personal Details
+            </Text>
+            <View>
+              <View
+                style={{
+                  flexDirection: "column",
+                  marginBottom: 6,
+                }}
+              >
+                <TextInput
+                  mode="outlined"
+                  label={
+                    user?.firstName !== "" ? user?.firstName : "First Name"
+                  }
+                  placeholder={user?.firstName}
+                  onChangeText={(value) => setFirstName(value)}
+                  editable={true}
                 />
-              </LinearGradient>
-            </View>
-          </View>
-          <Text
-            style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
-          >
-            Personal Details
-          </Text>
-          <View>
-            <View
-              style={{
-                flexDirection: "column",
-                marginBottom: 6,
-              }}
-            >
-              <TextInput
-                mode="outlined"
-                label={user?.firstName !== "" ? user?.firstName : "First Name"}
-                placeholder={user?.firstName}
-                onChangeText={(value) => setFirstName(value)}
-                editable={true}
-              />
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "column",
+                  marginBottom: 6,
+                }}
+              >
+                <TextInput
+                  mode="outlined"
+                  label={user?.lastName !== "" ? user?.lastName : "Last Name"}
+                  placeholder={user?.lastName}
+                  onChangeText={(value) => setLastName(value)}
+                  editable={true}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: "column",
+                  marginBottom: 6,
+                }}
+              >
+                <TextInput
+                  mode="outlined"
+                  label={user?.phone !== "" ? user?.phone : "Phone Number"}
+                  placeholder={user?.phone}
+                  onChangeText={(value) => setPhone(value)}
+                  editable={true}
+                />
+              </View>
             </View>
 
-            <View
-              style={{
-                flexDirection: "column",
-                marginBottom: 6,
-              }}
+            <Button
+              mode="contained"
+              style={{ marginTop: 10 }}
+              contentStyle={{ marginVertical: 10 }}
+              labelStyle={{ fontSize: 18 }}
+              onPress={() => updateProfile()}
             >
+              {!saving ? "Save Change" : "Saving"}
+            </Button>
+            <Text
+              style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
+            >
+              Location
+            </Text>
+            <View>
               <TextInput
-                mode="outlined"
-                label={user?.lastName !== "" ? user?.lastName : "Last Name"}
-                placeholder={user?.lastName}
-                onChangeText={(value) => setLastName(value)}
-                editable={true}
+                disabled
+                value={
+                  user?.location?.regionName?.city +
+                  ", " +
+                  user?.location?.regionName?.country
+                }
               />
             </View>
-            <View
-              style={{
-                flexDirection: "column",
-                marginBottom: 6,
-              }}
+            <Button
+              mode="contained"
+              style={{ marginVertical: 10 }}
+              contentStyle={{ marginVertical: 10 }}
+              labelStyle={{ fontSize: 18 }}
+              onPress={() => updateLocation()}
             >
-              <TextInput
-                mode="outlined"
-                label={user?.phone !== "" ? user?.phone : "Phone Number"}
-                placeholder={user?.phone}
-                onChangeText={(value) => setPhone(value)}
-                editable={true}
-              />
-            </View>
-          </View>
-
-          <Button
-            mode="contained"
-            style={{ marginTop: 10 }}
-            contentStyle={{ marginVertical: 10 }}
-            labelStyle={{ fontSize: 18 }}
-            onPress={() => updateProfile()}
-          >
-            {!saving ? "Save Change" : "Saving"}
-          </Button>
-          <Text
-            style={{ marginVertical: 10, fontSize: 25, fontWeight: "bold" }}
-          >
-            Location
-          </Text>
-          <View>
-            <TextInput
-              disabled
-              value={
-                user?.location?.regionName?.city +
-                ", " +
-                user?.location?.regionName?.country
-              }
-            />
-          </View>
-          <Button
-            mode="contained"
-            style={{ marginVertical: 10 }}
-            contentStyle={{ marginVertical: 10 }}
-            labelStyle={{ fontSize: 18 }}
-            onPress={() => updateLocation()}
-          >
-            {!loading ? "Update Location " : "Updating"}
-          </Button>
-        </ScrollView>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+              {!loading ? "Update Location " : "Updating"}
+            </Button>
+          </ScrollView>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

@@ -14,8 +14,7 @@ const ProductLayout = () => {
       <Stack.Screen
         name="images"
         options={{
-          title: "Add Images",
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
       <Stack.Screen
