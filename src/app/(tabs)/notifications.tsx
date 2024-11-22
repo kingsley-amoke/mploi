@@ -4,30 +4,28 @@ import { Switch, Text } from "react-native-paper";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
-import * as Notifications from "expo-notifications";
 
 export default function Shop() {
   const [notificationStatus, setNotificationStatus] = useState("denied");
 
-  const getNotification = async () => {
-    Notifications.getPermissionsAsync().then((status) => {
-      setNotificationStatus(status.status);
-    });
-  };
+  // const getNotification = async () => {
+  //   Notifications.getPermissionsAsync().then((status) => {
+  //     setNotificationStatus(status.status);
+  //   });
+  // };
 
-  const requestPermission = async () => {
-    if (notificationStatus === "granted") {
-      setNotificationStatus("denied");
-      return;
-    }
-    Notifications.requestPermissionsAsync({}).then((data) => {
-      console.log(data);
-      getNotification();
-    });
-  };
+  // const requestPermission = async () => {
+  //   if (notificationStatus === "granted") {
+  //     setNotificationStatus("denied");
+  //     return;
+  //   }
+  //   Notifications.requestPermissionsAsync({}).then((data) => {
+  //     getNotification();
+  //   });
+  // };
 
   useEffect(() => {
-    getNotification();
+    // getNotification();
   }, [notificationStatus]);
 
   return (
@@ -66,17 +64,16 @@ export default function Shop() {
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            itemsAlign: "center",
             margin: 10,
           }}
         >
           <Text style={{ fontSize: 20 }}>Allow Notifications?</Text>
 
-          <Switch
+          {/* <Switch
             value={notificationStatus === "granted" ? true : false}
             onValueChange={() => requestPermission()}
             color={Colors.primary}
-          />
+          /> */}
         </View>
       </ScrollView>
     </View>

@@ -112,8 +112,8 @@ const Home = () => {
             >
               Hi {auth.currentUser ? user?.lastName : "Anonymous"}
             </Text>
-            <Text style={{ color: "white" }}>
-              <MaterialIcons name="location-pin" color="white" />
+            <Text style={{ color: "silver" }}>
+              {/* <MaterialIcons name="location-pin" color="white" /> */}
               {userLocation}
             </Text>
           </TouchableOpacity>

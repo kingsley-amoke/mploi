@@ -47,7 +47,6 @@ import {
 import { onValue, ref } from "firebase/database";
 import { RootSiblingParent } from "react-native-root-siblings";
 import * as Location from "expo-location";
-import registerNNPushToken from "native-notify";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
 const customLightTheme = { ...MD3LightTheme, colors: Colors.light };
@@ -61,7 +60,7 @@ const CombinedDefaultTheme = merge(LightTheme, customLightTheme);
 const CombinedDarkTheme = merge(DarkTheme, customDarkTheme);
 
 export default function RootLayout() {
-  registerNNPushToken(24745, "yN3hxcW8jdGFZ7rIZfHwHq");
+  // registerNNPushToken(24745, "yN3hxcW8jdGFZ7rIZfHwHq");
   const colorScheme = useColorScheme();
 
   const paperTheme =

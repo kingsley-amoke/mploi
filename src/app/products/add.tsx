@@ -1,22 +1,23 @@
 import {
+  Dimensions,
+  FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
   useColorScheme,
   View,
 } from "react-native";
-import React, { useState } from "react";
-import { Button, RadioButton, Text, TextInput } from "react-native-paper";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import { Button, Text, TextInput } from "react-native-paper";
 import {
   useLocationStore,
-  useProductsStore,
   useShopsStore,
   useUserStore,
 } from "@/src/state/store";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { doc, setDoc } from "firebase/firestore";
-import { firestoreDB } from "@/src/utils/firebaseConfig";
+import { firestoreDB, storage } from "@/src/utils/firebaseConfig";
 import { ProductTypes } from "@/src/utils/types";
 import { useRouter } from "expo-router";
 import { CustomModal } from "@/src/components/CustomModal";
@@ -24,12 +25,18 @@ import { Colors } from "@/src/constants/Colors";
 import { CustomToast, deduct } from "@/src/utils/data";
 import { LinearGradient } from "expo-linear-gradient";
 
+import * as ImagePicker from "expo-image-picker";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import ProgressBar from "@/src/components/ProgressBar";
+import PhotosCard from "@/src/components/PhotosCard";
+
 const add = () => {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const { user } = useUserStore();
   const { shops } = useShopsStore();
   const { location: userLocation } = useLocationStore();
+  const { width, height } = Dimensions.get("window");
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -41,6 +48,9 @@ const add = () => {
   const [posting, setPosting] = useState(false);
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState(1);
+
+  const [progress, setProgress] = useState(0);
+  const [images, setImages] = useState([]);
 
   const textColor = colorScheme === "dark" ? "#fff" : "#000";
 
@@ -69,14 +79,14 @@ const add = () => {
       price: parseFloat(price),
       negotiable,
       category,
-      images: [],
+      images: images,
       sellerID: user?._id!,
       promo: promo,
     };
 
     const productRef = doc(firestoreDB, "products", data._id);
     setDoc(productRef, data).then(() => {
-      router.push(`/products/images?id=${data._id}`);
+      router.push("/");
       setVisible(false);
       setPosting(false);
     });
@@ -116,6 +126,54 @@ const add = () => {
         handleSubmitProduct();
         break;
     }
+  };
+
+  const selectImage = async (useLibrary: boolean) => {
+    let result;
+
+    const options: ImagePicker.ImagePickerOptions = {
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    };
+
+    if (useLibrary) {
+      result = await ImagePicker.launchImageLibraryAsync(options);
+    } else {
+      await ImagePicker.requestCameraPermissionsAsync();
+      result = await ImagePicker.launchCameraAsync(options);
+    }
+
+    if (!result.canceled) {
+      uploadImage(result.assets[0].uri);
+    }
+  };
+
+  const uploadImage = async (uri: string) => {
+    const filename = new Date().getTime() + ".jpg";
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    const storageRef = ref(storage, `products/${filename}`);
+
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(Math.floor(progress));
+      },
+      (error) => {
+        // handle error
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImages([...images, downloadURL]);
+          setProgress(0);
+        });
+      }
+    );
   };
 
   const modalContent = (
@@ -315,30 +373,8 @@ const add = () => {
             mode="outlined"
             onChangeText={(value) => setName(value)}
           />
-          <TextInput
-            label="Description"
-            mode="outlined"
-            multiline
-            numberOfLines={5}
-            onChangeText={(value) => setDescription(value)}
-          />
-          <TextInput
-            label="Location"
-            defaultValue={
-              userLocation.length > 0
-                ? userLocation[0].regionName?.region
-                : user?.location?.regionName?.region
-            }
-            mode="outlined"
-            onChangeText={(value) => setLocation(value)}
-          />
-          <TextInput
-            label="Price"
-            keyboardType="numeric"
-            mode="outlined"
-            onChangeText={(value) => setPrice(value)}
-          />
-          <View>
+
+          {/* <View>
             <Text style={{ marginBottom: 10, marginLeft: 10 }}>
               Negotiable?
             </Text>
@@ -362,7 +398,7 @@ const add = () => {
                 <Text>No</Text>
               </View>
             </View>
-          </View>
+          </View> */}
           <View
             style={{
               borderBottomWidth: 1,
@@ -381,6 +417,69 @@ const add = () => {
               onSelectedItemsChange={(item) => setCategory(item[0])}
             />
           </View>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "silver",
+                padding: 20,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="plus"
+                size={40}
+                onPress={() => selectImage(true)}
+              />
+            </View>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              data={images}
+              renderItem={({ item }) => (
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginRight: 10,
+                  }}
+                >
+                  <PhotosCard item={item} />
+                </View>
+              )}
+            />
+          </View>
+          {progress > 0 ? (
+            <ProgressBar progress={progress} barWidth={width - 20} />
+          ) : (
+            <Text style={{ color: "grey" }}>
+              Only images less than 5mb are supported.
+            </Text>
+          )}
+          <TextInput
+            label="Description"
+            mode="outlined"
+            multiline
+            numberOfLines={5}
+            onChangeText={(value) => setDescription(value)}
+          />
+
+          <TextInput
+            label="Price"
+            keyboardType="numeric"
+            mode="outlined"
+            onChangeText={(value) => setPrice(value)}
+          />
+          <TextInput
+            label="Location"
+            defaultValue={
+              userLocation.length > 0
+                ? userLocation[0].regionName?.region
+                : user?.location?.regionName?.region
+            }
+            mode="outlined"
+            onChangeText={(value) => setLocation(value)}
+          />
         </View>
 
         <View style={{ marginVertical: 10 }}>
