@@ -28,6 +28,11 @@ const career = () => {
       return job.company.toLowerCase().includes(company.value.toLowerCase());
     } else if (workType != "") {
       return job.workType.toLowerCase().includes(workType.value.toLowerCase());
+    } else if (datePosted != "") {
+      return (
+        new Date(parseInt(job._id)).getFullYear().toString() ==
+        datePosted.value.toLowerCase()
+      );
     }
 
     return jobs;
@@ -64,8 +69,6 @@ const career = () => {
   const dateData = [...jobYears].map((e) => {
     return { label: e, value: e };
   });
-
-  console.log(new Date("2024-12-25T23:15:30"));
 
   const JobRenderItem = (item: DocumentData) => {
     return (
