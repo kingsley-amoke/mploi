@@ -374,7 +374,12 @@ const settings = () => {
         </View>
       </ScrollView>
       <View style={{ position: "absolute", bottom: 40, right: 30 }}>
-        <MaterialCommunityIcons name="whatsapp" size={50} color="green" />
+        <MaterialCommunityIcons
+          name="whatsapp"
+          size={50}
+          color="green"
+          onPress={() => router.replace(socialLinks.chat)}
+        />
       </View>
     </View>
   );

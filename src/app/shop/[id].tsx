@@ -15,7 +15,7 @@ const index = () => {
 
   const router = useRouter();
 
-  const currentShop = shops.find((shop) => shop._id === shopID);
+  const currentShop = shops.find((shop) => shop._id == shopID);
 
   return (
     <View style={{ flex: 1 }}>

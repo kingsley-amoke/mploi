@@ -1,6 +1,6 @@
 import { useJobsStore } from "@/src/state/store";
 import React, { useState } from "react";
-import { FlatList, TextInput, View } from "react-native";
+import { FlatList, ScrollView, TextInput, View } from "react-native";
 import { Button, Card, Divider, Text } from "react-native-paper";
 import { Colors } from "@/src/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
@@ -72,7 +72,7 @@ const career = () => {
 
   const JobRenderItem = (item: DocumentData) => {
     return (
-      <View style={{ width: "100%", alignItems: "center" }}>
+      <View style={{ width: "100%", alignItems: "center" }} key={item._id}>
         <Card
           style={{
             width: "90%",
@@ -151,7 +151,10 @@ const career = () => {
           Jobs
         </Text>
       </LinearGradient>
-      <View style={{ marginVertical: 10 }}>
+      <ScrollView
+        style={{ marginVertical: 10 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View
           style={{
             marginHorizontal: 20,
@@ -229,13 +232,9 @@ const career = () => {
           />
         </View>
 
-        {filteredJobs.length > 0 && (
-          <FlatList
-            data={filteredJobs}
-            renderItem={({ item }) => JobRenderItem(item)}
-          />
-        )}
-      </View>
+        {filteredJobs.length > 0 &&
+          filteredJobs.map((job) => JobRenderItem(job))}
+      </ScrollView>
     </View>
   );
 };

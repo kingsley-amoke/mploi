@@ -6,12 +6,7 @@ import { Colors } from "@/src/constants/Colors";
 const JobLayout = () => {
   return (
     <Stack>
-      <Stack.Screen
-        name="add"
-        options={{
-          title: "Add Job",
-        }}
-      />
+      <Stack.Screen name="add" options={{ headerShown: false }} />
       <Stack.Screen name="[id]" options={{ headerShown: false }} />
     </Stack>
   );

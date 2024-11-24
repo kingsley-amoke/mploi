@@ -50,8 +50,18 @@ const Home = () => {
     return 0;
   });
 
+  const filteredShops = shops.sort(function (a, b) {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
+  });
+
   const topCategories = filteredCategories.slice(0, 15);
-  const topShops = shops.slice(0, 15);
+  const topShops = filteredShops.slice(0, 15);
 
   const handleSubmitSearch = ({
     nativeEvent: { key },

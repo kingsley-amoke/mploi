@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Switch, Text } from "react-native-paper";
+import { Button, Switch, Text } from "react-native-paper";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
+import { addDoc, doc, setDoc } from "firebase/firestore";
+import { firestoreDB } from "@/src/utils/firebaseConfig";
 
 export default function Shop() {
-  const [notificationStatus, setNotificationStatus] = useState("denied");
+  const [notificationStatus, setNotificationStatus] = useState(false);
 
   // const getNotification = async () => {
   //   Notifications.getPermissionsAsync().then((status) => {
@@ -27,6 +29,59 @@ export default function Shop() {
   useEffect(() => {
     // getNotification();
   }, [notificationStatus]);
+
+  // const shopData = {
+  //   _id: Date.now(),
+  //   name: "Food Stuffs",
+  //   color: "#31c4a0",
+  //   icon: "fish",
+  //   subshops: [
+  //     {
+  //       name: "Garri",
+  //     },
+  //     {
+  //       name: "Rice",
+  //     },
+  //     {
+  //       name: "Beans",
+  //     },
+  //     {
+  //       name: "Corn",
+  //     },
+  //     {
+  //       name: "Yam",
+  //     },
+  //     {
+  //       name: "Plantain",
+  //     },
+  //     {
+  //       name: "Beef",
+  //     },
+  //     {
+  //       name: "Chicken",
+  //     },
+  //     {
+  //       name: "Pork",
+  //     },
+  //     {
+  //       name: "Fish",
+  //     },
+  //     {
+  //       name: "Stockfish",
+  //     },
+  //     {
+  //       name: "Crayfish",
+  //     },
+  //   ],
+  // };
+
+  // const shopRef = doc(firestoreDB, "shop", shopData._id.toString());
+
+  // const addShop = () => {
+  //   setDoc(shopRef, shopData).then(() => {
+  //     console.log("done");
+  //   });
+  // };
 
   return (
     <View
@@ -69,12 +124,15 @@ export default function Shop() {
         >
           <Text style={{ fontSize: 20 }}>Allow Notifications?</Text>
 
-          {/* <Switch
-            value={notificationStatus === "granted" ? true : false}
-            onValueChange={() => requestPermission()}
+          <Switch
+            value={notificationStatus}
+            onValueChange={() => setNotificationStatus(!notificationStatus)}
             color={Colors.primary}
-          /> */}
+          />
         </View>
+        {/* <Button icon="plus" onPress={addShop}>
+          Add
+        </Button> */}
       </ScrollView>
     </View>
   );

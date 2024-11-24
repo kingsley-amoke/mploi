@@ -4,15 +4,14 @@ import {
   DocumentData,
   getDoc,
   getDocs,
-  onSnapshot,
-  query,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { firestoreDB, realtimeDB } from "./firebaseConfig";
+import { firestoreDB, realtimeDB, storage } from "./firebaseConfig";
 import { ref, serverTimestamp, set } from "firebase/database";
 import { getDistance } from "geolib";
 import { ToastAndroid } from "react-native";
+import { deleteObject, ref as mediaRef } from "firebase/storage";
 
 //get image blog
 export const getBlobFroUri = async (uri: string) => {
@@ -315,6 +314,15 @@ export const getCV = async () => {
     cvs.push(doc.data());
   });
   return cvs;
+};
+
+//delete file from storage
+
+export const deleteFromStorage = (fileUrl: string) => {
+  const filename = extractImagePath(fileUrl);
+
+  const storageRef = mediaRef(storage, `images/${filename}`);
+  deleteObject(storageRef);
 };
 
 //distance between user in km

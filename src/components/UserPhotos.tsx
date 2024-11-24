@@ -8,23 +8,14 @@ import {
   deleteObject,
   getDownloadURL,
   ref,
-  uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
-import {
-  collection,
-  doc,
-  DocumentData,
-  getDoc,
-  onSnapshot,
-  updateDoc,
-} from "firebase/firestore";
-import { extractImagePath, getBlobFroUri } from "../utils/data";
+import { doc, DocumentData, onSnapshot, updateDoc } from "firebase/firestore";
+import { deleteFromStorage, extractImagePath } from "../utils/data";
 import { PhotosCard } from "./PhotosCard";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useUserStore } from "../state/store";
 import { Video } from "expo-av";
-import { Uploading } from "./BlurView";
 import ProgressBar from "./ProgressBar";
 
 export default function UserPhotos({ user }: { user: DocumentData | null }) {
@@ -159,10 +150,7 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
 
     //delete from storage
 
-    const filename = extractImagePath(image);
-
-    const storageRef = ref(storage, `images/${filename}`);
-    deleteObject(storageRef);
+    deleteFromStorage(image);
   };
 
   useEffect(() => {
@@ -233,10 +221,7 @@ export default function UserPhotos({ user }: { user: DocumentData | null }) {
           style={{ marginVertical: 10, marginHorizontal: 20, marginTop: 10 }}
           onPress={() => {
             pickVideo();
-            const filename = extractImagePath(userVideo);
-
-            const storageRef = ref(storage, `images/${filename}`);
-            deleteObject(storageRef);
+            deleteFromStorage(userVideo);
           }}
         >
           Change Video

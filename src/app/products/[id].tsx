@@ -32,6 +32,7 @@ import {
 import {
   averageRating,
   createChat,
+  deleteFromStorage,
   formatPrice,
   shopAvatar,
 } from "@/src/utils/data";
@@ -39,15 +40,16 @@ import { Colors } from "@/src/constants/Colors";
 import Reviews from "@/src/components/Reviews";
 import { ref } from "firebase/database";
 import { LinearGradient } from "expo-linear-gradient";
+import { deleteDoc, doc, DocumentData } from "firebase/firestore";
+import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
 
 const ProductDetails = () => {
   const { id: productID } = useLocalSearchParams();
   const url = useGlobalSearchParams();
 
-  const navigation = useNavigation();
   const router = useRouter();
 
-  const { products } = useProductsStore();
+  const { products, deleteProduct } = useProductsStore();
   const { reviews } = useReviewsStore();
   const { user: loggedUser } = useUserStore();
   const { users } = useUsersStore();
@@ -108,6 +110,18 @@ const ProductDetails = () => {
 
     createChat(item).then(() => {
       router.push(`/rooms/${item._id}`);
+    });
+  };
+
+  const removeProduct = () => {
+    //delete product
+
+    const productRef = doc(firestoreDB, "products", product?._id);
+    deleteDoc(productRef).then(() => {
+      deleteProduct(product!);
+      product?.images.forEach((image: string) => {
+        deleteFromStorage(image);
+      });
     });
   };
 
@@ -217,11 +231,17 @@ const ProductDetails = () => {
       <View style={{ marginHorizontal: 10 }}>
         <Button
           mode="contained"
-          onPress={contactSeller}
+          onPress={
+            product?.sellerID == auth.currentUser?.uid
+              ? removeProduct
+              : contactSeller
+          }
           style={{ paddingVertical: 10 }}
           labelStyle={{ fontSize: 19 }}
         >
-          Contact Seller
+          {product?.sellerID == auth.currentUser?.uid
+            ? "Delete Product"
+            : "Contact Seller"}
         </Button>
       </View>
       <View style={{ marginBottom: 40, marginHorizontal: 10 }}>

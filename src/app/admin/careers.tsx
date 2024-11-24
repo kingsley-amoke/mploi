@@ -1,5 +1,5 @@
 import { FlatList, TouchableOpacity, useColorScheme, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { useJobsStore } from "@/src/state/store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -7,17 +7,14 @@ import { deleteDoc, doc, DocumentData } from "firebase/firestore";
 
 import { firestoreDB } from "@/src/utils/firebaseConfig";
 import { ActivityIndicator, Divider, Text } from "react-native-paper";
-import { CustomToast } from "@/src/utils/data";
+import { CustomToast, getJobs } from "@/src/utils/data";
 
 const CareerPage = () => {
   const router = useRouter();
 
-  const { jobs, deleteJob } = useJobsStore();
+  const { jobs, storeJobs, deleteJob } = useJobsStore();
 
-  const colorScheme = useColorScheme();
   const [loading, setLoading] = useState(false);
-
-  const iconColor = colorScheme === "dark" ? "#ffffff" : "#000000";
 
   const JobRenderItem = ({ item }: { item: DocumentData }) => {
     const salary = new Intl.NumberFormat("en-UK", {
@@ -56,7 +53,7 @@ const CareerPage = () => {
           >
             <View>
               <Text>ID: {item._id}</Text>
-              <Text>Position: #{item.position}</Text>
+              <Text>Position: {item.title}</Text>
               <Text>Salary: {salary}</Text>
               <Text>Location: {item.location}</Text>
             </View>
@@ -64,19 +61,11 @@ const CareerPage = () => {
               style={{ gap: 20, alignItems: "center", flexDirection: "row" }}
             >
               <TouchableOpacity onPress={handleViewJob}>
-                <MaterialCommunityIcons
-                  name="eye"
-                  size={30}
-                  color={iconColor}
-                />
+                <MaterialCommunityIcons name="eye" size={30} />
               </TouchableOpacity>
 
               <TouchableOpacity onPress={handleDeleteJob}>
-                <MaterialCommunityIcons
-                  name="trash-can-outline"
-                  size={30}
-                  color={iconColor}
-                />
+                <MaterialCommunityIcons name="trash-can-outline" size={30} />
               </TouchableOpacity>
             </View>
           </View>
@@ -85,6 +74,14 @@ const CareerPage = () => {
       </>
     );
   };
+
+  useEffect(() => {
+    getJobs()
+      .then((jobs) => {
+        storeJobs(jobs);
+      })
+      .catch((e) => console.log(e));
+  }, []);
 
   return (
     <>
@@ -100,7 +97,6 @@ const CareerPage = () => {
         <MaterialCommunityIcons
           name="plus"
           size={30}
-          color={iconColor}
           style={{ borderWidth: 1, borderRadius: 100 }}
         />
       </TouchableOpacity>
