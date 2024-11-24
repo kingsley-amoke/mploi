@@ -1,29 +1,12 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
+import { Router } from "expo-router";
 import { DocumentData } from "firebase/firestore";
-import { useColorScheme, View } from "react-native";
-import DropShadow from "react-native-drop-shadow";
+import { View } from "react-native";
 
-import { Button, Card, Divider, Text, useTheme } from "react-native-paper";
+import { Button, Card, Text } from "react-native-paper";
 
-export const JobRenderItem = ({ item }: { item: DocumentData }) => {
-  const router = useRouter();
-
-  // const iconColor = colorScheme === "dark" ? "#ffffff" : "#000000";
-
-  // const date = parseInt(item._id);
-
-  // const jobDate = new Date(date).getTime();
-
-  // const today = new Date(Date.now()).getTime();
-
-  // const daysAgo = Math.floor((today - jobDate) / (1000 * 60 * 60 * 24));
-
-  // const salary = new Intl.NumberFormat("en-UK", {
-  //   style: "currency",
-  //   currency: "NGN",
-  // }).format(item.salary);
-
+export const JobRenderItem = (data: DocumentData, router: Router) => {
+  console.log(data);
+  const { item } = data;
   return (
     <View style={{ width: "100%", alignItems: "center" }}>
       <Card

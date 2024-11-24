@@ -1,30 +1,46 @@
 import { useJobsStore } from "@/src/state/store";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { ScrollView, TextInput, View } from "react-native";
-import { JobRenderItem } from "@/src/components/JobRenterItem";
-import { ActivityIndicator, Button, Divider, Text } from "react-native-paper";
+import React, { useState } from "react";
+import { FlatList, TextInput, View } from "react-native";
+import { Button, Card, Divider, Text } from "react-native-paper";
 import { Colors } from "@/src/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Dropdown } from "react-native-element-dropdown";
 import CustomDropdown from "@/src/components/CustomDropdown";
+import { useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 
 const career = () => {
   const { jobs } = useJobsStore();
+  const router = useRouter();
 
-  const [searchedJobs, setSearchedJobs] = useState<DocumentData[]>([]);
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
-  const [value, setValue] = useState("");
+  const [datePosted, setDatePosted] = useState("");
+  const [company, setCompany] = useState("");
+  const [workType, setWorkType] = useState("");
 
-  const dateData = jobs
+  const filteredJobs = jobs.filter((job) => {
+    if (title != "") {
+      return job.title.toLowerCase().includes(title.toLowerCase());
+    } else if (location != "") {
+      return job.location.toLowerCase().includes(location.toLowerCase());
+    } else if (company != "") {
+      return job.company.toLowerCase().includes(company.value.toLowerCase());
+    } else if (workType != "") {
+      return job.workType.toLowerCase().includes(workType.value.toLowerCase());
+    }
+
+    return jobs;
+  });
+
+  const jobYears = new Set();
+
+  jobs
     .map((job) => job._id)
-    .map((date) => {
-      return {
-        label: date,
-        value: date,
-      };
+    .forEach((date) => {
+      const year = new Date(parseInt(date)).getFullYear().toString();
+
+      jobYears.add(year);
     });
 
   const companyData = jobs
@@ -45,22 +61,65 @@ const career = () => {
       };
     });
 
-  useLayoutEffect(() => {
-    const filteredJobs = jobs.filter((job) => {
-      if (title == "" && location == "") {
-        return job;
-      }
+  const dateData = [...jobYears].map((e) => {
+    return { label: e, value: e };
+  });
 
-      return (
-        job.title.toLowerCase() == title.toLowerCase() ||
-        job.title.toLowerCase().includes(title.toLowerCase()) ||
-        job.location.toLowerCase() == location.toLowerCase() ||
-        job.location.toLowerCase().includes(location.toLowerCase())
-      );
-    });
+  console.log(new Date("2024-12-25T23:15:30"));
 
-    setSearchedJobs(filteredJobs);
-  }, [title]);
+  const JobRenderItem = (item: DocumentData) => {
+    return (
+      <View style={{ width: "100%", alignItems: "center" }}>
+        <Card
+          style={{
+            width: "90%",
+            marginVertical: 10,
+            padding: 10,
+            borderRadius: 5,
+          }}
+        >
+          <View style={{ gap: 30 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                textTransform: "capitalize",
+              }}
+            >
+              {item.title}
+            </Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <View>
+                <Text style={{ fontSize: 16, textTransform: "capitalize" }}>
+                  {item.company}
+                </Text>
+                <Text style={{ textTransform: "capitalize" }}>
+                  {item.location}
+                </Text>
+              </View>
+              <View
+                style={{ justifyContent: "flex-end", alignItems: "flex-end" }}
+              >
+                <Button
+                  mode="contained"
+                  onPress={() => router.push(`/jobs/${item._id}`)}
+                >
+                  Apply
+                </Button>
+              </View>
+            </View>
+          </View>
+        </Card>
+      </View>
+    );
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -89,10 +148,7 @@ const career = () => {
           Jobs
         </Text>
       </LinearGradient>
-      <ScrollView
-        style={{ marginVertical: 10 }}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={{ marginVertical: 10 }}>
         <View
           style={{
             marginHorizontal: 20,
@@ -153,30 +209,30 @@ const career = () => {
           <CustomDropdown
             data={dateData}
             placeholder="Date Posted"
-            value={value}
-            setValue={setValue}
+            value={datePosted}
+            setValue={setDatePosted}
           />
           <CustomDropdown
             data={jobTypeData}
             placeholder="Job Type"
-            value={value}
-            setValue={setValue}
+            value={workType}
+            setValue={setWorkType}
           />
           <CustomDropdown
             data={companyData}
             placeholder="Company"
-            value={value}
-            setValue={setValue}
+            value={company}
+            setValue={setCompany}
           />
         </View>
-        {jobs ? (
-          searchedJobs.map((job) => <JobRenderItem item={job} key={job._id} />)
-        ) : (
-          <View>
-            <ActivityIndicator color={Colors.light.primary} size="large" />
-          </View>
+
+        {filteredJobs.length > 0 && (
+          <FlatList
+            data={filteredJobs}
+            renderItem={({ item }) => JobRenderItem(item)}
+          />
         )}
-      </ScrollView>
+      </View>
     </View>
   );
 };

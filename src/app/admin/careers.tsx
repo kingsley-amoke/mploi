@@ -95,7 +95,7 @@ const CareerPage = () => {
           width: "100%",
           padding: 20,
         }}
-        onPress={() => router.push("/admin/jobs/add")}
+        onPress={() => router.push("/jobs/add")}
       >
         <MaterialCommunityIcons
           name="plus"
