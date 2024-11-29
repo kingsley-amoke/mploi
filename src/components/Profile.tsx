@@ -244,11 +244,13 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
             >
               <Text style={{ fontSize: 18 }}>{user?.bio}</Text>
 
-              <MaterialCommunityIcons
-                name="pencil"
-                size={20}
-                onPress={showBioDialog}
-              />
+              {auth.currentUser?.uid === user?._id && (
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={20}
+                  onPress={showBioDialog}
+                />
+              )}
             </View>
             <View style={{ justifyContent: "center", alignItems: "center" }}>
               {user?.skills?.length > 0 && (
@@ -283,27 +285,29 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
                         <Text style={{ color: "white" }}>{skill}</Text>
                       </LinearGradient>
                     ))}
-                    <LinearGradient
-                      colors={[Colors.primary, Colors.secondary]}
-                      start={{ x: 0, y: 0.75 }}
-                      end={{ x: 1, y: 0.25 }}
-                      style={{
-                        borderRadius: 15,
-                        paddingHorizontal: 20,
+                    {auth.currentUser?.uid === user?._id && (
+                      <LinearGradient
+                        colors={[Colors.primary, Colors.secondary]}
+                        start={{ x: 0, y: 0.75 }}
+                        end={{ x: 1, y: 0.25 }}
+                        style={{
+                          borderRadius: 15,
+                          paddingHorizontal: 20,
 
-                        paddingVertical: 7,
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <MaterialCommunityIcons
-                        name="plus"
-                        size={20}
-                        color="white"
-                        onPress={showSkillsDialog}
-                      />
-                    </LinearGradient>
+                          paddingVertical: 7,
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          name="plus"
+                          size={20}
+                          color="white"
+                          onPress={showSkillsDialog}
+                        />
+                      </LinearGradient>
+                    )}
                   </View>
                 </>
               )}
@@ -327,27 +331,29 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
               >
                 Portfolio
               </Text>
-              <LinearGradient
-                colors={[Colors.primary, Colors.secondary]}
-                start={{ x: 0, y: 0.75 }}
-                end={{ x: 1, y: 0.25 }}
-                style={{
-                  borderRadius: 15,
-                  paddingHorizontal: 20,
+              {auth.currentUser?.uid === user?._id && (
+                <LinearGradient
+                  colors={[Colors.primary, Colors.secondary]}
+                  start={{ x: 0, y: 0.75 }}
+                  end={{ x: 1, y: 0.25 }}
+                  style={{
+                    borderRadius: 15,
+                    paddingHorizontal: 20,
 
-                  paddingVertical: 7,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="shuffle-variant"
-                  size={20}
-                  color="white"
-                  onPress={() => router.push("/portfolio")}
-                />
-              </LinearGradient>
+                    paddingVertical: 7,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="shuffle-variant"
+                    size={20}
+                    color="white"
+                    onPress={() => router.push("/portfolio")}
+                  />
+                </LinearGradient>
+              )}
             </View>
 
             <View>
@@ -413,6 +419,7 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
             >
               Testimonials
             </Text>
+
             <LinearGradient
               colors={[Colors.primary, Colors.secondary]}
               start={{ x: 0, y: 0.75 }}

@@ -63,7 +63,7 @@ export const socialLinks = {
     link: "https://youtube.com/@myplugapp?si=MC3GGLprCBuh6Pms",
     color: "red",
   },
-  chat: "https://whatsapp.com/+2347017663503",
+  chat: "https://wa.me/2347017663503",
   email: " connect@myplugmobile.com",
 };
 

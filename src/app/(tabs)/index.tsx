@@ -63,6 +63,10 @@ const Home = () => {
   const topCategories = filteredCategories.slice(0, 15);
   const topShops = filteredShops.slice(0, 15);
 
+  const submitKey = {
+    nativeEvent: { key: "Enter" },
+  };
+
   const handleSubmitSearch = ({
     nativeEvent: { key },
   }: {
@@ -149,15 +153,18 @@ const Home = () => {
           style={{
             position: "relative",
             width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
           }}
         >
           <TextInput
             mode="outlined"
             placeholder="Type what you are searching for here"
             style={{
-              width: "80%",
+              width: "74%",
               height: 40,
-              paddingLeft: 18,
+
               fontSize: 14,
             }}
             onChangeText={(value) => setSearch(value)}
@@ -165,9 +172,9 @@ const Home = () => {
           />
           <MaterialIcons
             name="search"
-            size={20}
-            color="black"
-            style={{ position: "absolute", left: 10, top: 10 }}
+            size={30}
+            color="white"
+            onPress={() => handleSubmitSearch(submitKey)}
           />
         </View>
       </LinearGradient>
@@ -185,21 +192,23 @@ const Home = () => {
             data: topShops,
           },
         ]}
-        renderItem={({ item }) => (
-          <Link
-            href={{
-              pathname: item.subshops
-                ? `/shop/[id]`
-                : `/service/providers/[id]`,
-              params: { id: item._id },
-            }}
-            asChild
-          >
-            <TouchableOpacity>
-              <CategoryCard category={item} />
-            </TouchableOpacity>
-          </Link>
-        )}
+        renderItem={({ item }) => {
+          return (
+            <Link
+              href={{
+                pathname: item.subshops
+                  ? `/shop/[id]`
+                  : `/service/providers/[id]`,
+                params: { id: item._id },
+              }}
+              asChild
+            >
+              <TouchableOpacity>
+                <CategoryCard category={item} />
+              </TouchableOpacity>
+            </Link>
+          );
+        }}
         renderSectionHeader={({ section }) => (
           <View
             style={{
@@ -221,7 +230,11 @@ const Home = () => {
             </Text>
             <TouchableOpacity
               style={{ flexDirection: "row", gap: 10 }}
-              onPress={() => router.push("/shop")}
+              onPress={
+                section.title != "Services"
+                  ? () => router.push("/shop")
+                  : () => router.push("/service")
+              }
             >
               <Text
                 style={{

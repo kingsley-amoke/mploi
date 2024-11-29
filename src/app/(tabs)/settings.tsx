@@ -20,7 +20,6 @@ import { auth } from "@/src/utils/firebaseConfig";
 import { ExternalLink } from "@/src/components/ExternalLink";
 import { useUserStore } from "@/src/state/store";
 import { socialLinks } from "@/src/utils/data";
-import WhatsappFAB from "@/src/components/WhatsappFAB";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
 

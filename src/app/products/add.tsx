@@ -413,7 +413,10 @@ const add = () => {
               subKey="subshops"
               readOnlyHeadings
               selectText={category}
-              colors={{ selectToggleTextColor: textColor }}
+              colors={{
+                selectToggleTextColor: textColor,
+                primary: Colors.light.primary,
+              }}
               onSelectedItemsChange={(item) => setCategory(item[0])}
             />
           </View>
