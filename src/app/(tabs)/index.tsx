@@ -180,6 +180,7 @@ const Home = () => {
       </LinearGradient>
 
       <SectionGrid
+        showsVerticalScrollIndicator={false}
         style={{ margin: 10 }}
         itemDimension={63}
         sections={[

@@ -65,13 +65,25 @@ const ServiceProviders = () => {
           {currentCategory?.name}
         </Text>
       </LinearGradient>
-      <SafeAreaView>
-        {serviceProviders.map((provider, index) => (
-          <View key={index}>
-            <UserCard user={provider} />
-          </View>
-        ))}
-      </SafeAreaView>
+      {serviceProviders.length > 0 ? (
+        <SafeAreaView>
+          {serviceProviders.map((provider, index) => (
+            <View key={index}>
+              <UserCard user={provider} />
+            </View>
+          ))}
+        </SafeAreaView>
+      ) : (
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80%",
+          }}
+        >
+          <Text>No service provider here..</Text>
+        </View>
+      )}
     </View>
   );
 };

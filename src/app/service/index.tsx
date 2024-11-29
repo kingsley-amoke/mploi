@@ -57,6 +57,7 @@ const index = () => {
           All Services
         </Text>
       </LinearGradient>
+
       {filteredCategories.map((category, index) => (
         <Services service={category} key={index} />
       ))}

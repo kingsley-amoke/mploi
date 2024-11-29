@@ -48,7 +48,19 @@ const index = () => {
           {shop}
         </Text>
       </LinearGradient>
-      <ProductsPage products={filteredproducts} />
+      {filteredproducts.length > 0 ? (
+        <ProductsPage products={filteredproducts} />
+      ) : (
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80%",
+          }}
+        >
+          <Text>No product here..</Text>
+        </View>
+      )}
     </View>
   );
 };
