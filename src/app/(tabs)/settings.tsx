@@ -24,13 +24,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
 
 const settings = () => {
-  // const {user} = useUserStore()
-
   const router = useRouter();
-  const colorScheme = useColorScheme();
   const { user } = useUserStore();
-
-  const color = colorScheme === "dark" ? "white" : "black";
 
   const navigateToEditProfile = () => {
     router.push("/profile/edit");
@@ -183,7 +178,7 @@ const settings = () => {
         borderRadius: 12,
       }}
     >
-      <MaterialIcons name={icon} size={20} color={color} />
+      <MaterialIcons name={icon} size={20} />
       <Text
         style={{
           marginLeft: 36,
@@ -295,7 +290,7 @@ const settings = () => {
                     borderRadius: 12,
                   }}
                 >
-                  <FontAwesome name={item.icon} size={20} color={color} />
+                  <FontAwesome name={item.icon} size={20} />
                   <Text
                     style={{
                       marginLeft: 36,
@@ -335,7 +330,7 @@ const settings = () => {
                     borderRadius: 12,
                   }}
                 >
-                  <FontAwesome name={item.icon} size={20} color={color} />
+                  <FontAwesome name={item.icon} size={20} />
                   <Text
                     style={{
                       marginLeft: 36,
