@@ -4,7 +4,6 @@ import EditProfile from "@/src/components/EditProfile";
 import { useNavigation } from "expo-router";
 
 const edit = () => {
-  const navigation = useNavigation();
   return <EditProfile />;
 };
 

@@ -327,7 +327,12 @@ export default function RootLayout() {
                 headerShown: false,
               }}
             />
-            <Stack.Screen name="rooms/[roomId]" />
+            <Stack.Screen
+              name="rooms/[roomId]"
+              options={{
+                headerShown: false,
+              }}
+            />
             <Stack.Screen
               name="cv/index"
               options={{

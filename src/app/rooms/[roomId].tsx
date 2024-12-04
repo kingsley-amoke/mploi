@@ -19,9 +19,8 @@ import { DocumentData } from "firebase/firestore";
 import { auth, realtimeDB } from "@/src/utils/firebaseConfig";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 
-import { useChatStore, useUserStore } from "@/src/state/store";
+import { useChatStore } from "@/src/state/store";
 import { onValue, ref, set, serverTimestamp } from "firebase/database";
-import useTheme from "@/src/hooks/useTheme";
 import { Colors } from "@/src/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -29,10 +28,6 @@ const Room = () => {
   const { roomId } = useLocalSearchParams();
 
   const navigation = useNavigation();
-
-  const colorScheme = useColorScheme();
-
-  const textColor = colorScheme === "dark" ? "#fff" : "#000";
 
   const { chats } = useChatStore();
 
@@ -123,15 +118,12 @@ const Room = () => {
   };
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      header: () => <ChatHeader />,
-    });
-
     fetchRoomMessages();
   }, [roomId]);
 
   return (
     <View style={{ flex: 1 }}>
+      <ChatHeader />
       <View
         style={{
           paddingHorizontal: 5,
@@ -332,7 +324,7 @@ const Room = () => {
                   style={{ paddingHorizontal: 10 }}
                   onPress={sendMessage}
                 >
-                  <FontAwesome name="send" size={24} color={textColor} />
+                  <FontAwesome name="send" size={24} color={Colors.primary} />
                 </TouchableOpacity>
               </View>
             )}

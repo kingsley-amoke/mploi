@@ -58,6 +58,10 @@ const settings = () => {
   const logout = () => {
     signOut(auth);
     AsyncStorage.removeItem("@user");
+    router.replace("/");
+  };
+
+  const login = () => {
     router.replace("/login");
   };
 
@@ -158,7 +162,9 @@ const settings = () => {
     user?.isAdmin
       ? { icon: "info", text: "Admin", action: admin }
       : { icon: "support-agent", text: "Request help", action: requestHelp },
-    { icon: "logout", text: "Log out", action: logout },
+    auth.currentUser
+      ? { icon: "logout", text: "Log out", action: logout }
+      : { icon: "login", text: "Login", action: login },
   ];
 
   interface settingsItemsProps {
@@ -224,25 +230,27 @@ const settings = () => {
       </LinearGradient>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Account Settings */}
-        <View style={{ marginBottom: 12 }}>
-          <Text
-            style={{
-              marginVertical: 10,
-              textTransform: "uppercase",
-              marginLeft: 12,
-              fontSize: 12,
-            }}
-          >
-            Account
-          </Text>
-          <View>
-            {accountItems.map((item, index) => (
-              <React.Fragment key={index}>
-                {renderSettingsItem(item)}
-              </React.Fragment>
-            ))}
+        {auth.currentUser && (
+          <View style={{ marginBottom: 12 }}>
+            <Text
+              style={{
+                marginVertical: 10,
+                textTransform: "uppercase",
+                marginLeft: 12,
+                fontSize: 12,
+              }}
+            >
+              Account
+            </Text>
+            <View>
+              {accountItems.map((item, index) => (
+                <React.Fragment key={index}>
+                  {renderSettingsItem(item)}
+                </React.Fragment>
+              ))}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Support and About settings */}
 

@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import { Colors } from "../constants/Colors";
 import { useRouter } from "expo-router";
+import { auth } from "../utils/firebaseConfig";
 
 const UserCard = ({ user }: { user: DocumentData }) => {
   const router = useRouter();
@@ -58,7 +59,11 @@ const UserCard = ({ user }: { user: DocumentData }) => {
           <Button
             mode="contained"
             icon="book"
-            onPress={() => router.push(`/service/${user._id}`)}
+            onPress={
+              auth.currentUser?.uid
+                ? () => router.push(`/service/${user._id}`)
+                : () => router.push(`/login`)
+            }
           >
             Hire
           </Button>

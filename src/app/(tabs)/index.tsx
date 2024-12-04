@@ -183,6 +183,7 @@ const Home = () => {
         showsVerticalScrollIndicator={false}
         style={{ margin: 10 }}
         itemDimension={63}
+        // renderSectionFooter={() => <Text>Hello</Text>}
         sections={[
           {
             title: "Services",

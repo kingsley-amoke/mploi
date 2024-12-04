@@ -8,6 +8,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import CustomDropdown from "@/src/components/CustomDropdown";
 import { useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const career = () => {
   const { jobs } = useJobsStore();
@@ -18,6 +19,29 @@ const career = () => {
   const [datePosted, setDatePosted] = useState("");
   const [company, setCompany] = useState("");
   const [workType, setWorkType] = useState("");
+
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
 
   const filteredJobs = jobs.filter((job) => {
     if (title != "") {
@@ -204,6 +228,9 @@ const career = () => {
             <MaterialIcons name="search" size={30} color="grey" />
           </View>
         </View>
+        <Button onPress={showDatepicker}>"Show date picker!"</Button>
+        <Button onPress={showTimepicker}>"Show time picker!"</Button>
+        <Text>selected: {date.toLocaleString()}</Text>
         <View
           style={{
             marginHorizontal: 10,
@@ -212,11 +239,18 @@ const career = () => {
             justifyContent: "space-evenly",
           }}
         >
-          <CustomDropdown
+          {/* <CustomDropdown
             data={dateData}
             placeholder="Date Posted"
             value={datePosted}
             setValue={setDatePosted}
+          /> */}
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            onChange={onChange}
           />
           <CustomDropdown
             data={jobTypeData}

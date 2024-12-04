@@ -10,7 +10,7 @@ import {
 import { Button, Text, TextInput } from "react-native-paper";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -26,18 +26,10 @@ const Login = () => {
   const auth = getAuth();
   const router = useRouter();
 
-  const colorScheme = useColorScheme();
-
-  const placeholderColor =
-    colorScheme === "dark"
-      ? Colors.dark.onSurfaceDisabled
-      : Colors.light.onSurfaceDisabled;
-
-  const { storeUser } = useUserStore();
-
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [show, setShow] = useState(true);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -73,14 +65,14 @@ const Login = () => {
           paddingBottom: 10,
         }}
       >
-        <Button
-          mode="outlined"
-          style={{ borderRadius: 2, marginLeft: 10 }}
-          labelStyle={{ color: "white", fontWeight: "bold" }}
-          onPress={() => router.back()}
-        >
-          BACK
-        </Button>
+        <MaterialCommunityIcons
+          name="chevron-left"
+          size={30}
+          onPress={() => router.replace("/")}
+          color="white"
+          style={{ marginLeft: 20 }}
+        />
+
         <Text
           style={{
             fontSize: 30,
@@ -130,7 +122,6 @@ const Login = () => {
               mode="outlined"
               label="Email address"
               placeholder="Enter your email address"
-              placeholderTextColor={placeholderColor}
               keyboardType="email-address"
               onChangeText={(value) => setEmail(value)}
             />
@@ -141,8 +132,15 @@ const Login = () => {
               mode="outlined"
               label="Password"
               placeholder="Enter your password"
-              placeholderTextColor={placeholderColor}
+              secureTextEntry={show}
+              style={{ position: "relative" }}
               onChangeText={(value) => setPassword(value)}
+            />
+            <MaterialCommunityIcons
+              name={!show ? "eye" : "eye-off"}
+              size={20}
+              style={{ position: "absolute", right: 20, top: 20 }}
+              onPress={() => setShow(!show)}
             />
           </View>
 

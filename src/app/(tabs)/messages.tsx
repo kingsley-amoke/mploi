@@ -1,6 +1,13 @@
 import { View, SafeAreaView, TouchableOpacity, ScrollView } from "react-native";
-import { Avatar, Badge, Divider, Text } from "react-native-paper";
-import React from "react";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Divider,
+  Text,
+  TextInput,
+} from "react-native-paper";
+import React, { useState } from "react";
 import { Link, useRouter } from "expo-router";
 import { useChatStore, useRequestStore, useUserStore } from "@/src/state/store";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,8 +17,11 @@ import { Colors } from "@/src/constants/Colors";
 import { auth } from "@/src/utils/firebaseConfig";
 
 const index = () => {
+  const router = useRouter();
   const { chats } = useChatStore();
   const { requests } = useRequestStore();
+
+  const [search, setSearch] = useState("");
 
   const myRequests = requests.filter(
     (req) => req.serviceProvider?._id === auth.currentUser?.uid
@@ -49,70 +59,108 @@ const index = () => {
           Messages
         </Text>
       </LinearGradient>
-      <SafeAreaView>
-        {myRequests.length > 0 && (
-          <Link href={"/service/requests"} asChild>
-            <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingHorizontal: 20,
-                marginVertical: 20,
-              }}
-            >
-              <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-                Service requests{" "}
-              </Text>
-              <Badge style={{ color: "#fff", fontWeight: "bold" }}>
-                {myRequests.length}
-              </Badge>
-            </TouchableOpacity>
-          </Link>
-        )}
-        <Divider bold horizontalInset />
-        <ScrollView style={{ paddingHorizontal: 20, paddingVertical: 20 }}>
-          <View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: 20,
-              }}
-            >
-              <Text style={{ fontWeight: "bold" }}>Recent Messages</Text>
-
-              <TouchableOpacity>
-                <Ionicons name="chatbox" size={20} color="#555" />
+      {auth.currentUser ? (
+        <SafeAreaView>
+          {myRequests.length > 0 && (
+            <Link href={"/service/requests"} asChild>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  paddingHorizontal: 20,
+                  marginVertical: 20,
+                }}
+              >
+                <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                  Service requests{" "}
+                </Text>
+                <Badge style={{ color: "#fff", fontWeight: "bold" }}>
+                  {myRequests.length}
+                </Badge>
               </TouchableOpacity>
-            </View>
+            </Link>
+          )}
+          <Divider bold horizontalInset />
+          <ScrollView style={{ paddingHorizontal: 20, paddingVertical: 20 }}>
+            <View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={{ fontWeight: "bold" }}>Recent Messages</Text>
 
-            {myChats.length < 1 ? (
-              <>
-                <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
-                  <Text>No Messages</Text>
-                </View>
-              </>
-            ) : (
-              <>
-                {myChats?.map((room) => (
-                  <View key={room._id}>
-                    <MessageCard room={room} />
+                <TouchableOpacity>
+                  <Ionicons name="chatbox" size={20} color="#555" />
+                </TouchableOpacity>
+              </View>
+              <View style={{ marginVertical: 20 }}>
+                <TextInput
+                  mode="outlined"
+                  placeholder="Search messages"
+                  style={{
+                    height: 40,
+                    fontSize: 14,
+                  }}
+                  onChangeText={(value) => setSearch(value)}
+                  // onKeyPress={handleSubmitSearch}
+                />
+              </View>
+
+              {myChats.length < 1 ? (
+                <>
+                  <View
+                    style={{ justifyContent: "center", alignItems: "center" }}
+                  >
+                    <Text>No Messages</Text>
                   </View>
-                ))}
-              </>
-            )}
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+                </>
+              ) : (
+                <>
+                  {myChats?.map((room) => (
+                    <View key={room._id}>
+                      <MessageCard room={room} search={search} />
+                    </View>
+                  ))}
+                </>
+              )}
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      ) : (
+        <View style={{ marginTop: 40 }}>
+          <Text style={{ textAlign: "center", fontSize: 20 }}>
+            Please login to see your messages.
+          </Text>
+          <Button
+            mode="contained"
+            labelStyle={{ fontSize: 20 }}
+            style={{
+              marginTop: 20,
+              marginLeft: 10,
+              borderRadius: 15,
+              width: "50%",
+            }}
+            onPress={() => router.push("/login")}
+          >
+            Login
+          </Button>
+        </View>
+      )}
     </View>
   );
 };
 
-const MessageCard = ({ room }: { room: DocumentData }) => {
+const MessageCard = ({
+  room,
+  search,
+}: {
+  room: DocumentData;
+  search: string;
+}) => {
   const chatName =
     auth.currentUser?.uid === room.client._id
       ? room.serviceProvider.firstName + " " + room.serviceProvider.lastName
@@ -123,7 +171,7 @@ const MessageCard = ({ room }: { room: DocumentData }) => {
       ? room.serviceProvider.image
       : room.client.image;
 
-  let lastMessage = { text: "New message" };
+  let lastMessage = { text: "New message", timeStamp: Date.now() };
   let lastMessageId = "1";
   let messageDate = "";
 
@@ -138,39 +186,43 @@ const MessageCard = ({ room }: { room: DocumentData }) => {
   }
 
   return (
-    <Link href={{ pathname: `/rooms/${room._id}` }} asChild>
-      <TouchableOpacity
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 20,
-        }}
-      >
-        <View style={{ flexDirection: "row", gap: 20 }}>
-          <Avatar.Image source={{ uri: chatImage }} size={50} />
-          <View style={{ alignItems: "flex-start", justifyContent: "center" }}>
-            <Text
-              style={{
-                fontWeight: "bold",
-                textTransform: "capitalize",
-                fontSize: 22,
-              }}
+    chatName.toLowerCase().includes(search.toLowerCase()) && (
+      <Link href={{ pathname: `/rooms/${room._id}` }} asChild>
+        <TouchableOpacity
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 20,
+          }}
+        >
+          <View style={{ flexDirection: "row", gap: 20 }}>
+            <Avatar.Image source={{ uri: chatImage }} size={50} />
+            <View
+              style={{ alignItems: "flex-start", justifyContent: "center" }}
             >
-              {chatName}
-            </Text>
-            <Text style={{ fontSize: 16 }}>
-              {lastMessage.text.slice(0, 20) + "..."}
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  textTransform: "capitalize",
+                  fontSize: 22,
+                }}
+              >
+                {chatName}
+              </Text>
+              <Text style={{ fontSize: 16 }}>
+                {lastMessage.text.slice(0, 20) + "..."}
+              </Text>
+            </View>
+          </View>
+          <View>
+            <Text style={{ fontSize: 12, fontStyle: "italic" }}>
+              {messageDate}
             </Text>
           </View>
-        </View>
-        <View>
-          <Text style={{ fontSize: 12, fontStyle: "italic" }}>
-            {messageDate}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    </Link>
+        </TouchableOpacity>
+      </Link>
+    )
   );
 };
 

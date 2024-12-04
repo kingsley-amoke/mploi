@@ -70,6 +70,7 @@ const index = () => {
           addTransaction(trans);
           increaseUserBalance(rechargeAmount);
           setPaying(false);
+          ``;
         } else {
           CustomToast("Failed");
           addTransaction(trans);
@@ -112,13 +113,14 @@ const index = () => {
             width: "90%",
           }}
         >
-          <TextInput
+          {/* <TextInput
             mode="outlined"
             label="Amount"
             keyboardType="numeric"
             style={{ width: "100%" }}
             onChangeText={(value) => setAmount(parseFloat(value))}
-          />
+          /> */}
+          <TextInput />
           <View
             style={{
               flexDirection: "row",

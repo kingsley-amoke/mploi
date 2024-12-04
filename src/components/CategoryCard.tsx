@@ -8,7 +8,14 @@ const CategoryCard = ({ category }: DocumentData) => {
   return (
     <View
       style={{
-        borderWidth: 1,
+        borderRadius: 10,
+        shadowRadius: 4,
+        backgroundColor: "white",
+        shadowColor: "black",
+        shadowOpacity: 0.5,
+        shadowOffset: { width: 0, height: -20 },
+
+        elevation: 5,
         padding: 5,
         justifyContent: "center",
         alignItems: "center",
@@ -23,6 +30,7 @@ const CategoryCard = ({ category }: DocumentData) => {
           color={category?.color}
         />
       </View>
+
       <Text style={{ fontSize: 10, textAlign: "center" }}>
         {category?.name.split(" ")[0]}
       </Text>
