@@ -177,19 +177,17 @@ const ProductDetails = () => {
         >
           <View
             style={{
-              width: 300,
+              width: "100%",
               height: 300,
               justifyContent: "center",
               alignItems: "center",
               borderRadius: 10,
-              borderWidth: 1,
-              borderColor: "grey",
               marginBottom: 30,
             }}
           >
             <Image
               source={{ uri: image || shopAvatar }}
-              width={290}
+              width={400}
               height={290}
               style={{ borderRadius: 10 }}
             />

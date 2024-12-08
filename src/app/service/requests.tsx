@@ -53,7 +53,7 @@ const requests = () => {
       <View style={{ marginBottom: 10 }}>
         <MaterialIcons name="info" size={30} style={{ textAlign: "center" }} />
         <Text style={{ fontWeight: "bold", marginVertical: 10 }}>
-          This action will cost you N500.
+          This action will cost you NGN 500.
         </Text>
         <View
           style={{

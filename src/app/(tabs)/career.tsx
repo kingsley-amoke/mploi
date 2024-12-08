@@ -4,7 +4,7 @@ import { FlatList, ScrollView, TextInput, View } from "react-native";
 import { Button, Card, Divider, Text } from "react-native-paper";
 import { Colors } from "@/src/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import CustomDropdown from "@/src/components/CustomDropdown";
 import { useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
@@ -16,11 +16,11 @@ const career = () => {
 
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
-  const [datePosted, setDatePosted] = useState("");
+  const [datePosted, setDatePosted] = useState("t");
   const [company, setCompany] = useState("");
   const [workType, setWorkType] = useState("");
 
-  const [date, setDate] = useState(new Date(1598051730000));
+  const [date, setDate] = useState(new Date(Date.now()));
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
@@ -39,10 +39,6 @@ const career = () => {
     showMode("date");
   };
 
-  const showTimepicker = () => {
-    showMode("time");
-  };
-
   const filteredJobs = jobs.filter((job) => {
     if (title != "") {
       return job.title.toLowerCase().includes(title.toLowerCase());
@@ -52,11 +48,8 @@ const career = () => {
       return job.company.toLowerCase().includes(company.value.toLowerCase());
     } else if (workType != "") {
       return job.workType.toLowerCase().includes(workType.value.toLowerCase());
-    } else if (datePosted != "") {
-      return (
-        new Date(parseInt(job._id)).getFullYear().toString() ==
-        datePosted.value.toLowerCase()
-      );
+    } else if (date != new Date(Date.now())) {
+      return date.getTime() > new Date(parseInt(job._id)).getTime();
     }
 
     return jobs;
@@ -228,9 +221,7 @@ const career = () => {
             <MaterialIcons name="search" size={30} color="grey" />
           </View>
         </View>
-        <Button onPress={showDatepicker}>"Show date picker!"</Button>
-        <Button onPress={showTimepicker}>"Show time picker!"</Button>
-        <Text>selected: {date.toLocaleString()}</Text>
+
         <View
           style={{
             marginHorizontal: 10,
@@ -239,19 +230,16 @@ const career = () => {
             justifyContent: "space-evenly",
           }}
         >
-          {/* <CustomDropdown
-            data={dateData}
-            placeholder="Date Posted"
-            value={datePosted}
-            setValue={setDatePosted}
-          /> */}
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            onChange={onChange}
-          />
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              onChange={onChange}
+            />
+          )}
+
           <CustomDropdown
             data={jobTypeData}
             placeholder="Job Type"
@@ -264,6 +252,20 @@ const career = () => {
             value={company}
             setValue={setCompany}
           />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <MaterialCommunityIcons
+              name="calendar"
+              size={30}
+              color={Colors.secondary}
+              onPress={showDatepicker}
+            />
+          </View>
         </View>
 
         {filteredJobs.length > 0 &&

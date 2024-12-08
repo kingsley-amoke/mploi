@@ -235,7 +235,9 @@ const add = () => {
               7 days
             </Text>
           </View>
-          <Text style={{ color: active === 2 ? "white" : "black" }}>#600</Text>
+          <Text style={{ color: active === 2 ? "white" : "black" }}>
+            NGN 600
+          </Text>
         </Pressable>
         <Pressable
           style={{
@@ -267,7 +269,9 @@ const add = () => {
               30 days
             </Text>
           </View>
-          <Text style={{ color: active === 3 ? "white" : "black" }}>#5000</Text>
+          <Text style={{ color: active === 3 ? "white" : "black" }}>
+            NGN 5000
+          </Text>
         </Pressable>
         <Pressable
           style={{
@@ -300,7 +304,7 @@ const add = () => {
             </Text>
           </View>
           <Text style={{ color: active === 4 ? "white" : "black" }}>
-            #10000
+            NGN 10000
           </Text>
         </Pressable>
       </View>

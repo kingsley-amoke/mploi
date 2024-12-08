@@ -181,7 +181,7 @@ const ProductsPage = () => {
                     </Text>
                   </View>
                   <Text style={{ color: active === 2 ? "white" : "black" }}>
-                    #600
+                    NGN 600
                   </Text>
                 </Pressable>
                 <Pressable
@@ -216,7 +216,7 @@ const ProductsPage = () => {
                     </Text>
                   </View>
                   <Text style={{ color: active === 3 ? "white" : "black" }}>
-                    #5000
+                    NGN 5000
                   </Text>
                 </Pressable>
                 <Pressable
@@ -251,7 +251,7 @@ const ProductsPage = () => {
                     </Text>
                   </View>
                   <Text style={{ color: active === 4 ? "white" : "black" }}>
-                    #10000
+                    NGN 10000
                   </Text>
                 </Pressable>
               </View>

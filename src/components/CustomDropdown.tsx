@@ -25,7 +25,7 @@ const CustomDropdown = ({
         paddingHorizontal: 8,
         borderColor: isFocus ? "blue" : "grey",
         backgroundColor: "silver",
-        opacity: 0.5,
+        opacity: 0.7,
       }}
       data={data}
       labelField="label"
