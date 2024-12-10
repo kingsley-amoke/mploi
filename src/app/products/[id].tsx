@@ -2,6 +2,7 @@ import {
   FlatList,
   Image,
   Linking,
+  Pressable,
   SafeAreaView,
   ScrollView,
   Share,
@@ -72,6 +73,12 @@ const ProductDetails = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  //view image fullscreen
+
+  const handleViewImage = () => {
+    router.push(`/image`);
   };
 
   const ImageRenderItem = ({ item }: { item: string }) => {
@@ -175,7 +182,7 @@ const ProductDetails = () => {
             justifyContent: "center",
           }}
         >
-          <View
+          <Pressable
             style={{
               width: "100%",
               height: 300,
@@ -184,14 +191,15 @@ const ProductDetails = () => {
               borderRadius: 10,
               marginBottom: 30,
             }}
+            onPress={handleViewImage}
           >
             <Image
               source={{ uri: image || shopAvatar }}
-              width={400}
-              height={290}
+              width={430}
+              height={300}
               style={{ borderRadius: 10 }}
             />
-          </View>
+          </Pressable>
           {product?.images.length > 1 && (
             <FlatList
               data={product?.images}

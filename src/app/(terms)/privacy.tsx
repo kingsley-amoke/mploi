@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import React from "react";
-import {Text } from 'react-native-paper'
+import { Text } from "react-native-paper";
 import { socialLinks } from "@/src/utils/data";
 
 const personalInformation = [
@@ -14,65 +14,44 @@ const personalInformation = [
 ];
 
 const privacy = () => {
-
   return (
     <ScrollView
       style={{ paddingVertical: 10, marginHorizontal: 30 }}
       showsVerticalScrollIndicator={false}
     >
       <Text style={{ marginVertical: 10 }}>
-        MyPlug companies are totally committed to
-        protecting your privacy.
+        MyPlug ("we," "us," or "our") provides a marketplace and service
+        provider app (the "App") that connects customers with service providers.
+        This Privacy Policy explains how we collect, use, share, and protect
+        personal information through the App.
+      </Text>
+      <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+        INFORMATION WE COLLECT
       </Text>
       <Text style={{ marginVertical: 10 }}>
-        MyPlug APP is designed solely to satisfy the desires of numerous job
-        seekers in our global space. When you visit our website and MyPlug APP,
-        when you sign up, you accept the terms as it is in this Privacy policy.
-        Your personal information will not be shared or transferred. It remains
-        confidencial within our website and MyPlug APP except as described in
-        this Privacy policy. It is important to know your rights relating to
-        your personal data at our disposal. As a valued customer, subscriber,
-        Service Provider and Client, you can have access to your personal data
-        to see the information that we have about you and how same information
-        are being processed by MyPlug. You have the rights under our privacy
-        policy to object to processing of your personal data, if it exposes
-        certain situations you may not want to bring to the public. It is your
-        right to demand for corrections of information if your personal data was
-        wrongly entered during registration. You can restrict us from processing
-        your personal data if you find no reason for processing it. You have the
-        right to request the transfer or sharing of your personal data, example,
-        transferring or sharing personal information between our Service
-        Providers and our Clients. You have the right to withdraw consent. If
-        you withdraw your consent, MyPlug may not allow you to access most
-        functionalities of our website and app.
+        We collect the following types of information:
       </Text>
 
       <Text style={{ marginVertical: 10 }}>
-        To exercise any of the above mentioned rights, you can reach out to
-        MyPlug through our phone lines............., Our
-        email................ When you contact us, we may demand to specific
-        information from you to confirm your identity.
+        1. Personal Information: name, email address, phone number, and physical
+        address.
       </Text>
-      <Text style={{ marginVertical: 10 }}>
-        There are some personal data we collect from subscribers and customers.
-        They are:
+      <Text style={{ marginVertical: 2 }}>
+        2. Device Information: device type, operating system, and location data.
       </Text>
+      <Text style={{ marginVertical: 2 }}>
+        3. Service Provider Information: business name, address, phone number,
+        and services offered.
+      </Text>
+      <Text style={{ marginVertical: 2 }}>
+        4. Transaction Information: payment information, service details, and
+        transaction history.
+      </Text>
+
       <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
-        CUSTOMER INFORMATION
+        HOW WE COLLECT INFORMATION
       </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Subscribers of MyPlug APP must provide customer information during
-        registration/subscription, entering details on the profile form and
-        upgrades. These information include:
-      </Text>
-      <View>
-        {personalInformation.map((item) => (
-          <Text key={item}>
-            {"\u2B24" + " "}
-            {item}
-          </Text>
-        ))}
-      </View>
+      <Text style={{ marginVertical: 10 }}>We collect information:</Text>
 
       <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
         INFORMATION FROM YOUR DEVICE
@@ -82,9 +61,9 @@ const privacy = () => {
         device with MyPlug APP. You are expected to select two guarantors in
         order to proceed. These guarantors must be immediate family members,
         close friends or colleagues. We use these information to track, solve
-        crimes and resolve conflicts within our website and MyPlug APP. MyPlug APP
-        automatically notifies your selected guarantors through phone calls or
-        messages.
+        crimes and resolve conflicts within our website and MyPlug APP. MyPlug
+        APP automatically notifies your selected guarantors through phone calls
+        or messages.
       </Text>
       <Text style={{ marginVertical: 10 }}>
         Other information such as type of handset, IMEI or serial number and sim
@@ -222,7 +201,7 @@ const privacy = () => {
         consent to the new policy.
       </Text>
       <Text style={{ marginVertical: 10 }}>Our contact</Text>
-      <Text style={{ marginVertical: 10, marginBottom:20 }}>
+      <Text style={{ marginVertical: 10, marginBottom: 20 }}>
         For any enquiry, please contact us on {socialLinks.email} or call
         07017663503
       </Text>

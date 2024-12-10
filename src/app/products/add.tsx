@@ -8,7 +8,14 @@ import {
   View,
 } from "react-native";
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Button, Text, TextInput } from "react-native-paper";
+import {
+  Button,
+  Dialog,
+  Modal,
+  Portal,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import {
   useLocationStore,
   useShopsStore,
@@ -32,7 +39,7 @@ import PhotosCard from "@/src/components/PhotosCard";
 
 const add = () => {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+
   const { user } = useUserStore();
   const { shops } = useShopsStore();
   const { location: userLocation } = useLocationStore();
@@ -48,11 +55,13 @@ const add = () => {
   const [posting, setPosting] = useState(false);
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState(1);
+  const [mediaVisible, setMediaVisible] = useState(false);
 
   const [progress, setProgress] = useState(0);
   const [images, setImages] = useState([]);
 
-  const textColor = colorScheme === "dark" ? "#fff" : "#000";
+  const showMedia = () => setMediaVisible(true);
+  const hideMedia = () => setMediaVisible(false);
 
   const handleSubmitProduct = () => {
     const promo =
@@ -378,35 +387,10 @@ const add = () => {
             onChangeText={(value) => setName(value)}
           />
 
-          {/* <View>
-            <Text style={{ marginBottom: 10, marginLeft: 10 }}>
-              Negotiable?
-            </Text>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 20 }}
-            >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <RadioButton
-                  value="Yes"
-                  status={negotiable ? "checked" : "unchecked"}
-                  onPress={() => setNegotiable(true)}
-                />
-                <Text>Yes</Text>
-              </View>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <RadioButton
-                  value="No"
-                  status={!negotiable ? "checked" : "unchecked"}
-                  onPress={() => setNegotiable(false)}
-                />
-                <Text>No</Text>
-              </View>
-            </View>
-          </View> */}
           <View
             style={{
               borderBottomWidth: 1,
-              borderColor: textColor,
+              borderColor: "black",
             }}
           >
             <SectionedMultiSelect
@@ -418,7 +402,7 @@ const add = () => {
               readOnlyHeadings
               selectText={category}
               colors={{
-                selectToggleTextColor: textColor,
+                selectToggleTextColor: "black",
                 primary: Colors.light.primary,
               }}
               onSelectedItemsChange={(item) => setCategory(item[0])}
@@ -436,8 +420,20 @@ const add = () => {
               <MaterialCommunityIcons
                 name="plus"
                 size={40}
-                onPress={() => selectImage(true)}
+                onPress={() => showMedia()}
               />
+              <Portal>
+                <Dialog
+                  visible={mediaVisible}
+                  onDismiss={hideMedia}
+                  children={
+                    <View>
+                      <Text>Photos</Text>
+                      <Text>Videos</Text>
+                    </View>
+                  }
+                />
+              </Portal>
             </View>
             <FlatList
               showsHorizontalScrollIndicator={false}

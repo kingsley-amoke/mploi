@@ -90,6 +90,28 @@ const Home = () => {
     });
   }, [user]);
 
+  const AdsArea = () => {
+    <View
+      style={{
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexDirection: "row",
+        marginBottom: 10,
+      }}
+    >
+      <Text
+        style={{
+          textAlign: "left",
+          fontSize: 20,
+          fontWeight: "700",
+          color: Colors.grey,
+        }}
+      >
+        text
+      </Text>
+    </View>;
+  };
+
   return (
     <SafeAreaView style={{ height: "100%" }}>
       <LinearGradient
@@ -183,7 +205,7 @@ const Home = () => {
         showsVerticalScrollIndicator={false}
         style={{ margin: 10 }}
         itemDimension={63}
-        // renderSectionFooter={() => <Text>Hello</Text>}
+        renderSectionFooter={AdsArea}
         sections={[
           {
             title: "Services",
