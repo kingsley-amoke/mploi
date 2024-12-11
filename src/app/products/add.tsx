@@ -1,21 +1,12 @@
 import {
-  Dimensions,
   FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
-  useColorScheme,
   View,
 } from "react-native";
-import React, { useLayoutEffect, useRef, useState } from "react";
-import {
-  Button,
-  Dialog,
-  Modal,
-  Portal,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import React, { useRef, useState, useCallback } from "react";
+import { Button, Text, TextInput } from "react-native-paper";
 import {
   useLocationStore,
   useShopsStore,
@@ -31,6 +22,12 @@ import { CustomModal } from "@/src/components/CustomModal";
 import { Colors } from "@/src/constants/Colors";
 import { CustomToast, deduct } from "@/src/utils/data";
 import { LinearGradient } from "expo-linear-gradient";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
 
 import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -43,7 +40,7 @@ const add = () => {
   const { user } = useUserStore();
   const { shops } = useShopsStore();
   const { location: userLocation } = useLocationStore();
-  const { width, height } = Dimensions.get("window");
+  // const { width, height } = Dimensions.get("window");
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -55,13 +52,21 @@ const add = () => {
   const [posting, setPosting] = useState(false);
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState(1);
-  const [mediaVisible, setMediaVisible] = useState(false);
 
   const [progress, setProgress] = useState(0);
   const [images, setImages] = useState([]);
+  const [videos, setVideos] = useState([]);
 
-  const showMedia = () => setMediaVisible(true);
-  const hideMedia = () => setMediaVisible(false);
+  // ref
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  // const handleSheetChanges = useCallback((index: number) => {}, []);
+
+  console.log("hello");
 
   const handleSubmitProduct = () => {
     const promo =
@@ -137,29 +142,29 @@ const add = () => {
     }
   };
 
-  const selectImage = async (useLibrary: boolean) => {
+  const selectMedia = async (mediaType: string) => {
     let result;
 
     const options: ImagePicker.ImagePickerOptions = {
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes:
+        mediaType == "photos"
+          ? ImagePicker.MediaTypeOptions.Images
+          : ImagePicker.MediaTypeOptions.Videos,
       allowsEditing: true,
       quality: 1,
     };
 
-    if (useLibrary) {
-      result = await ImagePicker.launchImageLibraryAsync(options);
-    } else {
-      await ImagePicker.requestCameraPermissionsAsync();
-      result = await ImagePicker.launchCameraAsync(options);
-    }
+    result = await ImagePicker.launchImageLibraryAsync(options);
 
     if (!result.canceled) {
-      uploadImage(result.assets[0].uri);
+      uploadImage(result.assets[0].uri, mediaType);
     }
   };
 
-  const uploadImage = async (uri: string) => {
-    const filename = new Date().getTime() + ".jpg";
+  const uploadImage = async (uri: string, type: string) => {
+    // const filename = new Date().getTime() + ".jpg";
+
+    const filename = uri.split("/").pop();
     const response = await fetch(uri);
     const blob = await response.blob();
 
@@ -178,7 +183,11 @@ const add = () => {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setImages([...images, downloadURL]);
+          if (type == "photos") {
+            setImages([...images, downloadURL]);
+          } else {
+            setVideos([...videos, downloadURL]);
+          }
           setProgress(0);
         });
       }
@@ -379,122 +388,140 @@ const add = () => {
           Add Product
         </Text>
       </LinearGradient>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
-          <TextInput
-            label="Name"
-            mode="outlined"
-            onChangeText={(value) => setName(value)}
-          />
-
-          <View
-            style={{
-              borderBottomWidth: 1,
-              borderColor: "black",
-            }}
-          >
-            <SectionedMultiSelect
-              items={shops}
-              IconRenderer={MaterialIcons}
-              uniqueKey="name"
-              single
-              subKey="subshops"
-              readOnlyHeadings
-              selectText={category}
-              colors={{
-                selectToggleTextColor: "black",
-                primary: Colors.light.primary,
-              }}
-              onSelectedItemsChange={(item) => setCategory(item[0])}
-            />
-          </View>
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            <View
-              style={{
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "silver",
-                padding: 20,
-              }}
-            >
-              <MaterialCommunityIcons
-                name="plus"
-                size={40}
-                onPress={() => showMedia()}
+      <GestureHandlerRootView>
+        <BottomSheetModalProvider>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
+              <TextInput
+                label="Name"
+                mode="outlined"
+                onChangeText={(value) => setName(value)}
               />
-              <Portal>
-                <Dialog
-                  visible={mediaVisible}
-                  onDismiss={hideMedia}
-                  children={
-                    <View>
-                      <Text>Photos</Text>
-                      <Text>Videos</Text>
-                    </View>
-                  }
+
+              <View
+                style={{
+                  borderBottomWidth: 1,
+                  borderColor: "black",
+                }}
+              >
+                <SectionedMultiSelect
+                  items={shops}
+                  IconRenderer={MaterialIcons}
+                  uniqueKey="name"
+                  single
+                  subKey="subshops"
+                  readOnlyHeadings
+                  selectText={category}
+                  colors={{
+                    selectToggleTextColor: "black",
+                    primary: Colors.light.primary,
+                  }}
+                  onSelectedItemsChange={(item) => setCategory(item[0])}
                 />
-              </Portal>
-            </View>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              horizontal
-              data={images}
-              renderItem={({ item }) => (
+              </View>
+              <View style={{ flexDirection: "row", gap: 10 }}>
                 <View
                   style={{
                     justifyContent: "center",
                     alignItems: "center",
-                    marginRight: 10,
+                    backgroundColor: "silver",
+                    padding: 20,
                   }}
                 >
-                  <PhotosCard item={item} />
+                  <MaterialCommunityIcons
+                    name="plus"
+                    size={40}
+                    onPress={() => handlePresentModalPress}
+                  />
+
+                  <BottomSheetModal ref={bottomSheetModalRef}>
+                    <BottomSheetView
+                      style={{
+                        height: 200,
+                      }}
+                    >
+                      <Text style={{ textAlign: "center", marginBottom: 40 }}>
+                        Choose media type
+                      </Text>
+                      <Button
+                        mode="text"
+                        labelStyle={{ fontSize: 20, marginLeft: 10 }}
+                        onPress={() => selectMedia("photos")}
+                      >
+                        Photos
+                      </Button>
+                      <Button
+                        mode="text"
+                        labelStyle={{ fontSize: 20, marginLeft: 10 }}
+                        onPress={() => selectMedia("videos")}
+                      >
+                        Videos
+                      </Button>
+                    </BottomSheetView>
+                  </BottomSheetModal>
                 </View>
+                <FlatList
+                  showsHorizontalScrollIndicator={false}
+                  horizontal
+                  data={images}
+                  renderItem={({ item }) => (
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginRight: 10,
+                      }}
+                    >
+                      <PhotosCard item={item} />
+                    </View>
+                  )}
+                />
+              </View>
+              {progress > 0 ? (
+                <ProgressBar progress={progress} barWidth={200} />
+              ) : (
+                <Text style={{ color: "grey" }}>
+                  Only images less than 5mb are supported.
+                </Text>
               )}
-            />
-          </View>
-          {progress > 0 ? (
-            <ProgressBar progress={progress} barWidth={width - 20} />
-          ) : (
-            <Text style={{ color: "grey" }}>
-              Only images less than 5mb are supported.
-            </Text>
-          )}
-          <TextInput
-            label="Description"
-            mode="outlined"
-            multiline
-            numberOfLines={5}
-            onChangeText={(value) => setDescription(value)}
-          />
+              <TextInput
+                label="Description"
+                mode="outlined"
+                multiline
+                numberOfLines={5}
+                onChangeText={(value) => setDescription(value)}
+              />
 
-          <TextInput
-            label="Price"
-            keyboardType="numeric"
-            mode="outlined"
-            onChangeText={(value) => setPrice(value)}
-          />
-          <TextInput
-            label="Location"
-            defaultValue={
-              userLocation.length > 0
-                ? userLocation[0].regionName?.region
-                : user?.location?.regionName?.region
-            }
-            mode="outlined"
-            onChangeText={(value) => setLocation(value)}
-          />
-        </View>
+              <TextInput
+                label="Price"
+                keyboardType="numeric"
+                mode="outlined"
+                onChangeText={(value) => setPrice(value)}
+              />
+              <TextInput
+                label="Location"
+                defaultValue={
+                  userLocation.length > 0
+                    ? userLocation[0].regionName?.region
+                    : user?.location?.regionName?.region
+                }
+                mode="outlined"
+                onChangeText={(value) => setLocation(value)}
+              />
+            </View>
 
-        <View style={{ marginVertical: 10 }}>
-          <CustomModal
-            content={modalContent}
-            triggerText="Post"
-            visible={visible}
-            setVisible={setVisible}
-            icon="cart"
-          />
-        </View>
-      </ScrollView>
+            <View style={{ marginVertical: 10 }}>
+              <CustomModal
+                content={modalContent}
+                triggerText="Post"
+                visible={visible}
+                setVisible={setVisible}
+                icon="cart"
+              />
+            </View>
+          </ScrollView>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </View>
   );
 };

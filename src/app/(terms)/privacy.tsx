@@ -2,210 +2,202 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import React from "react";
 import { Text } from "react-native-paper";
 import { socialLinks } from "@/src/utils/data";
-
-const personalInformation = [
-  "Full name",
-  "Email adress",
-  "Phone  number",
-  "Gender",
-  "Date of birth",
-  "Occupation",
-  "Photo",
-];
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "@/src/constants/Colors";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const privacy = () => {
+  const router = useRouter();
   return (
-    <ScrollView
-      style={{ paddingVertical: 10, marginHorizontal: 30 }}
-      showsVerticalScrollIndicator={false}
-    >
-      <Text style={{ marginVertical: 10 }}>
-        MyPlug ("we," "us," or "our") provides a marketplace and service
-        provider app (the "App") that connects customers with service providers.
-        This Privacy Policy explains how we collect, use, share, and protect
-        personal information through the App.
-      </Text>
-      <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
-        INFORMATION WE COLLECT
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        We collect the following types of information:
-      </Text>
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: 120,
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
+      >
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color="white"
+          size={30}
+          onPress={() => router.back()}
+        />
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          Privacy Policy
+        </Text>
+      </LinearGradient>
+      <ScrollView
+        style={{ paddingVertical: 10, marginHorizontal: 30 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={{ marginVertical: 10 }}>
+          MyPlug ("we," "us," or "our") provides a marketplace and service
+          provider app (the "App") that connects customers with service
+          providers. This Privacy Policy explains how we collect, use, share,
+          and protect personal information through the App.
+        </Text>
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          INFORMATION WE COLLECT
+        </Text>
+        <Text style={{ marginVertical: 10 }}>
+          We collect the following types of information:
+        </Text>
 
-      <Text style={{ marginVertical: 10 }}>
-        1. Personal Information: name, email address, phone number, and physical
-        address.
-      </Text>
-      <Text style={{ marginVertical: 2 }}>
-        2. Device Information: device type, operating system, and location data.
-      </Text>
-      <Text style={{ marginVertical: 2 }}>
-        3. Service Provider Information: business name, address, phone number,
-        and services offered.
-      </Text>
-      <Text style={{ marginVertical: 2 }}>
-        4. Transaction Information: payment information, service details, and
-        transaction history.
-      </Text>
+        <Text style={{ marginVertical: 10 }}>
+          1. Personal Information: name, email address, phone number, and
+          physical address.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          2. Device Information: device type, operating system, and location
+          data.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          3. Service Provider Information: business name, address, phone number,
+          and services offered.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          4. Transaction Information: payment information, service details, and
+          transaction history.
+        </Text>
 
-      <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
-        HOW WE COLLECT INFORMATION
-      </Text>
-      <Text style={{ marginVertical: 10 }}>We collect information:</Text>
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          HOW WE COLLECT INFORMATION
+        </Text>
+        <Text style={{ marginVertical: 10 }}>We collect information:</Text>
+        <Text style={{ marginVertical: 10 }}>
+          1. Directly from users through the App, website, or customer support.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          2. Automatically through the App, including device and location data.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          3. From third-party partners, such as payment processors and social
+          media platforms.
+        </Text>
 
-      <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
-        INFORMATION FROM YOUR DEVICE
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        We collect this information when you sync your contact list on your
-        device with MyPlug APP. You are expected to select two guarantors in
-        order to proceed. These guarantors must be immediate family members,
-        close friends or colleagues. We use these information to track, solve
-        crimes and resolve conflicts within our website and MyPlug APP. MyPlug
-        APP automatically notifies your selected guarantors through phone calls
-        or messages.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Other information such as type of handset, IMEI or serial number and sim
-        card details are also automatically extracted. These information helps
-        in protecting our customers from service-related crimes.
-      </Text>
-      <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
-        LOCATION
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Your device's GPS provides us with your location information. You will
-        have to grant consent. In turning off your location, you may be
-        restricted from enjoying certain functionalities of MyPlug APP.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        For your awareness and consciousness, we outline user's personal
-        information and data we collect as follows Identity data: these are
-        user's first name, surname, other names, username, gender, title,
-        marital status, date of birth, selfie pictures, photos from user's
-        device, identification documents and other forms of identification.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Contact data: this includes, user's home address, workshop/office
-        address, utility bills, email address and phone numbers.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Online/Social Media Data: under this category, MyPlug APP are linked to
-        user's social media profile and pages, website and other online
-        platforms related to you.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Financial Data: user's personal bank details, card details, statement of
-        account and user's financial situation can be linked with our wallet or
-        during subscription. During these processes, MyPlug APP gets access to
-        user's financial Data.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Transaction Data: details about payments, subscriptions, in-app
-        purchases, user's transactions with third party accounts and other
-        transaction history.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Interactions: we have access to user's interactions and negotiations and
-        these interactions are stored, for reference purposes.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Communication Data: this includes user's correspondence by emails,
-        messages and feedbacks. We may retain the content of such messages and
-        our responses.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Technical Data: these are user's Password/PIN, Internet Protocol (IP)
-        address, your login data, browser type, version and other settings.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Device Data: user's contacts, their names and phone numbers, details of
-        handset, IMEI and serial number, information about sim card.
-      </Text>
-      <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
-        SHARING OF PERSONAL INFORMATION
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Personal information is considered as a vital part of our relationship
-        with users of MyPlug APP. We may share your personal information with
-        third parties on the following instances:
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        MyPlug shares personal information between a CLIENT or employer and
-        SERVICE PROVIDER or employee. Sharing of these personal information
-        enhance interactions, negotiations and transactions among our users and
-        subscribers. During this process, details like name, phone numbers, home
-        address, bank account numbers and account names may be shared among our
-        users and subscribers. Sharing of financial account details is solely at
-        the discretion of our users and subscribers. Users can as well decide
-        not to share this information for personal reasons.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Users who are interested in our loan facilities may be asked to share
-        information about their identification, location, bank account details,
-        transaction history and phone contact details. These information enables
-        the company to access user's and loan applicants financial strength and
-        credit score to determine their eligibility for loan facilities. In case
-        of fraud and financial crimes of any kind, the user or subscriber may be
-        tracked using the above details.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        As we develop our app, we may buy or sell business or assets. We may
-        transfer user's personal data as part of the transferred assets without
-        your consent.
-      </Text>
-      <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
-        DISCLOSURE OF PERSONAL INFORMATION
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        User's information may be disclosed in the following cases without
-        user's consent:
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        * To grant a request from the regulator or government organization or
-        agency with sufficient authority.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        * To grant other legal obligations and requests from a court.
-      </Text>
-      <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
-        User's Responsibilities
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        It is the sole responsibility of our users to protect their Password or
-        PIN. User must not disclose their Password or PIN to anyone.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        MyPlug will never request for user's Password or PIN via any means of
-        communication. Please disregard any request for user's Password or PIN
-        or contact us on info@MyPlugglobal.com or call 07017663503
-      </Text>
-      <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
-        Consent
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        It is important to note that by accessing or using our services, you
-        consent to the collection, usage, storage and disclosure of your user
-        information as set out in our Privacy Policy.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Our Privacy Policy shall be governed in accordance with the relevant
-        laws of the Federal Republic of Nigeria.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        Our Privacy Policy may be amended or changed with time at the discretion
-        of MyPlug.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>
-        By continuing to use our website and MyPlug APP after the change, you
-        consent to the new policy.
-      </Text>
-      <Text style={{ marginVertical: 10 }}>Our contact</Text>
-      <Text style={{ marginVertical: 10, marginBottom: 20 }}>
-        For any enquiry, please contact us on {socialLinks.email} or call
-        07017663503
-      </Text>
-    </ScrollView>
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          HOW WE USE INFORMATION
+        </Text>
+        <Text style={{ marginVertical: 10 }}>We use information to:</Text>
+        <Text style={{ marginVertical: 10 }}>
+          1. Provide and improve the App's services.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>2. Enhance user experience.</Text>
+        <Text style={{ marginVertical: 2 }}>3. Offer customer support.</Text>
+        <Text style={{ marginVertical: 2 }}>
+          4. Conduct research and analytics
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          5. Comply with legal obligations.
+        </Text>
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          SHARING INFORMATION
+        </Text>
+        <Text style={{ marginVertical: 10 }}>We share information with:</Text>
+        <Text style={{ marginVertical: 10 }}>
+          1. Authorized service providers.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          2. Law enforcement agencies (with valid legal requests).
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          3. Third-party partners (for research or analytics).
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          4. Service Providers (to facilitate transactions).
+        </Text>
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          SHARING INFORMATION
+        </Text>
+        <Text style={{ marginVertical: 10 }}>
+          We implement industry-standard security measures to protect
+          information, including:
+        </Text>
+        <Text style={{ marginVertical: 10 }}>1. Encryption.</Text>
+        <Text style={{ marginVertical: 2 }}>2. Sercure servers.</Text>
+        <Text style={{ marginVertical: 2 }}>3. Firewalls.</Text>
+        <Text style={{ marginVertical: 2 }}>4. Access controls.</Text>
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          DATA RETENTION
+        </Text>
+        <Text style={{ marginVertical: 10 }}>We retain information for:</Text>
+        <Text style={{ marginVertical: 10 }}>
+          1. As long as necessary to provide services.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>2. As required by law.</Text>
+
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          USE RIGHTS
+        </Text>
+        <Text style={{ marginVertical: 10 }}>You have the right to:</Text>
+
+        <Text style={{ marginVertical: 10 }}>
+          1. Access and correct personal information.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>2. Request data deletion.</Text>
+        <Text style={{ marginVertical: 2 }}>3. Opt-out of data sharing.</Text>
+        <Text style={{ marginVertical: 2 }}>4. Access controls.</Text>
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          CHANGES TO THIS POLICY
+        </Text>
+        <Text style={{ marginVertical: 10 }}>
+          We reserve the right to update this policy at any time.
+        </Text>
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          CONTACT US
+        </Text>
+        <Text style={{ marginVertical: 10 }}>
+          For questions or concerns, please contact:
+        </Text>
+        <Text style={{ marginVertical: 10 }}>MyPlug Mobile App</Text>
+        <Text style={{ marginVertical: 2 }}>
+          81 Agwangede Extension, Kuje, Abuja.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>connect@myplugmobile.com.</Text>
+        <Text style={{ marginVertical: 2 }}>+2347017663503</Text>
+
+        <Text style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}>
+          ADDITIONAL DISCLOSURES
+        </Text>
+        <Text style={{ marginVertical: 10 }}>
+          - California Residents: We comply with California Consumer Privacy Act
+          (CCPA) requirements.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          - EU Residents: We comply with General Data Protection Regulation
+          (GDPR) requirements.
+        </Text>
+        <Text style={{ marginVertical: 2 }}>
+          - Nigeria Residents: We comply with Federal Competition and Consumer
+          Protection Commission (FCCPC)
+        </Text>
+        <Text style={{ marginVertical: 10, fontWeight: "bold" }}>
+          ACKNOLEDGEMENT
+        </Text>
+        <Text style={{ marginVertical: 10 }}>
+          By using the App, you acknowledge that you have read, understood, and
+          agree to this Privacy Policy.
+        </Text>
+        <Text style={{ marginVertical: 10 }}>Last Updated:</Text>
+        <Text style={{ marginVertical: 10 }}>31 December 2024</Text>
+      </ScrollView>
+    </View>
   );
 };
 

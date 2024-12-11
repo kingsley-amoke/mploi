@@ -1,11 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
-import { Button, Switch, Text } from "react-native-paper";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
+
+// import { Button, Switch, Text } from "react-native-paper";
+import { View, Text, Button, ScrollView } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
 import { addDoc, doc, setDoc } from "firebase/firestore";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
 
 export default function Shop() {
   const [notificationStatus, setNotificationStatus] = useState(false);
@@ -26,62 +39,18 @@ export default function Shop() {
   //   });
   // };
 
+  // ref
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  // const handleSheetChanges = useCallback((index: number) => {}, []);
+
   useEffect(() => {
     // getNotification();
   }, [notificationStatus]);
-
-  // const shopData = {
-  //   _id: Date.now(),
-  //   name: "Food Stuffs",
-  //   color: "#31c4a0",
-  //   icon: "fish",
-  //   subshops: [
-  //     {
-  //       name: "Garri",
-  //     },
-  //     {
-  //       name: "Rice",
-  //     },
-  //     {
-  //       name: "Beans",
-  //     },
-  //     {
-  //       name: "Corn",
-  //     },
-  //     {
-  //       name: "Yam",
-  //     },
-  //     {
-  //       name: "Plantain",
-  //     },
-  //     {
-  //       name: "Beef",
-  //     },
-  //     {
-  //       name: "Chicken",
-  //     },
-  //     {
-  //       name: "Pork",
-  //     },
-  //     {
-  //       name: "Fish",
-  //     },
-  //     {
-  //       name: "Stockfish",
-  //     },
-  //     {
-  //       name: "Crayfish",
-  //     },
-  //   ],
-  // };
-
-  // const shopRef = doc(firestoreDB, "shop", shopData._id.toString());
-
-  // const addShop = () => {
-  //   setDoc(shopRef, shopData).then(() => {
-  //     console.log("done");
-  //   });
-  // };
 
   return (
     <View
@@ -114,8 +83,8 @@ export default function Shop() {
           Notifications
         </Text>
       </LinearGradient>
-      <ScrollView>
-        <View
+
+      {/* <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
@@ -129,11 +98,28 @@ export default function Shop() {
             onValueChange={() => setNotificationStatus(!notificationStatus)}
             color={Colors.primary}
           />
-        </View>
-        {/* <Button icon="plus" onPress={addShop}>
-          Add
-        </Button> */}
-      </ScrollView>
+        </View> */}
+      <GestureHandlerRootView
+        style={{
+          flex: 1,
+          padding: 24,
+          justifyContent: "center",
+        }}
+      >
+        <BottomSheetModalProvider>
+          <Button onPress={handlePresentModalPress} title="Present" />
+          <BottomSheetModal ref={bottomSheetModalRef}>
+            <BottomSheetView
+              style={{
+                flex: 1,
+                alignItems: "center",
+              }}
+            >
+              <Text>Awesome 🎉</Text>
+            </BottomSheetView>
+          </BottomSheetModal>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </View>
   );
 }
