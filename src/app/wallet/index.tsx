@@ -1,43 +1,23 @@
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
-import React, { useRef, useState } from "react";
-import {
-  Button,
-  Dialog,
-  Modal,
-  Portal,
-  SegmentedButtons,
-  Surface,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import { ScrollView, StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { Button, SegmentedButtons, Surface, Text } from "react-native-paper";
 import { useTransactionsStore, useUserStore } from "@/src/state/store";
-import { CustomToast } from "@/src/utils/data";
-import { verifyPayment } from "@/src/utils/paystack";
-import { Paystack, paystackProps } from "react-native-paystack-webview";
+
 import TransactionsPage from "@/src/components/TransactionsPage";
+import { useRouter } from "expo-router";
+import { formatPrice } from "@/src/utils/data";
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "@/src/constants/Colors";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const index = () => {
   const [value, setValue] = useState("completed");
 
-  const paystackKey = process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY as string;
+  const router = useRouter();
 
-  const { user, increaseUserBalance } = useUserStore();
-  const { transactions, addTransaction } = useTransactionsStore();
+  const { transactions } = useTransactionsStore();
 
-  const paystackWebViewRef = useRef<paystackProps.PayStackRef>();
-
-  const [paying, setPaying] = useState(false);
-
-  const [visible, setVisible] = useState(false);
-
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const { user } = useUserStore();
 
   const completedTransaction = transactions.filter(
     (trans) => trans.status === "success" && trans.userId === user._id
@@ -49,102 +29,41 @@ const index = () => {
     (trans) => trans.status === "failed" && trans.userId === user._id
   );
 
-  const balance = new Intl.NumberFormat("en-UK", {
-    style: "currency",
-    currency: "NGN",
-  }).format(parseFloat(user?.walletBalance || 0));
-
-  const HandlePayment = () => {
-    const [amount, setAmount] = useState<number>(0);
-
-    const makePayment = ({ data }) => {
-      setPaying(true);
-      hideModal();
-
-      const reference = data.transactionRef.trxref;
-      const rechargeAmount = amount - 50;
-
-      verifyPayment(user!, reference).then((trans) => {
-        if (trans) {
-          CustomToast("Successfull");
-          addTransaction(trans);
-          increaseUserBalance(rechargeAmount);
-          setPaying(false);
-          ``;
-        } else {
-          CustomToast("Failed");
-          addTransaction(trans);
-        }
-      });
-    };
-
-    return (
-      <Dialog
-        visible={visible}
-        onDismiss={hideModal}
-        style={{ padding: 5, justifyContent: "center", alignItems: "center" }}
-      >
-        <Paystack
-          paystackKey={paystackKey}
-          amount={amount}
-          channels={[
-            "bank_transfer",
-            "card",
-            "bank",
-            "qr",
-            "mobile_money",
-            "ussd",
-          ]}
-          billingEmail={user?.email!}
-          activityIndicatorColor="teal"
-          onCancel={(e) => {
-            CustomToast("Payment cancelled");
-          }}
-          onSuccess={(res) => {
-            makePayment(res);
-          }}
-          ref={paystackWebViewRef}
-        />
-        <View
-          style={{
-            gap: 20,
-            marginVertical: 10,
-            marginHorizontal: 5,
-            width: "90%",
-          }}
-        >
-          {/* <TextInput
-            mode="outlined"
-            label="Amount"
-            keyboardType="numeric"
-            style={{ width: "100%" }}
-            onChangeText={(value) => setAmount(parseFloat(value))}
-          /> */}
-          <TextInput />
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Button mode="outlined" onPress={() => hideModal()}>
-              Cancel
-            </Button>
-            <Button
-              mode="contained"
-              onPress={() => paystackWebViewRef.current.startTransaction()}
-            >
-              Continue
-            </Button>
-          </View>
-        </View>
-      </Dialog>
-    );
-  };
+  const balance = formatPrice(parseFloat(user?.walletBalance || 0));
 
   return (
-    <SafeAreaView>
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0.75 }}
+        end={{ x: 1, y: 0.25 }}
+        style={{
+          height: "12%",
+          paddingHorizontal: 20,
+          paddingBottom: 30,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+        }}
+      >
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color="white"
+          size={30}
+          onPress={() => router.back()}
+        />
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "800",
+            textAlign: "center",
+            flex: 1,
+          }}
+        >
+          Wallet
+        </Text>
+      </LinearGradient>
       <View
         style={{
           width: "100%",
@@ -169,10 +88,12 @@ const index = () => {
             <Text>{balance}</Text>
           </Surface>
         </View>
-        <Portal>
-          <HandlePayment />
-        </Portal>
-        <Button mode="outlined" icon="plus" onPress={showModal}>
+
+        <Button
+          mode="outlined"
+          icon="plus"
+          onPress={() => router.push("/wallet/fund")}
+        >
           Fund Wallet
         </Button>
       </View>
@@ -209,7 +130,7 @@ const index = () => {
           <TransactionsPage transactions={failedTransaction} />
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

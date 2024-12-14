@@ -31,7 +31,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button, Divider, Text, TextInput } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  Divider,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import { SectionGrid } from "react-native-super-grid";
 
 const Home = () => {
@@ -261,150 +267,162 @@ const Home = () => {
           />
         </View>
       </LinearGradient>
-      <ScrollView>
-        <SectionGrid
-          showsVerticalScrollIndicator={false}
-          style={{ margin: 10, marginBottom: 20 }}
-          itemDimension={63}
-          scrollEnabled={false}
-          sections={[
-            {
-              title: "Services",
-              data: topCategories,
-            },
-          ]}
-          renderItem={({ item }) => {
-            return (
-              <Link
-                href={{
-                  pathname: item.subshops
-                    ? `/shop/[id]`
-                    : `/service/providers/[id]`,
-                  params: { id: item._id },
-                }}
-                asChild
-              >
-                <TouchableOpacity>
-                  <CategoryCard category={item} />
-                </TouchableOpacity>
-              </Link>
-            );
-          }}
-          renderSectionHeader={({ section }) => (
-            <View
-              style={{
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexDirection: "row",
-                marginBottom: 10,
-              }}
-            >
-              <Text
+      {filteredShops.length > 0 ? (
+        <ScrollView>
+          <SectionGrid
+            showsVerticalScrollIndicator={false}
+            style={{ margin: 10, marginBottom: 20 }}
+            itemDimension={63}
+            scrollEnabled={false}
+            sections={[
+              {
+                title: "Services",
+                data: topCategories,
+              },
+            ]}
+            renderItem={({ item }) => {
+              return (
+                <Link
+                  href={{
+                    pathname: item.subshops
+                      ? `/shop/[id]`
+                      : `/service/providers/[id]`,
+                    params: { id: item._id },
+                  }}
+                  asChild
+                >
+                  <TouchableOpacity>
+                    <CategoryCard category={item} />
+                  </TouchableOpacity>
+                </Link>
+              );
+            }}
+            renderSectionHeader={({ section }) => (
+              <View
                 style={{
-                  textAlign: "left",
-                  fontSize: 20,
-                  fontWeight: "700",
-                  color: Colors.grey,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  marginBottom: 10,
                 }}
-              >
-                {section.title}
-              </Text>
-              <TouchableOpacity
-                style={{ flexDirection: "row", gap: 10 }}
-                onPress={
-                  section.title != "Services"
-                    ? () => router.push("/shop")
-                    : () => router.push("/service")
-                }
               >
                 <Text
                   style={{
                     textAlign: "left",
-
+                    fontSize: 20,
                     fontWeight: "700",
                     color: Colors.grey,
                   }}
                 >
-                  See all
+                  {section.title}
                 </Text>
-                <MaterialCommunityIcons name="arrow-right-box" size={20} />
-              </TouchableOpacity>
-            </View>
-          )}
-        />
-        <AdsArea />
-        <SectionGrid
-          showsVerticalScrollIndicator={false}
-          style={{ margin: 10 }}
-          itemDimension={63}
-          scrollEnabled={false}
-          sections={[
-            {
-              title: "Market Place",
-              data: topShops,
-            },
-          ]}
-          renderItem={({ item }) => {
-            return (
-              <Link
-                href={{
-                  pathname: item.subshops
-                    ? `/shop/[id]`
-                    : `/service/providers/[id]`,
-                  params: { id: item._id },
-                }}
-                asChild
-              >
-                <TouchableOpacity>
-                  <CategoryCard category={item} />
+                <TouchableOpacity
+                  style={{ flexDirection: "row", gap: 10 }}
+                  onPress={
+                    section.title != "Services"
+                      ? () => router.push("/shop")
+                      : () => router.push("/service")
+                  }
+                >
+                  <Text
+                    style={{
+                      textAlign: "left",
+
+                      fontWeight: "700",
+                      color: Colors.grey,
+                    }}
+                  >
+                    See all
+                  </Text>
+                  <MaterialCommunityIcons name="arrow-right-box" size={20} />
                 </TouchableOpacity>
-              </Link>
-            );
-          }}
-          renderSectionHeader={({ section }) => (
-            <View
-              style={{
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexDirection: "row",
-                marginBottom: 10,
-              }}
-            >
-              <Text
+              </View>
+            )}
+          />
+          <AdsArea />
+          <SectionGrid
+            showsVerticalScrollIndicator={false}
+            style={{ margin: 10 }}
+            itemDimension={63}
+            scrollEnabled={false}
+            sections={[
+              {
+                title: "Market Place",
+                data: topShops,
+              },
+            ]}
+            renderItem={({ item }) => {
+              return (
+                <Link
+                  href={{
+                    pathname: item.subshops
+                      ? `/shop/[id]`
+                      : `/service/providers/[id]`,
+                    params: { id: item._id },
+                  }}
+                  asChild
+                >
+                  <TouchableOpacity>
+                    <CategoryCard category={item} />
+                  </TouchableOpacity>
+                </Link>
+              );
+            }}
+            renderSectionHeader={({ section }) => (
+              <View
                 style={{
-                  textAlign: "left",
-                  fontSize: 20,
-                  fontWeight: "700",
-                  color: Colors.grey,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  marginBottom: 10,
                 }}
-              >
-                {section.title}
-              </Text>
-              <TouchableOpacity
-                style={{ flexDirection: "row", gap: 10 }}
-                onPress={
-                  section.title != "Services"
-                    ? () => router.push("/shop")
-                    : () => router.push("/service")
-                }
               >
                 <Text
                   style={{
                     textAlign: "left",
-
+                    fontSize: 20,
                     fontWeight: "700",
                     color: Colors.grey,
                   }}
                 >
-                  See all
+                  {section.title}
                 </Text>
-                <MaterialCommunityIcons name="arrow-right-box" size={20} />
-              </TouchableOpacity>
-            </View>
-          )}
-        />
-      </ScrollView>
+                <TouchableOpacity
+                  style={{ flexDirection: "row", gap: 10 }}
+                  onPress={
+                    section.title != "Services"
+                      ? () => router.push("/shop")
+                      : () => router.push("/service")
+                  }
+                >
+                  <Text
+                    style={{
+                      textAlign: "left",
 
+                      fontWeight: "700",
+                      color: Colors.grey,
+                    }}
+                  >
+                    See all
+                  </Text>
+                  <MaterialCommunityIcons name="arrow-right-box" size={20} />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </ScrollView>
+      ) : (
+        <View
+          style={{
+            height: "100%",
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator color={Colors.secondary} size={40} />
+        </View>
+      )}
       <FloatingButton />
     </SafeAreaView>
   );

@@ -317,8 +317,13 @@ export default function RootLayout() {
             <Stack.Screen
               name="wallet/index"
               options={{
-                title: "Wallet",
-                headerTitleAlign: "center",
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="wallet/fund"
+              options={{
+                headerShown: false,
               }}
             />
             <Stack.Screen
