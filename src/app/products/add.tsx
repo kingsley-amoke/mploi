@@ -64,12 +64,9 @@ const add = () => {
 
   const generateThumbnail = async () => {
     try {
-      const { uri } = await VideoThumbnails.getThumbnailAsync(
-        "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-        {
-          time: 15000,
-        }
-      );
+      const { uri } = await VideoThumbnails.getThumbnailAsync(video, {
+        time: 15000,
+      });
       setImage(uri);
     } catch (e) {
       console.warn(e);

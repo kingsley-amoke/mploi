@@ -5,11 +5,17 @@ import {
   useCategoryStore,
   useChatStore,
   useLocationStore,
+  useProductsStore,
   useShopsStore,
   useUsersStore,
   useUserStore,
 } from "@/src/state/store";
-import { createQueryString, getUsers } from "@/src/utils/data";
+import {
+  createQueryString,
+  formatPrice,
+  getUsers,
+  shopAvatar,
+} from "@/src/utils/data";
 import { auth } from "@/src/utils/firebaseConfig";
 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -17,8 +23,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 
 import React, { useLayoutEffect, useState } from "react";
-import { SafeAreaView, TouchableOpacity, View } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Button, Divider, Text, TextInput } from "react-native-paper";
 import { SectionGrid } from "react-native-super-grid";
 
 const Home = () => {
@@ -26,6 +39,7 @@ const Home = () => {
   const { user, storeUser } = useUserStore();
   const { categories } = useCategoryStore();
   const { shops } = useShopsStore();
+  const { products } = useProductsStore();
   const router = useRouter();
   const { location } = useLocationStore();
 
@@ -62,6 +76,7 @@ const Home = () => {
 
   const topCategories = filteredCategories.slice(0, 15);
   const topShops = filteredShops.slice(0, 15);
+  const promoted = products.filter((item) => item.promo != "free");
 
   const submitKey = {
     nativeEvent: { key: "Enter" },
@@ -90,15 +105,8 @@ const Home = () => {
     });
   }, [user]);
 
-  const AdsArea = () => {
-    <View
-      style={{
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexDirection: "row",
-        marginBottom: 10,
-      }}
-    >
+  const AdsArea = () => (
+    <View style={{ marginHorizontal: 10 }}>
       <Text
         style={{
           textAlign: "left",
@@ -107,10 +115,63 @@ const Home = () => {
           color: Colors.grey,
         }}
       >
-        text
+        Trending
       </Text>
-    </View>;
-  };
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        data={promoted}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "row",
+              marginVertical: 10,
+              borderWidth: 1,
+              borderColor: "grey",
+              borderRadius: 6,
+              marginRight: 10,
+              height: 100,
+              width: 250,
+            }}
+            onPress={() => router.push(`/products/${item._id}`)}
+          >
+            <View style={{ width: "40%", height: "100%" }}>
+              <Image
+                source={{ uri: item.images[0] || shopAvatar }}
+                height={98}
+                style={{ borderTopLeftRadius: 6, borderBottomLeftRadius: 6 }}
+              />
+            </View>
+            <View
+              style={{
+                width: "60%",
+                height: "100%",
+                padding: 3,
+                paddingLeft: 5,
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: "700",
+                  textTransform: "capitalize",
+                }}
+              >
+                {item.name.slice(0, 14)}
+              </Text>
+              <Text>{item.location}</Text>
+              <Divider bold />
+              <Text style={{ fontSize: 12 }}>{item.category}</Text>
+              <Text style={{ fontWeight: "bold", fontSize: 12 }}>
+                {formatPrice(item.price)}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  );
 
   return (
     <SafeAreaView style={{ height: "100%" }}>
@@ -200,81 +261,149 @@ const Home = () => {
           />
         </View>
       </LinearGradient>
-
-      <SectionGrid
-        showsVerticalScrollIndicator={false}
-        style={{ margin: 10 }}
-        itemDimension={63}
-        renderSectionFooter={AdsArea}
-        sections={[
-          {
-            title: "Services",
-            data: topCategories,
-          },
-          {
-            title: "Market Place",
-            data: topShops,
-          },
-        ]}
-        renderItem={({ item }) => {
-          return (
-            <Link
-              href={{
-                pathname: item.subshops
-                  ? `/shop/[id]`
-                  : `/service/providers/[id]`,
-                params: { id: item._id },
-              }}
-              asChild
-            >
-              <TouchableOpacity>
-                <CategoryCard category={item} />
-              </TouchableOpacity>
-            </Link>
-          );
-        }}
-        renderSectionHeader={({ section }) => (
-          <View
-            style={{
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexDirection: "row",
-              marginBottom: 10,
-            }}
-          >
-            <Text
+      <ScrollView>
+        <SectionGrid
+          showsVerticalScrollIndicator={false}
+          style={{ margin: 10, marginBottom: 20 }}
+          itemDimension={63}
+          scrollEnabled={false}
+          sections={[
+            {
+              title: "Services",
+              data: topCategories,
+            },
+          ]}
+          renderItem={({ item }) => {
+            return (
+              <Link
+                href={{
+                  pathname: item.subshops
+                    ? `/shop/[id]`
+                    : `/service/providers/[id]`,
+                  params: { id: item._id },
+                }}
+                asChild
+              >
+                <TouchableOpacity>
+                  <CategoryCard category={item} />
+                </TouchableOpacity>
+              </Link>
+            );
+          }}
+          renderSectionHeader={({ section }) => (
+            <View
               style={{
-                textAlign: "left",
-                fontSize: 20,
-                fontWeight: "700",
-                color: Colors.grey,
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection: "row",
+                marginBottom: 10,
               }}
-            >
-              {section.title}
-            </Text>
-            <TouchableOpacity
-              style={{ flexDirection: "row", gap: 10 }}
-              onPress={
-                section.title != "Services"
-                  ? () => router.push("/shop")
-                  : () => router.push("/service")
-              }
             >
               <Text
                 style={{
                   textAlign: "left",
-
+                  fontSize: 20,
                   fontWeight: "700",
                   color: Colors.grey,
                 }}
               >
-                See all
+                {section.title}
               </Text>
-              <MaterialCommunityIcons name="arrow-right-box" size={20} />
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+              <TouchableOpacity
+                style={{ flexDirection: "row", gap: 10 }}
+                onPress={
+                  section.title != "Services"
+                    ? () => router.push("/shop")
+                    : () => router.push("/service")
+                }
+              >
+                <Text
+                  style={{
+                    textAlign: "left",
+
+                    fontWeight: "700",
+                    color: Colors.grey,
+                  }}
+                >
+                  See all
+                </Text>
+                <MaterialCommunityIcons name="arrow-right-box" size={20} />
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+        <AdsArea />
+        <SectionGrid
+          showsVerticalScrollIndicator={false}
+          style={{ margin: 10 }}
+          itemDimension={63}
+          scrollEnabled={false}
+          sections={[
+            {
+              title: "Market Place",
+              data: topShops,
+            },
+          ]}
+          renderItem={({ item }) => {
+            return (
+              <Link
+                href={{
+                  pathname: item.subshops
+                    ? `/shop/[id]`
+                    : `/service/providers/[id]`,
+                  params: { id: item._id },
+                }}
+                asChild
+              >
+                <TouchableOpacity>
+                  <CategoryCard category={item} />
+                </TouchableOpacity>
+              </Link>
+            );
+          }}
+          renderSectionHeader={({ section }) => (
+            <View
+              style={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection: "row",
+                marginBottom: 10,
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "left",
+                  fontSize: 20,
+                  fontWeight: "700",
+                  color: Colors.grey,
+                }}
+              >
+                {section.title}
+              </Text>
+              <TouchableOpacity
+                style={{ flexDirection: "row", gap: 10 }}
+                onPress={
+                  section.title != "Services"
+                    ? () => router.push("/shop")
+                    : () => router.push("/service")
+                }
+              >
+                <Text
+                  style={{
+                    textAlign: "left",
+
+                    fontWeight: "700",
+                    color: Colors.grey,
+                  }}
+                >
+                  See all
+                </Text>
+                <MaterialCommunityIcons name="arrow-right-box" size={20} />
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      </ScrollView>
 
       <FloatingButton />
     </SafeAreaView>
