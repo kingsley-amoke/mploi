@@ -1,9 +1,16 @@
-import { StyleSheet, Platform } from "react-native";
-import { Tabs, useRouter } from "expo-router";
+import { StyleSheet, Platform, View } from "react-native";
+import { Tabs } from "expo-router";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
+import { Badge } from "react-native-paper";
+import { useRequestStore } from "@/src/state/store";
+import { auth } from "@/src/utils/firebaseConfig";
 
 const TabLayout = () => {
+  const { requests } = useRequestStore();
+
+  const myRequests = requests.filter(
+    (req) => req.serviceProvider?._id === auth.currentUser?.uid
+  );
   return (
     <>
       <Tabs
@@ -36,11 +43,18 @@ const TabLayout = () => {
             tabBarLabel: "Messages",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="message-outline"
-                size={30}
-                color={color}
-              />
+              <View>
+                <MaterialCommunityIcons
+                  name="message-outline"
+                  size={30}
+                  color={color}
+                />
+                {myRequests.length > 0 && (
+                  <Badge style={{ position: "absolute", right: -2, top: -5 }}>
+                    {myRequests.length}
+                  </Badge>
+                )}
+              </View>
             ),
           }}
         />

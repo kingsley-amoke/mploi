@@ -60,7 +60,7 @@ const index = () => {
         </Text>
       </LinearGradient>
       {auth.currentUser ? (
-        <SafeAreaView>
+        <View>
           {myRequests.length > 0 && (
             <Link href={"/service/requests"} asChild>
               <TouchableOpacity
@@ -119,17 +119,17 @@ const index = () => {
                   </View>
                 </>
               ) : (
-                <>
+                <View style={{ marginBottom: 40 }}>
                   {myChats?.map((room) => (
                     <View key={room._id}>
                       <MessageCard room={room} search={search} />
                     </View>
                   ))}
-                </>
+                </View>
               )}
             </View>
           </ScrollView>
-        </SafeAreaView>
+        </View>
       ) : (
         <View style={{ marginTop: 40 }}>
           <Text style={{ textAlign: "center", fontSize: 20 }}>
