@@ -1,7 +1,7 @@
 import { DocumentData } from "firebase/firestore";
 import { ImageSourcePropType } from "react-native";
 
-export interface chatTypes{
+export interface chatTypes {
   _id: string;
   chatName: string;
   user: DBUser;
@@ -9,7 +9,7 @@ export interface chatTypes{
 }
 
 export interface userTypes {
-  status: {isVerifired: boolean, isVIP: boolean};
+  status: { isVerifired: boolean; isVIP: boolean };
   firstName: string;
   lastName: string;
   email: string;
@@ -45,34 +45,31 @@ export interface jobTypes {
   date?: string;
   employer: DBUser;
   categories: string[];
-  notifications?: NotificationTypes[]
+  notifications?: NotificationTypes[];
 }
 
 export interface serviceTypes {
-  _id: string,
+  _id: string;
   name: string;
   icon: string;
   jobs: jobTypes[];
 }
 
-export interface BankTypes{
-  bank: string,
-  accountName: string,
-  accountNumber: string,
-  
+export interface BankTypes {
+  bank: string;
+  accountName: string;
+  accountNumber: string;
 }
 
-export interface loacationTypes{
-
-  country: string,
-  state: string,
-  lga: string,
+export interface loacationTypes {
+  country: string;
+  state: string;
+  lga: string;
 }
 
-export interface Coordinstes{
-  latitude: number,
-  longitude: number,
-
+export interface Coordinstes {
+  latitude: number;
+  longitude: number;
 }
 
 export interface DBUser {
@@ -88,8 +85,8 @@ export interface DBUser {
   phone: string;
   skills?: string[] | null;
   status: Status;
-  bio: string,
-  location?: loacationTypes,
+  bio: string;
+  location?: loacationTypes;
   walletBalance: string;
   referralBalance: string;
   referral: string[];
@@ -98,20 +95,19 @@ export interface DBUser {
   referee: string;
   phoneVerified: boolean;
   createdAt: Number;
-  coordinates: Coordinstes
+  coordinates: Coordinstes;
 }
 
 export interface SyncUserTypes {
-  email:string;
+  email: string;
   firstName: string;
   lastName: string;
-  image:string;
+  image: string;
   phone: string;
   password: string;
   referee: string;
-  }
+}
 export interface ContactType {
-  
   phone: string;
   name: string;
 }
@@ -120,80 +116,77 @@ export interface Status {
   isVerified: boolean;
 }
 
-
 interface PhoneEntry {
-  number: string,
-  type: string
+  number: string;
+  type: string;
 }
 
 interface EmailEntry {
-  address: string,
-  type: string
+  address: string;
+  type: string;
 }
 
 interface AddressEntry {
-  formattedAddress: string, // android only
-  type: string, // android only
-  street: string,
-  city: string,
-  state: string,
-  postalCode: string,
-  isoCountryCode: string
+  formattedAddress: string; // android only
+  type: string; // android only
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  isoCountryCode: string;
 }
 
 interface Contact {
-  name: string,
-  phones: PhoneEntry[],
-  emails: EmailEntry[],
-  postalAddresses: AddressEntry[]
+  name: string;
+  phones: PhoneEntry[];
+  emails: EmailEntry[];
+  postalAddresses: AddressEntry[];
 }
 
 interface ContactPhoneSelection {
-  contact: Contact,
-  selectedPhone: PhoneEntry
+  contact: Contact;
+  selectedPhone: PhoneEntry;
 }
 
 interface ContactEmailSelection {
-  contact: Contact,
-  selectedEmail: EmailEntry
+  contact: Contact;
+  selectedEmail: EmailEntry;
 }
 
 interface ContactPostalAddressSelection {
-  contact: Contact,
-  selectedAddress: AddressEntry
+  contact: Contact;
+  selectedAddress: AddressEntry;
 }
 
-export interface LoanTypes{
+export interface LoanTypes {
   id: number;
   name: string;
   icon: string;
-  
 }
 
-export interface RecruitmentTypes{
+export interface RecruitmentTypes {
   _id: string;
   name: string;
   icon?: string;
   experience: string;
   location: loacationTypes;
   workTime: string;
-  desc:string;
+  desc: string;
   requirements: string;
   others: string;
   pay: string;
 }
 
-
-export interface NotificationTypes{
-  title: string,
-  description: string,
-  date: string,
-  isRead: boolean,
-  _id: string,
-  __v: number
+export interface NotificationTypes {
+  title: string;
+  description: string;
+  date: string;
+  isRead: boolean;
+  _id: string;
+  __v: number;
 }
 
-export interface SubscriptionTypes{
+export interface SubscriptionTypes {
   id: number;
   name: string;
   price: number;
@@ -201,32 +194,32 @@ export interface SubscriptionTypes{
 }
 
 interface SubShopTypes {
-    
-  name:string
+  name: string;
 }
 export interface ShopTypes {
-  _id:string,
-  name:string,
-  subshops?: SubShopTypes[]
+  _id: string;
+  name: string;
+  subshops?: SubShopTypes[];
 }
 
-export interface ProductTypes{
-_id:string,
-name:string,
-description:string,
-location:string,
-price:number,
-negotiable:boolean,
-sellerID: string,
-images: string[],
-category: string,
-promo:string
+export interface ProductTypes {
+  _id: string;
+  name: string;
+  description: string;
+  location: string;
+  price: number;
+  negotiable: boolean;
+  sellerID: string;
+  images: string[];
+  videos: string[];
+  category: string;
+  promo: string;
 }
 
-export interface ReviewTypes{
-  _id: string,
-  productID: string,
-  userID: string,
-  rating: number,
-  review: string,
+export interface ReviewTypes {
+  _id: string;
+  productID: string;
+  userID: string;
+  rating: number;
+  review: string;
 }

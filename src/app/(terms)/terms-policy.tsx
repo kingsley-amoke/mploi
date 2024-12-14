@@ -47,116 +47,154 @@ const Terms = () => {
         style={{ paddingVertical: 10, marginHorizontal: 30 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={{ marginVertical: 10 }}>
-          The terms and conditions are the operational guidelines on the usage
-          of MyPlug APP written out by the MyPlug's legal team. The content and
-          provisions of these terms and conditions are subject to periodic
-          amendments or changes according to the realities of time.{" "}
-        </Text>
+        <Text style={{ marginVertical: 10 }}>TERMS AND CONDITIONS</Text>
         <View>
           <Text
             style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}
           >
-            1. TERMS AND CONDITIONS FOR SERVICE PROVIDERS
+            MyPlug
           </Text>
           <View>
             <Text style={{ marginVertical: 5 }}>
-              i. A Service Provider in our context is any man or any woman
-              within a given productive age who possesses skills and has the
-              ability and capacity to apply such skill in production of goods
-              and in rendering of services to his or her client.
+              Effective Date: February, 2024
             </Text>
 
             <Text style={{ marginVertical: 5 }}>
-              ii. <Text style={{ fontWeight: "700" }}>SUBSCRIPTION: </Text> A
-              Service Provider must be a subscriber in order to access jobs and
-              receive any job order from a client. MyPlug APP provides for
-              monthly and yearly subscription payments. The amount are not fix
-              as it can change with time.
+              <Text style={{ fontWeight: "700" }}>Introduction:</Text> MyPlug
+              ("we," "us," or "our") provides a marketplace and service
+              providers app (the "App") that connects customers with service
+              providers. These Terms and Conditions ("Terms") govern your use of
+              the App.
             </Text>
-            <Text style={{ marginVertical: 5 }}>
-              iii. <Text style={{ fontWeight: "700" }}>A SERVICE PROVIDER</Text>{" "}
-              can also function as a client when he or she orders for the
-              services of other Service Providers. MyPlug APP gives you the
-              liberty to apply your skills effectively and be productive.
+
+            <Text style={{ fontWeight: "700" }}>Definitions:</Text>
+            <Text style={{ marginVertical: 2 }}>
+              - "App" refers to the MyPlug marketplace and service providers
+              app.
             </Text>
-            <Text style={{ marginVertical: 5 }}>
-              iv.{" "}
-              <Text style={{ fontWeight: "700" }}>
-                STEALING/DISCREDITABLE CONDUCT/ASSAULT/FIGHTING:
-              </Text>{" "}
-              Any Service Provider found committing any of the above mentioned
-              offences or reported in connection to any of the above mentioned
-              offences shall be blocked from using our app. If arrested shall be
-              handed over to the law enforcement agencies.
+            <Text style={{ marginVertical: 2 }}>
+              - "User" refers to you, the individual using the App.
             </Text>
-            <Text style={{ marginVertical: 5 }}>
-              v.{" "}
-              <Text style={{ fontWeight: "700" }}>
-                THIRD PARTY ENGAGEMENT:{" "}
-              </Text>{" "}
-              It is illegal to work as a Service Provider using another person's
-              identity. MyPlug APP does not encourage such illegality. If
-              reported, such user account shall be blocked by MyPlug.
+            <Text style={{ marginVertical: 2 }}>
+              - "Customer" refers to a User who requests services through the
+              App.
             </Text>
-            <Text style={{ marginVertical: 5 }}>
-              vi. <Text style={{ fontWeight: "700" }}>JOB AGENTS: </Text>MyPlug
-              APP does not encourage touting and activities of job agents on our
-              app. Service Providers must not involve in arranging any job that
-              they cannot do. If reported such user account shall be blocked by
-              MyPlug.
+            <Text style={{ marginVertical: 2 }}>
+              - "Service Provider" refers to a User who offers services through
+              the App.
+            </Text>
+            <Text style={{ fontWeight: "700" }}>User Agreement:</Text>
+            <Text style={{ marginVertical: 10 }}>
+              1. By using the App, you agree to these Terms.
+            </Text>
+            <Text style={{ marginVertical: 2 }}>
+              2. You must be at least 18 years old to use the App.
+            </Text>
+            <Text style={{ marginVertical: 2 }}>
+              3. You warrant that you have the authority to enter into these
+              Terms.
+            </Text>
+            <Text style={{ fontWeight: "700" }}>Account Registration:</Text>
+            <Text style={{ marginVertical: 10 }}>
+              1. To use the App, you must create an account.
+            </Text>
+            <Text style={{ marginVertical: 2 }}>
+              2. You must provide accurate and complete information during the
+              registration process.
+            </Text>
+            <Text style={{ marginVertical: 2 }}>
+              3. You are responsible for maintaining the confidentiality of your
+              account credentials.
+            </Text>
+            <Text style={{ fontWeight: "700" }}>Service Providers: </Text>
+            <Text style={{ marginVertical: 10 }}>
+              1. Service Providers are independent contractors and not employees
+              of MyPlug.
+            </Text>
+            <Text style={{ marginVertical: 2 }}>
+              2. Service Providers are responsible for providing their own
+              equipment, materials, and labor.
+            </Text>
+            <Text style={{ marginVertical: 2 }}>
+              3. Service Providers must comply with all applicable laws and
+              regulations.
             </Text>
           </View>
           <View>
             <Text
               style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}
             >
-              2. TERMS AND CONDITIONS FOR CLIENTS
+              Payment Terms:
+            </Text>
+            <Text style={{ marginVertical: 10 }}>
+              1. Customers must pay for services through the App's payment
+              system.
+            </Text>
+            <Text style={{ marginVertical: 2 }}>
+              2. Service Providers will receive payment for their services
+              through the App's payment system.
+            </Text>
+            <Text style={{ marginVertical: 2 }}>
+              3. MyPlug may charge a commission fee for each transaction.
             </Text>
             <View>
-              <Text style={{ marginVertical: 5 }}>
-                i. <Text style={{ fontWeight: "700" }}>A CLIENT</Text> is any
-                man or any woman who has a job for a Service Provider to do and
-                is willing and ready to pay for such services.
+              <Text style={{ fontWeight: "700" }}>
+                Cancellation and Refund Policy:
               </Text>
-              <Text style={{ marginVertical: 5 }}>
-                ii. <Text style={{ fontWeight: "700" }}>SUBSCRIPTION:</Text> Our
-                Clients are exempted from subscribing. They are free to order
-                for any service they need as provided by MyPlug APP. Clients are
-                to pay for services after the Service Provider had done the job
+              <Text style={{ marginVertical: 10 }}>
+                1. Customers may cancel a service request at any time before the
+                service is completed.
               </Text>
-              <Text style={{ marginVertical: 5 }}>
-                iii. <Text style={{ fontWeight: "700" }}>A CLIENT </Text> can
-                also function as a Service Provider if he or she possesses any
-                skill and is willing and ready to put his or her skills to use.
-                On this note, the Client will have to subscribe in order to
-                receive job orders.
+              <Text style={{ marginVertical: 2 }}>
+                2. Service Providers may cancel a service request at any time
+                before the service is completed.
               </Text>
-              <Text style={{ marginVertical: 5 }}>
-                vi.{" "}
-                <Text style={{ fontWeight: "700" }}>
-                  STEALING/DISCREDITABLE CONDUCT/ASSAULT/FIGHTING:{" "}
-                </Text>{" "}
-                Any Client found committing any of the above mentioned offences
-                or reported in connection to any of the above mentioned offences
-                shall be blocked by MyPlug. If arrested, shall be handed over to
-                law enforcement agencies.
+              <Text style={{ marginVertical: 2 }}>
+                3. Refunds will be processed in accordance with MyPlug's refund
+                policy.
               </Text>
-              <Text style={{ marginVertical: 5 }}>
-                v.{" "}
-                <Text style={{ fontWeight: "700" }}>
-                  THIRD PARTY ENGAGEMENT:{" "}
-                </Text>{" "}
-                It is illegal to order for a service using another Client's
-                account and identity. MyPlug APP does not encourage such
-                illegality, if reported, such user account shall be blocked by
-                MyPlug.
+              <Text style={{ fontWeight: "700" }}>Intellectual Property::</Text>
+              <Text style={{ marginVertical: 10 }}>
+                1. The App and its content are owned by MPLOi Global Resources
+                and are protected by intellectual property laws.
               </Text>
-              <Text style={{ marginVertical: 5, paddingBottom: 10 }}>
-                vi. <Text style={{ fontWeight: "700" }}>JOB AGENTS: </Text>{" "}
-                MyPlug APP does not encourage touting and activities of job
-                agents on our app. Any Client involved in arranging jobs outside
-                the provisions of MyPlug APP shall be blocked by MyPlug.
+              <Text style={{ marginVertical: 2 }}>
+                2. You may not reproduce, distribute, or display any content
+                from the App without MyPlug's prior written consent.
+              </Text>
+              <Text style={{ fontWeight: "700" }}>Disclaimer of Warranty:</Text>
+              <Text style={{ marginVertical: 10 }}>
+                1. The App is provided on an "as is" and "as available" basis.
+              </Text>
+              <Text style={{ marginVertical: 2 }}>
+                2. MyPlug disclaims all warranties, express or implied.
+              </Text>
+              <Text style={{ fontWeight: "700" }}>
+                Limitation of Liability:
+              </Text>
+              <Text style={{ marginVertical: 10 }}>
+                1. MyPlug shall not be liable for any damages or losses arising
+                from your use of the App.
+              </Text>
+              <Text style={{ marginVertical: 2 }}>
+                2. MyPlug's liability shall be limited to the amount you paid
+                for the services.
+              </Text>
+              <Text style={{ fontWeight: "700" }}>Governing Law:</Text>
+              <Text style={{ marginVertical: 10 }}>
+                1. These Terms shall be governed by and construed in accordance
+                with the laws of the Federal Republic of Nigeria.
+              </Text>
+              <Text style={{ marginVertical: 2 }}>
+                2. Any disputes arising out of or related to these Terms shall
+                be resolved through the appropriate team within our company.
+              </Text>
+              <Text style={{ fontWeight: "700" }}>Changes to Terms: </Text>
+              <Text style={{ marginVertical: 10 }}>
+                1. MyPlug reserves the right to update these Terms at any time.
+              </Text>
+              <Text style={{ marginVertical: 2 }}>
+                2. Changes will be effective immediately upon posting.
               </Text>
             </View>
           </View>
@@ -164,102 +202,40 @@ const Terms = () => {
             <Text
               style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}
             >
-              3. SHOP
+              Contact Us:
             </Text>
-            <View>
-              <Text style={{ marginVertical: 10 }}>
-                One prominent feature of Myplug Mobile APP that cannot be
-                overlooked is the online shopping platform which allows
-                interaction between buyers and sellers in a well organized open
-                market system.
-              </Text>
-              <Text style={{ marginVertical: 10 }}>
-                Users of Myplug Mobile APP are granted equal opportunity to post
-                or display products or any item for sale in our shop.
-              </Text>
-              <Text style={{ marginVertical: 10 }}>
-                In order to post any item in our shop, you must have at least 3
-                photos of the item you want to sell, you must enter your name or
-                business name, your location, amount for the item, your phone
-                number and description of the product you want to sell. This
-                information is required to help potential buyers in decision
-                making.
-              </Text>
-              <Text style={{ marginVertical: 10 }}>
-                Items under this platform must be legally approved to be sold to
-                or consumed by humans considering the laws governing our
-                existence and laws of our societies or countries depending on
-                the location such transaction is being carried out. For example,
-                it is illegal to sell or buy cannabis or any illicit drugs or
-                substance in Nigeria. If any user decides to post such an
-                illegal item in our shop, his or her account will be blocked
-                immediately. He or she can further be identified, arrested and
-                handed over to law enforcement authorities.
-              </Text>
-            </View>
+            <Text style={{ marginVertical: 10 }}>
+              For questions or concerns, please contact:
+            </Text>
+            <Text style={{ marginVertical: 10 }}>MyPlug </Text>
+            <Text style={{ marginVertical: 2 }}>
+              81 Agwangede Extension, Kuje, Abuja.
+            </Text>
+            <Text style={{ marginVertical: 2 }}>connect@myplugmobile.com.</Text>
+            <Text style={{ marginVertical: 2 }}>+2347017663503</Text>
+            <Text style={{ marginVertical: 10 }}>
+              By using the App, you acknowledge that you have read, understood,
+              and agree to this Privacy Policy.
+            </Text>
+            <Text style={{ marginVertical: 10 }}>Last Updated:</Text>
+            <Text style={{ marginVertical: 10 }}>31 December 2024</Text>
             <Text
               style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}
             >
               4. STOLEN ITEMS
             </Text>
-            <View>
-              <Text style={{ marginVertical: 10 }}>
-                This platform was not created for trading of stolen properties
-                or properties acquired by fraud. Myplug shall not, in any
-                circumstances be held responsible for such trade. Users are
-                therefore warned to scrutinize the authenticity of any item or
-                items, either brand new, foreign used or locally used before
-                buying same from any seller within our platform. Any user
-                reported for selling stolen properties or properties acquired by
-                fraud shall be investigated, arrested and handed over to law
-                enforcement authorities for prosecution. He or she shall be
-                permanently blocked from accessing Myplug Mobile APP. Users must
-                ensure that they are issued with an authentic receipt or a legal
-                document for any item they acquire through our shopping
-                platform. Myplug Mobile APP shall not be held responsible for
-                any transaction without receipts or any legal documents required
-                for such trade to be carried out. Myplug shall not demand for
-                any commission or percentage share for money or proceeds from
-                such transaction or trade. We are not involved in such
-                transaction, as such cannot be invited as a witness except on
-                special demand to provide aid to appropriate authorities during
-                investigation. Such demands must be made official and addressed
-                to the Founder, MPLOi Global Resources through Myplug Mobile and
-                forwarded through our email address at {socialLinks.email}.
-              </Text>
-            </View>
+
             <Text
               style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}
             >
               5. PRICES
             </Text>
-            <View>
-              <Text style={{ marginVertical: 10 }}>
-                Myplug Mobile APP will not influence the prices of items posted
-                on our platform. We provide a level playing ground for
-                competition and allow users to set the prices of their
-                items/goods. Myplug Mobile APP shall not be held responsible for
-                any high rates or low rates of goods/items posted on our
-                shopping platform
-              </Text>
-            </View>
+
             <Text
               style={{ fontSize: 14, fontWeight: "bold", marginVertical: 10 }}
             >
               6. LOCATION
             </Text>
-            <View>
-              <Text style={{ marginVertical: 10 }}>
-                Users of Myplug Mobile APP must be cautious about certain
-                locations and remote areas before going out for delivery.
-                Security is everybody's business. In order to keep our users
-                safe, we urge users of Myplug Mobile APP to operate only in
-                urban cities and avoid any lonely and dangerous locations.
-                Myplug shall not be held responsible for any loss of life or
-                properties of any user who fails to apply this caution or in any
-                circumstance.
-              </Text>
-            </View>
           </View>
         </View>
       </ScrollView>

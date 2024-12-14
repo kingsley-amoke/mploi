@@ -1,5 +1,6 @@
 import {
   FlatList,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -33,6 +34,7 @@ import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import ProgressBar from "@/src/components/ProgressBar";
 import PhotosCard from "@/src/components/PhotosCard";
+import * as VideoThumbnails from "expo-video-thumbnails";
 
 const add = () => {
   const router = useRouter();
@@ -55,7 +57,24 @@ const add = () => {
 
   const [progress, setProgress] = useState(0);
   const [images, setImages] = useState([]);
-  const [videos, setVideos] = useState([]);
+  const [video, setVideo] = useState(
+    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  );
+  const [image, setImage] = useState<string | null>(null);
+
+  const generateThumbnail = async () => {
+    try {
+      const { uri } = await VideoThumbnails.getThumbnailAsync(
+        "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+        {
+          time: 15000,
+        }
+      );
+      setImage(uri);
+    } catch (e) {
+      console.warn(e);
+    }
+  };
 
   // ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -64,9 +83,6 @@ const add = () => {
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
-  // const handleSheetChanges = useCallback((index: number) => {}, []);
-
-  console.log("hello");
 
   const handleSubmitProduct = () => {
     const promo =
@@ -94,6 +110,7 @@ const add = () => {
       negotiable,
       category,
       images: images,
+      videos: videos,
       sellerID: user?._id!,
       promo: promo,
     };
@@ -186,7 +203,8 @@ const add = () => {
           if (type == "photos") {
             setImages([...images, downloadURL]);
           } else {
-            setVideos([...videos, downloadURL]);
+            setVideo(downloadURL);
+            generateThumbnail();
           }
           setProgress(0);
         });
@@ -431,7 +449,7 @@ const add = () => {
                   <MaterialCommunityIcons
                     name="plus"
                     size={40}
-                    onPress={() => handlePresentModalPress}
+                    onPress={handlePresentModalPress}
                   />
 
                   <BottomSheetModal ref={bottomSheetModalRef}>
@@ -477,6 +495,15 @@ const add = () => {
                   )}
                 />
               </View>
+              {image && (
+                <Image
+                  source={{ uri: image }}
+                  style={{
+                    width: 400,
+                    height: 200,
+                  }}
+                />
+              )}
               {progress > 0 ? (
                 <ProgressBar progress={progress} barWidth={200} />
               ) : (
