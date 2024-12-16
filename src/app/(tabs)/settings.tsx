@@ -1,11 +1,4 @@
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { useRouter } from "expo-router";
 import {
@@ -18,14 +11,16 @@ import { signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { auth } from "@/src/utils/firebaseConfig";
 import { ExternalLink } from "@/src/components/ExternalLink";
-import { useUserStore } from "@/src/state/store";
+import { useUsersStore, useUserStore } from "@/src/state/store";
 import { socialLinks } from "@/src/utils/data";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
 
 const settings = () => {
   const router = useRouter();
-  const { user } = useUserStore();
+  const { users } = useUsersStore();
+
+  const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
 
   const navigateToEditProfile = () => {
     router.push("/profile/edit");
@@ -84,9 +79,7 @@ const settings = () => {
       text: "Notifications",
       action: navigateToNotifications,
     },
-    { icon: "wallet", text: "Wallet", action: navigateToWallet },
   ];
-
   const TermsItems = [
     {
       icon: "lock-outline",

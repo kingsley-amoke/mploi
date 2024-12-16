@@ -13,7 +13,7 @@ const UserProfile = () => {
 
   const { id } = useLocalSearchParams();
 
-  const user = fetchUserById(users, id.toLocaleString())!;
+  const user = users.find((user) => user._id === id)!;
 
   return <Profile user={user} />;
 };

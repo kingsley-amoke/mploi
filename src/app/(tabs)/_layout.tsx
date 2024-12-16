@@ -32,7 +32,11 @@ const TabLayout = () => {
           options={{
             tabBarLabel: "Home",
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="home" size={30} color={color} />
+              <MaterialCommunityIcons
+                name="home-outline"
+                size={30}
+                color={color}
+              />
             ),
             headerShown: false,
           }}
@@ -49,7 +53,7 @@ const TabLayout = () => {
                   size={30}
                   color={color}
                 />
-                {myRequests.length > 0 && (
+                {auth.currentUser && myRequests.length > 0 && (
                   <Badge style={{ position: "absolute", right: -2, top: -5 }}>
                     {myRequests.length}
                   </Badge>
@@ -65,7 +69,7 @@ const TabLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
-                name="briefcase-clock"
+                name="briefcase-clock-outline"
                 size={30}
                 color={color}
               />
@@ -73,13 +77,13 @@ const TabLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="notifications"
+          name="wallet"
           options={{
-            tabBarLabel: "Notiications",
+            tabBarLabel: "Wallet",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
-                name="bell-outline"
+                name="wallet-outline"
                 size={30}
                 color={color}
               />

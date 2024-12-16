@@ -14,10 +14,11 @@ import { useRouter } from "expo-router";
 import {
   useCategoryStore,
   useLocationStore,
+  useUsersStore,
   useUserStore,
 } from "@/src/state/store";
 import { Colors } from "../constants/Colors";
-import { CustomToast, getBlobFroUri } from "../utils/data";
+import { CustomToast, getBlobFroUri, getUsers } from "../utils/data";
 import { auth, firestoreDB, storage } from "../utils/firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { LinearGradient } from "expo-linear-gradient";
@@ -28,10 +29,8 @@ import ProgressBar from "./ProgressBar";
 
 const EditProfile = () => {
   const router = useRouter();
-
   const { location } = useLocationStore();
-
-  const { user } = useUserStore();
+  const { users, storeUsers } = useUsersStore();
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -41,6 +40,8 @@ const EditProfile = () => {
   const [phone, setPhone] = useState("");
 
   const [progress, setProgress] = useState(0);
+
+  const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
 
   const handleProfileImageSelection = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -76,6 +77,9 @@ const EditProfile = () => {
             updateDoc(userRef, { image: downloadURL }).then(async () => {
               setProgress(0);
               setLoading(false);
+              getUsers().then((res) => {
+                storeUsers(res);
+              });
             });
           });
         }
@@ -96,7 +100,11 @@ const EditProfile = () => {
 
     updateDoc(userRef, data)
       .then(() => {
-        router.push("/profile");
+        getUsers().then((res) => {
+          storeUsers(res);
+        });
+
+        router.push("/");
         CustomToast("Profile updated Successfully");
         setSaving(false);
       })
@@ -118,7 +126,10 @@ const EditProfile = () => {
 
     updateDoc(userRef, data)
       .then(() => {
-        router.push("/profile");
+        getUsers().then((res) => {
+          storeUsers(res);
+        });
+        router.push("/");
         CustomToast("Profile updated Successfully");
         setLoading(false);
       })

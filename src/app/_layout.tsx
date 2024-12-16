@@ -28,9 +28,7 @@ import {
   useShopsStore,
   useTransactionsStore,
   useUsersStore,
-  useUserStore,
 } from "../state/store";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { auth, realtimeDB } from "../utils/firebaseConfig";
 import {
   CustomToast,
@@ -76,8 +74,12 @@ export default function RootLayout() {
   const { storeTransactions } = useTransactionsStore();
   const { storeCV } = useCVStore();
   const { storeLocation } = useLocationStore();
+  const { storeUsers } = useUsersStore();
 
   const fetchAllUsers = async () => {
+    getUsers().then((users) => {
+      storeUsers(users);
+    });
     getTransactions().then((transactions) => {
       storeTransactions(transactions);
     });
@@ -340,6 +342,12 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="cv/index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="notifications/index"
               options={{
                 headerShown: false,
               }}

@@ -3,26 +3,19 @@ import FloatingButton from "@/src/components/FloatingButton";
 import { Colors } from "@/src/constants/Colors";
 import {
   useCategoryStore,
-  useChatStore,
   useLocationStore,
   useProductsStore,
   useShopsStore,
   useUsersStore,
-  useUserStore,
 } from "@/src/state/store";
-import {
-  createQueryString,
-  formatPrice,
-  getUsers,
-  shopAvatar,
-} from "@/src/utils/data";
+import { createQueryString, formatPrice, shopAvatar } from "@/src/utils/data";
 import { auth } from "@/src/utils/firebaseConfig";
 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 
-import React, { useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   FlatList,
   Image,
@@ -33,7 +26,6 @@ import {
 } from "react-native";
 import {
   ActivityIndicator,
-  Button,
   Divider,
   Text,
   TextInput,
@@ -41,8 +33,7 @@ import {
 import { SectionGrid } from "react-native-super-grid";
 
 const Home = () => {
-  const { storeUsers } = useUsersStore();
-  const { user, storeUser } = useUserStore();
+  const { storeUsers, users } = useUsersStore();
   const { categories } = useCategoryStore();
   const { shops } = useShopsStore();
   const { products } = useProductsStore();
@@ -51,6 +42,10 @@ const Home = () => {
 
   const [search, setSearch] = useState("");
 
+  const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
+  if (user?.suspended) {
+    router.replace("/suspended");
+  }
   const userLocation =
     location.length > 0
       ? location[0]?.regionName.subregion +
@@ -98,18 +93,6 @@ const Home = () => {
       router.push(`/search?${createQueryString("search", search)}`);
     }
   };
-
-  useLayoutEffect(() => {
-    getUsers().then((users) => {
-      storeUsers(users);
-
-      const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
-      storeUser(user);
-      if (user?.suspended) {
-        router.replace("/suspended");
-      }
-    });
-  }, [user]);
 
   const AdsArea = () => (
     <View style={{ marginHorizontal: 10 }}>
@@ -221,7 +204,7 @@ const Home = () => {
             </Text>
           </TouchableOpacity>
           <MaterialIcons
-            name="person"
+            name={auth.currentUser ? "person" : "login"}
             size={30}
             color="white"
             onPress={() =>
