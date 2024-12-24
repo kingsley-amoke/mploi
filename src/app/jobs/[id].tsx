@@ -337,9 +337,10 @@ const JobPage = () => {
             fontWeight: "800",
             textAlign: "center",
             flex: 1,
+            textTransform: "capitalize",
           }}
         >
-          {job.title}
+          {job.title.slice(0, 20)}
         </Text>
       </LinearGradient>
       <View style={{ paddingHorizontal: 24, marginTop: 10 }}>
@@ -350,15 +351,6 @@ const JobPage = () => {
           style={{ marginHorizontal: 20, marginVertical: 10 }}
           showsVerticalScrollIndicator={false}
         >
-          {/* <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              marginVertical: 10,
-            }}
-          >
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>MyPlug</Text>
-          </View> */}
           <Divider bold horizontalInset style={{ marginBottom: 10 }} />
           <View>
             <Text>Experience Level: {job.experience}</Text>

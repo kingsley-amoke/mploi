@@ -29,7 +29,7 @@ import {
   useTransactionsStore,
   useUsersStore,
 } from "../state/store";
-import { auth, realtimeDB } from "../utils/firebaseConfig";
+import { realtimeDB } from "../utils/firebaseConfig";
 import {
   CustomToast,
   exitApp,

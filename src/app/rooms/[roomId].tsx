@@ -6,9 +6,10 @@ import {
   ScrollView,
   StyleSheet,
   useColorScheme,
+  Pressable,
 } from "react-native";
 import { TextInput, Text, Avatar } from "react-native-paper";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Entypo,
   FontAwesome,
@@ -17,9 +18,9 @@ import {
 } from "@expo/vector-icons";
 import { DocumentData } from "firebase/firestore";
 import { auth, realtimeDB } from "@/src/utils/firebaseConfig";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
-import { useChatStore } from "@/src/state/store";
+import { useChatStore, useUsersStore } from "@/src/state/store";
 import { onValue, ref, set, serverTimestamp } from "firebase/database";
 import { Colors } from "@/src/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
@@ -27,9 +28,10 @@ import { LinearGradient } from "expo-linear-gradient";
 const Room = () => {
   const { roomId } = useLocalSearchParams();
 
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const { chats } = useChatStore();
+  const { users } = useUsersStore();
 
   const room = chats.find((chat) => chat._id === roomId);
 
@@ -68,15 +70,18 @@ const Room = () => {
     });
   };
 
-  const chatName =
+  const chatProfileId =
     auth.currentUser?.uid === room.client._id
-      ? room.serviceProvider.firstName + " " + room.serviceProvider.lastName
-      : room.client.firstName + " " + room.client.lastName;
+      ? room.serviceProvider._id
+      : room.client._id;
 
-  const chatImage =
-    auth.currentUser?.uid === room.client._id
-      ? room.serviceProvider.image
-      : room.client.image;
+  const chatProfile = useMemo(
+    () => users.find((user) => user._id == chatProfileId)!,
+    [roomId]
+  );
+
+  const chatName = chatProfile.firstName + " " + chatProfile.lastName;
+  const chatImage = chatProfile.image;
 
   const ChatHeader = () => {
     return (
@@ -97,7 +102,7 @@ const Room = () => {
           name="chevron-left"
           color="white"
           size={30}
-          onPress={() => navigation.goBack()}
+          onPress={() => router.back()}
         />
 
         <Text
@@ -112,7 +117,9 @@ const Room = () => {
         >
           {chatName}
         </Text>
-        <Avatar.Image source={{ uri: chatImage }} size={30} />
+        <Pressable onPress={() => router.push(`profile/${chatProfileId}`)}>
+          <Avatar.Image source={{ uri: chatImage }} size={30} />
+        </Pressable>
       </LinearGradient>
     );
   };

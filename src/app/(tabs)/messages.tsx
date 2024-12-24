@@ -7,9 +7,14 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link, useRouter } from "expo-router";
-import { useChatStore, useRequestStore, useUserStore } from "@/src/state/store";
+import {
+  useChatStore,
+  useRequestStore,
+  useUsersStore,
+  useUserStore,
+} from "@/src/state/store";
 import { Ionicons } from "@expo/vector-icons";
 import { DocumentData } from "firebase/firestore";
 import { LinearGradient } from "expo-linear-gradient";
@@ -20,6 +25,7 @@ const index = () => {
   const router = useRouter();
   const { chats } = useChatStore();
   const { requests } = useRequestStore();
+  const { users } = useUsersStore();
 
   const [search, setSearch] = useState("");
 
@@ -122,7 +128,7 @@ const index = () => {
                 <View style={{ marginBottom: 40 }}>
                   {myChats?.map((room) => (
                     <View key={room._id}>
-                      <MessageCard room={room} search={search} />
+                      <MessageCard room={room} search={search} users={users} />
                     </View>
                   ))}
                 </View>
@@ -157,19 +163,24 @@ const index = () => {
 const MessageCard = ({
   room,
   search,
+  users,
 }: {
   room: DocumentData;
+  users: DocumentData[];
   search: string;
 }) => {
-  const chatName =
+  const chatProfileId =
     auth.currentUser?.uid === room.client._id
-      ? room.serviceProvider.firstName + " " + room.serviceProvider.lastName
-      : room.client.firstName + " " + room.client.lastName;
+      ? room.serviceProvider._id
+      : room.client._id;
 
-  const chatImage =
-    auth.currentUser?.uid === room.client._id
-      ? room.serviceProvider.image
-      : room.client.image;
+  const chatProfile = useMemo(
+    () => users.find((user) => user._id == chatProfileId)!,
+    []
+  );
+
+  const chatName = chatProfile.firstName + " " + chatProfile.lastName;
+  const chatImage = chatProfile.image;
 
   let lastMessage = { text: "New message", timeStamp: Date.now() };
   let lastMessageId = "1";

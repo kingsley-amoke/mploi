@@ -1,5 +1,5 @@
 import { useJobsStore } from "@/src/state/store";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FlatList, ScrollView, TextInput, View } from "react-native";
 import { Button, Card, Divider, Text } from "react-native-paper";
 import { Colors } from "@/src/constants/Colors";
@@ -39,53 +39,69 @@ const career = () => {
     showMode("date");
   };
 
-  const filteredJobs = jobs.filter((job) => {
-    if (title != "") {
-      return job.title.toLowerCase().includes(title.toLowerCase());
-    } else if (location != "") {
-      return job.location.toLowerCase().includes(location.toLowerCase());
-    } else if (company != "") {
-      return job.company.toLowerCase().includes(company.value.toLowerCase());
-    } else if (workType != "") {
-      return job.workType.toLowerCase().includes(workType.value.toLowerCase());
-    } else if (date != new Date(Date.now())) {
-      return date.getTime() > new Date(parseInt(job._id)).getTime();
-    }
+  const filteredJobs = useMemo(
+    () =>
+      jobs.filter((job) => {
+        if (title != "") {
+          return job.title.toLowerCase().includes(title.toLowerCase());
+        } else if (location != "") {
+          return job.location.toLowerCase().includes(location.toLowerCase());
+        } else if (company != "") {
+          return job.company
+            .toLowerCase()
+            .includes(company.value.toLowerCase());
+        } else if (workType != "") {
+          return job.workType
+            .toLowerCase()
+            .includes(workType.value.toLowerCase());
+        } else if (date != new Date(Date.now())) {
+          return date.getTime() > new Date(parseInt(job._id)).getTime();
+        }
 
-    return jobs;
-  });
+        return jobs;
+      }),
+    [jobs.length, title, location, workType, date]
+  );
 
   const jobYears = new Set();
 
-  jobs
-    .map((job) => job._id)
-    .forEach((date) => {
-      const year = new Date(parseInt(date)).getFullYear().toString();
+  // jobs
+  //   .map((job) => job._id)
+  //   .forEach((date) => {
+  //     const year = new Date(parseInt(date)).getFullYear().toString();
 
-      jobYears.add(year);
-    });
+  //     jobYears.add(year);
+  //   });
 
-  const companyData = jobs
-    .map((job) => job.company)
-    .map((company) => {
-      return {
-        label: company,
-        value: company,
-      };
-    });
+  const companyData = useMemo(
+    () =>
+      jobs
+        .map((job) => job.company)
+        .map((company) => {
+          return {
+            label: company,
+            value: company,
+          };
+        }),
+    [jobs.length]
+  );
 
-  const jobTypeData = jobs
-    .map((job) => job.workType)
-    .map((type) => {
-      return {
-        label: type,
-        value: type,
-      };
-    });
+  const jobTypeData = useMemo(
+    () =>
+      jobs
+        .map((job) => job.workType)
+        .map((type) => {
+          return {
+            label: type,
+            value: type,
+          };
+        }),
+    [jobs.length]
+  );
 
-  const dateData = [...jobYears].map((e) => {
-    return { label: e, value: e };
-  });
+  // const dateData = [...jobYears].map((e) => {
+  //   return { label: e, value: e };
+  // });
 
   const JobRenderItem = (item: DocumentData) => {
     return (

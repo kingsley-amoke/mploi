@@ -4,15 +4,17 @@ import { useRouter } from "expo-router";
 import { useJobsStore } from "@/src/state/store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { deleteDoc, doc, DocumentData } from "firebase/firestore";
+import { UIActivityIndicator } from "react-native-indicators";
 
 import { firestoreDB } from "@/src/utils/firebaseConfig";
-import { ActivityIndicator, Divider, Text } from "react-native-paper";
+import { Button, Divider, Text } from "react-native-paper";
 import { CustomToast, getJobs } from "@/src/utils/data";
+import { Colors } from "@/src/constants/Colors";
 
 const CareerPage = () => {
   const router = useRouter();
 
-  const { jobs, storeJobs, deleteJob } = useJobsStore();
+  const { jobs, deleteJob } = useJobsStore();
 
   const [loading, setLoading] = useState(false);
 
@@ -75,31 +77,15 @@ const CareerPage = () => {
     );
   };
 
-  useEffect(() => {
-    getJobs()
-      .then((jobs) => {
-        storeJobs(jobs);
-      })
-      .catch((e) => console.log(e));
-  }, []);
-
   return (
     <>
-      <TouchableOpacity
-        style={{
-          alignItems: "flex-end",
-          justifyContent: "flex-end",
-          width: "100%",
-          padding: 20,
-        }}
+      <Button
+        mode="contained"
+        style={{ width: "50%", alignSelf: "center", marginVertical: 10 }}
         onPress={() => router.push("/jobs/add")}
       >
-        <MaterialCommunityIcons
-          name="plus"
-          size={30}
-          style={{ borderWidth: 1, borderRadius: 100 }}
-        />
-      </TouchableOpacity>
+        Add Job
+      </Button>
       {loading || jobs.length < 1 ? (
         <View
           style={{
@@ -114,10 +100,7 @@ const CareerPage = () => {
               <Text>No jobs today...</Text>
             </View>
           ) : (
-            <View>
-              <ActivityIndicator animating color="teal" size="small" />
-              <Text>Deleting...</Text>
-            </View>
+            <UIActivityIndicator color={Colors.primary} />
           )}
         </View>
       ) : (

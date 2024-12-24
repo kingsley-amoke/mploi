@@ -8,32 +8,35 @@ import {
   useShopsStore,
   useUsersStore,
 } from "@/src/state/store";
-import { createQueryString, formatPrice, shopAvatar } from "@/src/utils/data";
+import {
+  createQueryString,
+  formatPrice,
+  noAvatar,
+  shopAvatar,
+} from "@/src/utils/data";
 import { auth } from "@/src/utils/firebaseConfig";
 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   FlatList,
   Image,
+  Pressable,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  ActivityIndicator,
-  Divider,
-  Text,
-  TextInput,
-} from "react-native-paper";
+
+import { UIActivityIndicator } from "react-native-indicators";
+import { Avatar, Divider, Text, TextInput } from "react-native-paper";
 import { SectionGrid } from "react-native-super-grid";
 
 const Home = () => {
-  const { storeUsers, users } = useUsersStore();
+  const { users } = useUsersStore();
   const { categories } = useCategoryStore();
   const { shops } = useShopsStore();
   const { products } = useProductsStore();
@@ -42,7 +45,11 @@ const Home = () => {
 
   const [search, setSearch] = useState("");
 
-  const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
+  const user = useMemo(
+    () => users.find((usr) => usr._id === auth.currentUser?.uid),
+    [users.length, auth.currentUser?.uid]
+  );
+
   if (user?.suspended) {
     router.replace("/suspended");
   }
@@ -55,29 +62,40 @@ const Home = () => {
         ", " +
         user?.location?.regionName?.city;
 
-  const filteredCategories = categories.sort(function (a, b) {
-    if (a.name < b.name) {
-      return -1;
-    }
-    if (a.name > b.name) {
-      return 1;
-    }
-    return 0;
-  });
+  const filteredCategories = useMemo(
+    () =>
+      categories.sort(function (a, b) {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      }),
+    [categories.length]
+  );
 
-  const filteredShops = shops.sort(function (a, b) {
-    if (a.name < b.name) {
-      return -1;
-    }
-    if (a.name > b.name) {
-      return 1;
-    }
-    return 0;
-  });
+  const filteredShops = useMemo(
+    () =>
+      shops.sort(function (a, b) {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      }),
+    [shops.length]
+  );
 
   const topCategories = filteredCategories.slice(0, 15);
   const topShops = filteredShops.slice(0, 15);
-  const promoted = products.filter((item) => item.promo != "free");
+  const promoted = useMemo(
+    () => products.filter((item) => item.promo != "free"),
+    [products.length]
+  );
 
   const submitKey = {
     nativeEvent: { key: "Enter" },
@@ -196,21 +214,20 @@ const Home = () => {
                 fontSize: 18,
               }}
             >
-              Hi {auth.currentUser ? user?.lastName : "Anonymous"}
+              Hi {auth.currentUser && user ? user.lastName : "Anonymous"}
             </Text>
-            <Text style={{ color: "silver" }}>
-              {/* <MaterialIcons name="location-pin" color="white" /> */}
-              {userLocation}
-            </Text>
+            <Text style={{ color: "silver" }}>{userLocation}</Text>
           </TouchableOpacity>
-          <MaterialIcons
-            name={auth.currentUser ? "person" : "login"}
-            size={30}
-            color="white"
+          <Pressable
             onPress={() =>
               router.push(auth.currentUser ? "/profile" : "/login")
             }
-          />
+          >
+            <Avatar.Image
+              source={{ uri: auth.currentUser && user ? user.image : noAvatar }}
+              size={30}
+            />
+          </Pressable>
         </View>
         <Text
           style={{
@@ -250,7 +267,7 @@ const Home = () => {
           />
         </View>
       </LinearGradient>
-      {filteredShops.length > 0 ? (
+      {filteredCategories.length > 0 ? (
         <ScrollView>
           <SectionGrid
             showsVerticalScrollIndicator={false}
@@ -264,7 +281,7 @@ const Home = () => {
               },
             ]}
             renderItem={({ item }) => {
-              return (
+              return filteredCategories.length > 0 ? (
                 <Link
                   href={{
                     pathname: item.subshops
@@ -278,6 +295,8 @@ const Home = () => {
                     <CategoryCard category={item} />
                   </TouchableOpacity>
                 </Link>
+              ) : (
+                <Text>Loading...</Text>
               );
             }}
             renderSectionHeader={({ section }) => (
@@ -301,11 +320,7 @@ const Home = () => {
                 </Text>
                 <TouchableOpacity
                   style={{ flexDirection: "row", gap: 10 }}
-                  onPress={
-                    section.title != "Services"
-                      ? () => router.push("/shop")
-                      : () => router.push("/service")
-                  }
+                  onPress={() => router.push("/service")}
                 >
                   <Text
                     style={{
@@ -372,11 +387,7 @@ const Home = () => {
                 </Text>
                 <TouchableOpacity
                   style={{ flexDirection: "row", gap: 10 }}
-                  onPress={
-                    section.title != "Services"
-                      ? () => router.push("/shop")
-                      : () => router.push("/service")
-                  }
+                  onPress={() => router.push("/shop")}
                 >
                   <Text
                     style={{
@@ -395,16 +406,7 @@ const Home = () => {
           />
         </ScrollView>
       ) : (
-        <View
-          style={{
-            height: "100%",
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ActivityIndicator color={Colors.secondary} size={40} />
-        </View>
+        <UIActivityIndicator color={Colors.primary} />
       )}
       <FloatingButton />
     </SafeAreaView>

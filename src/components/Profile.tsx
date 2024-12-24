@@ -15,7 +15,7 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 
 import { Colors } from "@/src/constants/Colors";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -35,7 +35,7 @@ import { getBlobFroUri, getUsers, shopAvatar } from "../utils/data";
 import { LinearGradient } from "expo-linear-gradient";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 
-const Profile = ({ user }: { user: DocumentData | null }) => {
+const Profile = memo(({ user }: { user: DocumentData | null }) => {
   const router = useRouter();
 
   const { updateImage } = useImageStore();
@@ -76,14 +76,6 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
     }
     return 0;
   });
-
-  // const userReviews = reviews.filter(
-  //   (review) => review.productID === user?._id
-  // );
-
-  // const engagements = chats.filter(
-  //   (c) => c.serviceProvider._id === user?._id || c.client._id === user?._id
-  // ).length;
 
   //view image fullscreen
 
@@ -419,28 +411,29 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
             >
               Testimonials
             </Text>
+            {auth.currentUser?.uid == user?._id && (
+              <LinearGradient
+                colors={[Colors.primary, Colors.secondary]}
+                start={{ x: 0, y: 0.75 }}
+                end={{ x: 1, y: 0.25 }}
+                style={{
+                  borderRadius: 15,
+                  paddingHorizontal: 20,
 
-            <LinearGradient
-              colors={[Colors.primary, Colors.secondary]}
-              start={{ x: 0, y: 0.75 }}
-              end={{ x: 1, y: 0.25 }}
-              style={{
-                borderRadius: 15,
-                paddingHorizontal: 20,
-
-                paddingVertical: 7,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <MaterialCommunityIcons
-                name="plus"
-                size={20}
-                color="white"
-                onPress={showTestimonialDialog}
-              />
-            </LinearGradient>
+                  paddingVertical: 7,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="plus"
+                  size={20}
+                  color="white"
+                  onPress={showTestimonialDialog}
+                />
+              </LinearGradient>
+            )}
           </View>
 
           <FlatList
@@ -558,6 +551,6 @@ const Profile = ({ user }: { user: DocumentData | null }) => {
       </ScrollView>
     </View>
   );
-};
+});
 
 export default Profile;

@@ -8,7 +8,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import {
@@ -41,7 +41,10 @@ const EditProfile = () => {
 
   const [progress, setProgress] = useState(0);
 
-  const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
+  const user = useMemo(
+    () => users.find((usr) => usr._id === auth.currentUser?.uid)!,
+    []
+  );
 
   const handleProfileImageSelection = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

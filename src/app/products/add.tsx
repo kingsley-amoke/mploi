@@ -199,11 +199,15 @@ const add = () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           if (type == "photos") {
             setImages([...images, downloadURL]);
+            setProgress(0);
           } else {
             setVideo(downloadURL);
-            generateThumbnail();
+            generateThumbnail()
+              .then(() => {
+                setProgress(0);
+              })
+              .catch((e) => console.log(e));
           }
-          setProgress(0);
         });
       }
     );
