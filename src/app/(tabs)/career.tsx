@@ -9,6 +9,7 @@ import CustomDropdown from "@/src/components/CustomDropdown";
 import { useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { UIActivityIndicator } from "react-native-indicators";
 
 const career = () => {
   const { jobs } = useJobsStore();
@@ -284,8 +285,11 @@ const career = () => {
           </View>
         </View>
 
-        {filteredJobs.length > 0 &&
-          filteredJobs.map((job) => JobRenderItem(job))}
+        {filteredJobs.length > 0 ? (
+          filteredJobs.map((job) => JobRenderItem(job))
+        ) : (
+          <UIActivityIndicator color={Colors.primary} />
+        )}
       </ScrollView>
     </View>
   );

@@ -1,4 +1,4 @@
-import { View, SafeAreaView, TouchableOpacity, ScrollView } from "react-native";
+import { View, TouchableOpacity, ScrollView } from "react-native";
 import {
   Avatar,
   Badge,
@@ -20,6 +20,7 @@ import { DocumentData } from "firebase/firestore";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
 import { auth } from "@/src/utils/firebaseConfig";
+import { noAvatar } from "@/src/utils/data";
 
 const index = () => {
   const router = useRouter();
@@ -29,13 +30,21 @@ const index = () => {
 
   const [search, setSearch] = useState("");
 
-  const myRequests = requests.filter(
-    (req) => req.serviceProvider?._id === auth.currentUser?.uid
+  const myRequests = useMemo(
+    () =>
+      requests.filter(
+        (req) => req.serviceProvider?._id === auth.currentUser?.uid
+      ),
+    [requests.length]
   );
-  const myChats = chats.filter(
-    (c) =>
-      c.serviceProvider._id === auth.currentUser?.uid ||
-      c.client._id === auth.currentUser?.uid
+  const myChats = useMemo(
+    () =>
+      chats.filter(
+        (c) =>
+          c.serviceProvider._id === auth.currentUser?.uid ||
+          c.client._id === auth.currentUser?.uid
+      ),
+    [chats.length]
   );
 
   return (
@@ -116,7 +125,7 @@ const index = () => {
                 />
               </View>
 
-              {myChats.length < 1 ? (
+              {myChats.length < 1 || !myChats ? (
                 <>
                   <View
                     style={{ justifyContent: "center", alignItems: "center" }}
@@ -175,12 +184,12 @@ const MessageCard = ({
       : room.client._id;
 
   const chatProfile = useMemo(
-    () => users.find((user) => user._id == chatProfileId)!,
-    []
+    () => users.find((user) => user._id == chatProfileId),
+    [users.length]
   );
 
-  const chatName = chatProfile.firstName + " " + chatProfile.lastName;
-  const chatImage = chatProfile.image;
+  const chatName = chatProfile?.firstName + " " + chatProfile?.lastName || "";
+  const chatImage = chatProfile?.image || noAvatar;
 
   let lastMessage = { text: "New message", timeStamp: Date.now() };
   let lastMessageId = "1";

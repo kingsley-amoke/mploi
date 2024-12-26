@@ -5,13 +5,11 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  useColorScheme,
   Pressable,
 } from "react-native";
 import { TextInput, Text, Avatar } from "react-native-paper";
-import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
-  Entypo,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
@@ -33,7 +31,10 @@ const Room = () => {
   const { chats } = useChatStore();
   const { users } = useUsersStore();
 
-  const room = chats.find((chat) => chat._id === roomId);
+  const room = useMemo(
+    () => chats.find((chat) => chat._id === roomId),
+    [chats.length, roomId]
+  );
 
   if (!room) return;
 
@@ -124,7 +125,7 @@ const Room = () => {
     );
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     fetchRoomMessages();
   }, [roomId]);
 

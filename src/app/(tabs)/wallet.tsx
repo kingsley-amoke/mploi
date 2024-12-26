@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Button, SegmentedButtons, Surface, Text } from "react-native-paper";
 import { useTransactionsStore, useUsersStore } from "@/src/state/store";
 
@@ -11,30 +11,34 @@ import { Colors } from "@/src/constants/Colors";
 import { auth } from "@/src/utils/firebaseConfig";
 
 export default function Wallet() {
-  const [value, setValue] = useState("completed");
+  // const [value, setValue] = useState("completed");
 
   const router = useRouter();
 
-  const { transactions } = useTransactionsStore();
+  // const { transactions } = useTransactionsStore();
 
-  const { users } = useUsersStore();
+  // const { users } = useUsersStore();
 
-  const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
+  // const user = useMemo(
+  //   () => users.find((usr) => usr._id === auth.currentUser?.uid)!,
+  //   [users.length]
+  // );
 
-  const completedTransaction = transactions.filter(
-    (trans) =>
-      trans.status === "success" && trans.userId === auth.currentUser?.uid
-  );
-  const pendingTransaction = transactions.filter(
-    (trans) =>
-      trans.status === "pending" && trans.userId === auth.currentUser?.uid
-  );
-  const failedTransaction = transactions.filter(
-    (trans) =>
-      trans.status === "failed" && trans.userId === auth.currentUser?.uid
-  );
+  // const completedTransaction = transactions.filter(
+  //   (trans) =>
+  //     trans.status === "success" && trans.userId === auth.currentUser?.uid
+  // );
+  // const pendingTransaction = transactions.filter(
+  //   (trans) =>
+  //     trans.status === "pending" && trans.userId === auth.currentUser?.uid
+  // );
+  // const failedTransaction = transactions.filter(
+  //   (trans) =>
+  //     trans.status === "failed" && trans.userId === auth.currentUser?.uid
+  // );
 
-  const balance = formatPrice(parseFloat(user?.walletBalance || 0));
+  // const balance = formatPrice(parseFloat(user?.walletBalance || 0));
+  const balance = 0;
 
   return (
     <View style={{ flex: 1 }}>
@@ -109,7 +113,7 @@ export default function Wallet() {
             </Button>
           </View>
 
-          <View style={{ paddingHorizontal: 10 }}>
+          {/* <View style={{ paddingHorizontal: 10 }}>
             <Text
               variant="bodyLarge"
               style={{ marginVertical: 10, marginLeft: 5 }}
@@ -134,8 +138,8 @@ export default function Wallet() {
                 },
               ]}
             />
-          </View>
-          <ScrollView scrollEnabled showsVerticalScrollIndicator={false}>
+          </View> */}
+          {/* <ScrollView scrollEnabled showsVerticalScrollIndicator={false}>
             {value === "completed" ? (
               <TransactionsPage transactions={completedTransaction} />
             ) : value === "pending" ? (
@@ -143,7 +147,7 @@ export default function Wallet() {
             ) : (
               <TransactionsPage transactions={failedTransaction} />
             )}
-          </ScrollView>
+          </ScrollView> */}
         </>
       ) : (
         <View style={{ marginTop: 40 }}>

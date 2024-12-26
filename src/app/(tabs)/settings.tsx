@@ -1,5 +1,5 @@
 import { ScrollView, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "expo-router";
 import {
   FontAwesome,
@@ -20,7 +20,10 @@ const settings = () => {
   const router = useRouter();
   const { users } = useUsersStore();
 
-  const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
+  const user = useMemo(
+    () => users.find((usr) => usr._id === auth.currentUser?.uid)!,
+    [users.length]
+  );
 
   const navigateToEditProfile = () => {
     router.push("/profile/edit");
