@@ -40,7 +40,6 @@
     },
     "plugins": [
       "expo-router",
-   
       [
         "expo-location",
         {
@@ -51,6 +50,24 @@
         "expo-document-picker",
         {
           "iCloudContainerEnvironment": "Production"
+        }
+      ],
+      [
+        "@react-native-community/datetimepicker",
+        {
+          "android":{
+            "datePicker":{
+              "colorAccent":{
+                "light": "#BE1E2D"
+              },
+              "colorControlActivated":{
+                "light": "#BE1E2D"
+              },
+              "colorControlHighlight":{
+                "light":"#BE1E2D"
+              }
+            }
+          }
         }
       ]
     ],

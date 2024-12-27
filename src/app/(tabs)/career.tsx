@@ -10,6 +10,7 @@ import { useRouter } from "expo-router";
 import { DocumentData } from "firebase/firestore";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { UIActivityIndicator } from "react-native-indicators";
+import { Pressable } from "react-native";
 
 const career = () => {
   const { jobs } = useJobsStore();
@@ -269,20 +270,26 @@ const career = () => {
             value={company}
             setValue={setCompany}
           />
-          <View
+          <Pressable
             style={{
               flexDirection: "row",
               justifyContent: "center",
-              alignItems: "center",
+
+              alignItems: "flex-start",
             }}
+            onPress={showDatepicker}
           >
             <MaterialCommunityIcons
               name="calendar"
-              size={30}
-              color={Colors.secondary}
-              onPress={showDatepicker}
+              size={40}
+              color={Colors.grey}
             />
-          </View>
+            <MaterialCommunityIcons
+              name="arrow-down-bold"
+              size={20}
+              color={Colors.primary}
+            />
+          </Pressable>
         </View>
 
         {filteredJobs.length > 0 ? (

@@ -1,53 +1,54 @@
 //env variables
 
-import { doc, DocumentData } from "firebase/firestore"
-import { recharge, setTransaction } from "./data"
+import { doc, DocumentData } from "firebase/firestore";
+import { recharge, setTransaction } from "./data";
 
-const url = process.env.EXPO_PUBLIC_PAYSTACK_URL!
-const secretKey = process.env.EXPO_PUBLIC_PAYSTACK_KEY!
-
-
+const url = process.env.EXPO_PUBLIC_PAYSTACK_URL!;
+const secretKey = process.env.EXPO_PUBLIC_PAYSTACK_KEY!;
 
 //fetch all banks
 
-export const fetchAllBanks = async() => {
-    const banks = await fetch(`${url}/bank`)
-    const data = await banks.json()
+export const fetchAllBanks = async () => {
+  const banks = await fetch(`${url}/bank`);
+  const data = await banks.json();
 
-  return data.data
-}
-
+  return data.data;
+};
 
 //bank names
 
-export const getBankByCode = async(code:string) => {
-    const response = await fetchAllBanks().then((res) => {
-        const banks = res.filter((bank: any) => (bank.code === code))
-        return banks
-    });
+export const getBankByCode = async (code: string) => {
+  const response = await fetchAllBanks().then((res) => {
+    const banks = res.filter((bank: any) => bank.code === code);
+    return banks;
+  });
 
-    return response
-}
+  return response;
+};
 
-//validate account number 
+//validate account number
 
-export const validateAccountNumber = async(accountNumber:string, bankCode:string) => {
+export const validateAccountNumber = async (
+  accountNumber: string,
+  bankCode: string
+) => {
+  const options = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + secretKey,
+    },
+  };
 
-    const options = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + secretKey
-        },
-        
-    }
+  const res = await fetch(
+    `${url}/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`,
+    options
+  );
 
-    const res = await fetch(`${url}/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`, options)
+  const data = await res.json();
 
-    const data = await res.json()
-
-    return data
-}
+  return data;
+};
 
 //payment paystack
 
@@ -56,79 +57,73 @@ const getPaystackHeaders = () => ({
   "Content-Type": "application/json",
 });
 
-
 export const verifyPaystackTransaction = async (reference: string) => {
-    try {
-      const response = await fetch(
-        `https://api.paystack.co/transaction/verify/${reference}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer sk_test_a1c26ed17b48cb17ff04568ce8e3c3561d5466e1`,
-          },
-        }
-      );
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      return error;
-    }
-  };
-
+  try {
+    const response = await fetch(
+      `https://api.paystack.co/transaction/verify/${reference}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer sk_test_a1c26ed17b48cb17ff04568ce8e3c3561d5466e1`,
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
 
 export const verifyPayment = async (user: DocumentData, reference: string) => {
+  const response = await verifyPaystackTransaction(reference);
+  if (response.data.status === "success") {
+    const id = `${Date.now()}`;
 
-    const response = await verifyPaystackTransaction(reference);
-    if (response.data.status === "success") {
+    const trans: DocumentData = {
+      _id: id,
+      userId: user._id,
+      purpose: "wallet",
+      amount: (response.data.amount / 100).toString(),
+      status: response.data.status,
+      channel: response.data.channel,
+      currency: response.data.currency,
+      previousBalance: user?.walletBalance,
+      newBalance: (
+        response.data.amount / 100 +
+        parseInt(user?.walletBalance)
+      ).toString(),
+      reference: reference,
+      transactionId: response.data.id,
+      type: "deposit",
+    };
 
-      const id = `${Date.now()}`;
+    const rechargeAmount = (parseInt(trans.amount) - 50).toString();
 
-      const trans: DocumentData = {
-        _id: id,
-        userId: user._id,
-        purpose: "wallet",
-        amount: (response.data.amount / 100).toString(),
-        status: response.data.status,
-        channel: response.data.channel,
-        currency: response.data.currency,
-        previousBalance: user?.walletBalance,
-        newBalance: (
-          response.data.amount / 100 +
-          parseInt(user?.walletBalance)
-        ).toString(),
-        reference: reference,
-        transactionId: response.data.id,
-      };
-  
-      const rechargeAmount = (parseInt(trans.amount) - 50).toString();
-  
-      recharge(user?._id, rechargeAmount);
-  
-      setTransaction(trans);
+    recharge(user?._id, rechargeAmount);
 
-      return trans;
-    } else{
+    setTransaction(trans);
 
-      const id = `${Date.now()}`;
+    return trans;
+  } else {
+    const id = `${Date.now()}`;
 
-      const trans: DocumentData = {
-        _id: id,
-        userId: user._id,
-        purpose: "wallet",
-        amount: (response.data.amount / 100).toString(),
-        status: response.data.status,
-        channel: response.data.channel,
-        currency: response.data.currency,
-        previousBalance: user?.walletBalance,
-        newBalance: user?.walletBalance,
-        reference: reference,
-        transactionId: response.data.id,
-      };
-  
-      setTransaction(trans);
+    const trans: DocumentData = {
+      _id: id,
+      userId: user._id,
+      purpose: "wallet",
+      amount: (response.data.amount / 100).toString(),
+      status: response.data.status,
+      channel: response.data.channel,
+      currency: response.data.currency,
+      previousBalance: user?.walletBalance,
+      newBalance: user?.walletBalance,
+      reference: reference,
+      transactionId: response.data.id,
+    };
 
-      return trans;
-    }
-  
-  };
+    setTransaction(trans);
 
+    return trans;
+  }
+};

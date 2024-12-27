@@ -9,7 +9,9 @@ const tintColorDark = "#fff";
 export const Colors = {
   primary: "rgb(190,30,45)",
   secondary: "rgb(38, 34, 98)",
-  grey: "grey",
+  grey: "rgb(130, 122, 122)",
+  lightgrey: "rgba(255, 255, 255, 0.82)",
+  success: "rgb(17, 137, 37)",
   light: {
     primary: "rgb(190,30,45)",
     onPrimary: "rgb(255, 255, 255)",

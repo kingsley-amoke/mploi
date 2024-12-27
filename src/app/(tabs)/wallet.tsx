@@ -1,44 +1,74 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import {
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  SectionList,
+  StyleSheet,
+  View,
+} from "react-native";
 import React, { useMemo, useState } from "react";
-import { Button, SegmentedButtons, Surface, Text } from "react-native-paper";
+import { Button, Surface, Text } from "react-native-paper";
 import { useTransactionsStore, useUsersStore } from "@/src/state/store";
-
-import TransactionsPage from "@/src/components/TransactionsPage";
 import { useRouter } from "expo-router";
 import { formatPrice } from "@/src/utils/data";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
 import { auth } from "@/src/utils/firebaseConfig";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { DocumentData } from "firebase/firestore";
 
 export default function Wallet() {
-  // const [value, setValue] = useState("completed");
-
   const router = useRouter();
 
-  // const { transactions } = useTransactionsStore();
+  const { transactions } = useTransactionsStore();
+  const { users } = useUsersStore();
 
-  // const { users } = useUsersStore();
+  const [date, setDate] = useState(new Date(Date.now()));
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
 
-  // const user = useMemo(
-  //   () => users.find((usr) => usr._id === auth.currentUser?.uid)!,
-  //   [users.length]
-  // );
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
+  };
 
-  // const completedTransaction = transactions.filter(
-  //   (trans) =>
-  //     trans.status === "success" && trans.userId === auth.currentUser?.uid
-  // );
-  // const pendingTransaction = transactions.filter(
-  //   (trans) =>
-  //     trans.status === "pending" && trans.userId === auth.currentUser?.uid
-  // );
-  // const failedTransaction = transactions.filter(
-  //   (trans) =>
-  //     trans.status === "failed" && trans.userId === auth.currentUser?.uid
-  // );
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
 
-  // const balance = formatPrice(parseFloat(user?.walletBalance || 0));
-  const balance = 0;
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const user = useMemo(
+    () => users.find((usr) => usr._id === auth.currentUser?.uid)!,
+    [users.length]
+  );
+
+  const userTransactions = useMemo(
+    () => transactions.filter((trans) => trans.userId == auth.currentUser?.uid),
+    [transactions.length]
+  );
+
+  const data = [
+    {
+      title: "Main dishes",
+      data: userTransactions,
+    },
+    {
+      title: "Sides",
+      data: userTransactions,
+    },
+    {
+      title: "Drinks",
+      data: userTransactions,
+    },
+  ];
+
+  const balance = formatPrice(parseFloat(user?.walletBalance || 0));
 
   return (
     <View style={{ flex: 1 }}>
@@ -68,87 +98,179 @@ export default function Wallet() {
         </Text>
       </LinearGradient>
       {auth.currentUser ? (
-        <>
+        <View
+          style={{
+            width: "100%",
+            padding: 20,
+            gap: 20,
+          }}
+        >
           <View
             style={{
               width: "100%",
-              padding: 10,
-              justifyContent: "flex-end",
-              alignItems: "flex-end",
-              gap: 20,
-              marginVertical: 20,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
+            <Surface
+              style={{
+                padding: 12,
+                paddingTop: 10,
+                height: 100,
+                width: 300,
+                gap: 10,
+                borderRadius: 10,
+                backgroundColor: Colors.grey,
+              }}
+              elevation={4}
+            >
+              <Text
+                disabled
+                variant="titleLarge"
+                style={{
+                  color: Colors.lightgrey,
+                  fontSize: 22,
+                  fontWeight: "bold",
+                }}
+              >
+                Wallet Balance
+              </Text>
+              <Text
+                style={{
+                  color: Colors.lightgrey,
+                  fontSize: 22,
+                  fontWeight: "bold",
+                }}
+              >
+                {balance}
+              </Text>
+            </Surface>
+          </View>
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+            }}
+          >
+            <Pressable onPress={() => router.push("/wallet/fund")}>
+              <LinearGradient
+                colors={[Colors.primary, Colors.secondary]}
+                start={{ x: 0, y: 0.75 }}
+                end={{ x: 1, y: 0.25 }}
+                style={{
+                  paddingHorizontal: 20,
+                  paddingVertical: 10,
+                  flexDirection: "row",
+                  gap: 10,
+                  alignItems: "center",
+
+                  borderRadius: 10,
+                  elevation: 1,
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="arrow-bottom-left"
+                  color="#fff"
+                  size={30}
+                />
+                <Text style={{ color: "#fff", fontSize: 18 }}>Deposit</Text>
+              </LinearGradient>
+            </Pressable>
+            <Pressable>
+              <LinearGradient
+                colors={[Colors.primary, Colors.secondary]}
+                start={{ x: 0, y: 0.75 }}
+                end={{ x: 1, y: 0.25 }}
+                style={{
+                  paddingHorizontal: 20,
+                  paddingVertical: 10,
+                  flexDirection: "row",
+                  gap: 10,
+                  alignItems: "center",
+
+                  borderRadius: 10,
+                  elevation: 1,
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="arrow-top-right"
+                  color="#fff"
+                  size={30}
+                />
+                <Text style={{ color: "#fff", fontSize: 18 }}>Withdraw</Text>
+              </LinearGradient>
+            </Pressable>
+          </View>
+
+          <View>
             <View
               style={{
-                width: "100%",
-                justifyContent: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
                 alignItems: "center",
               }}
             >
-              <Surface
+              {show && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={date}
+                  mode={mode}
+                  is24Hour={true}
+                  onChange={onChange}
+                />
+              )}
+              <Text
                 style={{
-                  padding: 8,
-                  paddingTop: 10,
-                  height: 120,
-                  width: 300,
-                  gap: 10,
-                  borderRadius: 10,
+                  color: Colors.grey,
+                  fontSize: 24,
+                  fontWeight: "bold",
                 }}
-                elevation={4}
               >
-                <Text disabled variant="titleLarge">
-                  Balance
-                </Text>
-                <Text>{balance}</Text>
-              </Surface>
-            </View>
+                Recent Activities
+              </Text>
+              <Pressable
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
 
-            <Button
-              mode="outlined"
-              icon="plus"
-              onPress={() => router.push("/wallet/fund")}
-            >
-              Fund Wallet
-            </Button>
+                  alignItems: "flex-start",
+                }}
+                onPress={showDatepicker}
+              >
+                <MaterialCommunityIcons
+                  name="calendar"
+                  size={40}
+                  color={Colors.grey}
+                />
+                <MaterialCommunityIcons
+                  name="arrow-down-bold"
+                  size={20}
+                  color={Colors.primary}
+                />
+              </Pressable>
+            </View>
           </View>
 
-          {/* <View style={{ paddingHorizontal: 10 }}>
-            <Text
-              variant="bodyLarge"
-              style={{ marginVertical: 10, marginLeft: 5 }}
-            >
-              Payment History
-            </Text>
-            <SegmentedButtons
-              value={value}
-              onValueChange={setValue}
-              buttons={[
-                {
-                  label: "Completed",
-                  value: "completed",
-                },
-                {
-                  label: "Pending",
-                  value: "pending",
-                },
-                {
-                  label: "Failed",
-                  value: "failed",
-                },
-              ]}
-            />
-          </View> */}
-          {/* <ScrollView scrollEnabled showsVerticalScrollIndicator={false}>
-            {value === "completed" ? (
-              <TransactionsPage transactions={completedTransaction} />
-            ) : value === "pending" ? (
-              <TransactionsPage transactions={pendingTransaction} />
-            ) : (
-              <TransactionsPage transactions={failedTransaction} />
+          <SectionList
+            showsVerticalScrollIndicator={false}
+            sections={data}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => RenderItem(item)}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text
+                style={{
+                  marginVertical: 10,
+                  fontSize: 20,
+                  color: Colors.grey,
+                }}
+              >
+                {title}
+              </Text>
             )}
-          </ScrollView> */}
-        </>
+          />
+        </View>
       ) : (
         <View style={{ marginTop: 40 }}>
           <Text style={{ textAlign: "center", fontSize: 20 }}>
@@ -172,3 +294,59 @@ export default function Wallet() {
     </View>
   );
 }
+
+const RenderItem = (item: DocumentData) => (
+  <View
+    style={{
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginVertical: 7,
+    }}
+  >
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+      }}
+    >
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+
+          backgroundColor: Colors.lightgrey,
+          padding: 10,
+          borderRadius: 10,
+          elevation: 1,
+        }}
+      >
+        <MaterialCommunityIcons
+          name={
+            item.type == "deposit" ? "arrow-bottom-left" : "arrow-top-right"
+          }
+          size={25}
+          color={item.type == "deposit" ? Colors.success : Colors.primary}
+        />
+      </View>
+      <View>
+        <Text style={{ fontSize: 22, textTransform: "capitalize" }}>
+          {item.type}
+        </Text>
+        <Text style={{ fontSize: 22, textTransform: "capitalize" }}>17:30</Text>
+      </View>
+    </View>
+    <Text
+      style={{
+        fontSize: 18,
+        fontWeight: "bold",
+        color: Colors.grey,
+        flexShrink: 1,
+      }}
+    >
+      {formatPrice(parseFloat(item.amount))}
+    </Text>
+  </View>
+);
