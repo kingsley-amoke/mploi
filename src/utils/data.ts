@@ -241,35 +241,7 @@ export const setTransaction = (transaction: DocumentData) => {
   setDoc(transRef, transaction);
 };
 
-//fetch all transactions
-
-// export const getTransactions = async () => {
-//   const transactionsRef = collection(firestoreDB, "transactions");
-
-//   const transactions: DocumentData[] = [];
-
-//   const querySnapshot = await getDocs(transactionsRef);
-//   querySnapshot.forEach((doc) => {
-//     transactions.push(doc.data());
-//   });
-//   return transactions;
-// };
-
-//fetch all cvs
-
-// export const getCV = async () => {
-//   const cvRef = collection(firestoreDB, "resume");
-
-//   const cvs: DocumentData[] = [];
-
-//   const querySnapshot = await getDocs(cvRef);
-//   querySnapshot.forEach((doc) => {
-//     cvs.push(doc.data());
-//   });
-//   return cvs;
-// };
-
-//delete file from storage
+//delete image from storage
 
 export const deleteFromStorage = (fileUrl: string) => {
   const filename = extractImagePath(fileUrl);

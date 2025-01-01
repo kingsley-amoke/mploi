@@ -104,7 +104,7 @@ export const verifyPayment = async (user: DocumentData, reference: string) => {
 
     setTransaction(trans);
 
-    return trans;
+    return true;
   } else {
     const id = `${Date.now()}`;
 
@@ -124,6 +124,6 @@ export const verifyPayment = async (user: DocumentData, reference: string) => {
 
     setTransaction(trans);
 
-    return trans;
+    return false;
   }
 };
