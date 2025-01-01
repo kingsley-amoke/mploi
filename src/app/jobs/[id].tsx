@@ -324,7 +324,7 @@ const JobPage = () => {
               <Text>Note: {job.others}</Text>
             </View>
             <View style={{ marginVertical: 10 }}>
-              {user.isAdmin ? (
+              {!user.isAdmin ? (
                 <CustomModal
                   content={modalContent}
                   triggerText="Apply"
