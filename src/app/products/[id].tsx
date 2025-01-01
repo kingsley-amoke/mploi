@@ -1,26 +1,19 @@
 import {
   FlatList,
   Image,
-  Linking,
   Pressable,
-  SafeAreaView,
   ScrollView,
   Share,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Avatar, Button, Divider, Text, TextInput } from "react-native-paper";
-import React, { useLayoutEffect, useState } from "react";
-import {
-  Feather,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { Button, Divider, Text } from "react-native-paper";
+import React, { useEffect, useLayoutEffect, useMemo } from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   useGlobalSearchParams,
   useLocalSearchParams,
-  useNavigation,
   useRouter,
 } from "expo-router";
 import {
@@ -28,21 +21,29 @@ import {
   useProductsStore,
   useReviewsStore,
   useUsersStore,
-  useUserStore,
 } from "@/src/state/store";
 import {
   averageRating,
   createChat,
+  CustomToast,
   deleteFromStorage,
   formatPrice,
   shopAvatar,
 } from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
 import Reviews from "@/src/components/Reviews";
-import { ref } from "firebase/database";
-import { LinearGradient } from "expo-linear-gradient";
-import { deleteDoc, doc, DocumentData } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
+import FancyHeader from "@/src/components/FancyHeader";
+import moment from "moment";
+import { ImagesAssets } from "../../../assets/imageAssets";
 
 const ProductDetails = () => {
   const { id: productID } = useLocalSearchParams();
@@ -51,17 +52,18 @@ const ProductDetails = () => {
   const router = useRouter();
 
   const { products, deleteProduct } = useProductsStore();
-  const { reviews } = useReviewsStore();
-  const { user: loggedUser } = useUserStore();
+  const { reviews, storeReviews } = useReviewsStore();
   const { users } = useUsersStore();
 
   const { image, updateImage } = useImageStore();
 
-  const product = products.find((product) => product._id === productID);
-  const seller = users.find((user) => user._id === product?.sellerID);
-
-  const productReviews = reviews.filter(
-    (review) => review.productID === productID
+  const product = useMemo(
+    () => products.find((product) => product._id === productID),
+    [products.length, productID]
+  );
+  const seller = useMemo(
+    () => users.find((user) => user._id === product?.sellerID)!,
+    [users.length]
   );
 
   const onShare = async () => {
@@ -78,7 +80,11 @@ const ProductDetails = () => {
   //view image fullscreen
 
   const handleViewImage = () => {
-    router.push(`/image`);
+    if (image) {
+      router.push(`/image`);
+    } else {
+      CustomToast("This product has no image");
+    }
   };
 
   const ImageRenderItem = ({ item }: { item: string }) => {
@@ -107,17 +113,8 @@ const ProductDetails = () => {
   };
 
   const contactSeller = () => {
-    const id = `${Date.now()}`;
-    //create chat
-    const item = {
-      _id: id,
-      client: loggedUser,
-      serviceProvider: seller,
-    };
-
-    createChat(item).then(() => {
-      router.push(`/rooms/${item._id}`);
-    });
+    createChat(auth.currentUser?.uid!, seller._id);
+    router.push(`/`);
   };
 
   const removeProduct = () => {
@@ -136,137 +133,184 @@ const ProductDetails = () => {
     updateImage(product?.images[0]);
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      query(
+        collection(firestoreDB, "reviews"),
+        where("productID", "==", productID)
+      ),
+      (snapshot) => {
+        const reviews = snapshot.docs.map((doc) => doc.data());
+        storeReviews(reviews);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [productID]);
   return (
-    <ScrollView>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: 120,
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          color="white"
-          size={30}
-          onPress={() => router.back()}
-        />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-          }}
-        >
-          {product?.name.substring(0, 25)}
-        </Text>
-        <MaterialCommunityIcons
-          name="share-variant-outline"
-          size={20}
-          onPress={onShare}
-          color="white"
-        />
-      </LinearGradient>
-      <View>
-        <View
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Pressable
+    <View style={{ flex: 1 }}>
+      <FancyHeader
+        title={product?.name.substring(0, 25)}
+        backButton
+        rightComponent={
+          <MaterialCommunityIcons
+            name="share-variant-outline"
+            size={20}
+            onPress={() => onShare()}
+            color="white"
+          />
+        }
+      />
+      <ScrollView>
+        <View>
+          <View
             style={{
-              width: "100%",
-              height: 300,
-              justifyContent: "center",
               alignItems: "center",
-              borderRadius: 10,
-              marginBottom: 30,
+              justifyContent: "center",
             }}
-            onPress={handleViewImage}
           >
-            <Image
-              source={{ uri: image || shopAvatar }}
-              width={430}
-              height={300}
-              style={{ borderRadius: 10 }}
-            />
-          </Pressable>
-          {product?.images.length > 1 && (
-            <FlatList
-              data={product?.images}
-              horizontal
-              renderItem={ImageRenderItem}
-              showsHorizontalScrollIndicator={false}
-            />
-          )}
+            <Pressable
+              style={{
+                position: "relative",
+                width: "100%",
+                height: 300,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 10,
+                marginBottom: 40,
+              }}
+              onPress={handleViewImage}
+            >
+              <Image
+                source={{ uri: image || shopAvatar }}
+                width={430}
+                height={300}
+                style={{ borderRadius: 10 }}
+              />
+              <Image
+                source={Image.resolveAssetSource(ImagesAssets.logo)}
+                style={{
+                  width: 150,
+                  height: 50,
+                  opacity: 1,
+                  position: "absolute",
+                  bottom: 100,
+                }}
+              />
+              {moment(product?.promoExpiresOn).diff(moment()) > 0 && (
+                <Text
+                  style={{
+                    position: "absolute",
+                    bottom: 10,
+                    left: 10,
+                    backgroundColor: Colors.primary,
+                    color: "white",
+                    fontWeight: "condensedBold",
+                    fontSize: 18,
+                    padding: 10,
+                    borderRadius: 10,
+                  }}
+                >
+                  Promoted
+                </Text>
+              )}
+              {moment(product?.promoExpiresOn).diff(moment()) > 0 &&
+                product?.sellerID == auth.currentUser?.uid && (
+                  <Text
+                    style={{
+                      position: "absolute",
+                      bottom: -40,
+                      left: 10,
+                      fontWeight: "condensedBold",
+                      fontSize: 18,
+                      padding: 10,
+                      color: Colors.grey,
+                      borderRadius: 10,
+                    }}
+                  >
+                    Expires on: {moment(product?.promoExpiresOn).calendar()}
+                  </Text>
+                )}
+            </Pressable>
+            {product?.images.length > 1 && (
+              <FlatList
+                data={product?.images}
+                horizontal
+                renderItem={ImageRenderItem}
+                showsHorizontalScrollIndicator={false}
+              />
+            )}
+          </View>
+          <Divider
+            bold
+            horizontalInset
+            style={{ borderColor: "grey", marginTop: 20 }}
+          />
+          <View style={{ margin: 20 }}>
+            <Text
+              style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}
+            >
+              Product Details
+            </Text>
+            <View style={{ gap: 10, marginTop: 10 }}>
+              <Text>Name: {product?.name}</Text>
+              <Text>Description: {product?.description}</Text>
+              <Text>Location: {product?.location}</Text>
+              <Text>Price: {formatPrice(product?.price)}</Text>
+              <Text>Negotiable: {product?.negotiable ? "Yes" : "No"}</Text>
+              <Text>Seller: {seller.lastName}</Text>
+              <Text>Phone: {seller.phone}</Text>
+            </View>
+          </View>
         </View>
         <Divider
           bold
           horizontalInset
-          style={{ borderColor: "grey", marginTop: 20 }}
+          style={{ borderColor: "grey", marginVertical: 20 }}
         />
-        <View style={{ margin: 20 }}>
-          <Text
-            style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}
+        <Text style={{ color: Colors.light.error, paddingHorizontal: 20 }}>
+          Do not pay before deliveries, Physically inspect goods and sellers
+          before making payment. MyPlug will not be responsible for transactions
+        </Text>
+        <Divider
+          bold
+          horizontalInset
+          style={{ borderColor: "grey", marginVertical: 20 }}
+        />
+        <View style={{ marginHorizontal: 10 }}>
+          <Button
+            mode="contained"
+            onPress={
+              product?.sellerID == auth.currentUser?.uid
+                ? removeProduct
+                : contactSeller
+            }
+            style={{ paddingVertical: 10 }}
+            labelStyle={{ fontSize: 19 }}
           >
-            Product Details
-          </Text>
-          <View style={{ gap: 10, marginTop: 10 }}>
-            <Text>Name: {product?.name}</Text>
-            <Text>Description: {product?.description}</Text>
-            <Text>Location: {product?.location}</Text>
-            <Text>Price: {formatPrice(product?.price)}</Text>
-            <Text>Negotiable: {product?.negotiable ? "Yes" : "No"}</Text>
+            {product?.sellerID == auth.currentUser?.uid
+              ? "Delete Product"
+              : "Contact Seller"}
+          </Button>
+        </View>
+        <View style={{ marginBottom: 40, marginHorizontal: 10 }}>
+          <View style={{ marginVertical: 30 }}>
+            <Text
+              style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}
+            >
+              Review this product
+            </Text>
+          </View>
+
+          <View>
+            <Text>Total: ({reviews.length})</Text>
+            <Text>Average: {averageRating(reviews)}</Text>
           </View>
         </View>
-      </View>
-      <Divider
-        bold
-        horizontalInset
-        style={{ borderColor: "grey", marginVertical: 20 }}
-      />
-      <View style={{ marginHorizontal: 10 }}>
-        <Button
-          mode="contained"
-          onPress={
-            product?.sellerID == auth.currentUser?.uid
-              ? removeProduct
-              : contactSeller
-          }
-          style={{ paddingVertical: 10 }}
-          labelStyle={{ fontSize: 19 }}
-        >
-          {product?.sellerID == auth.currentUser?.uid
-            ? "Delete Product"
-            : "Contact Seller"}
-        </Button>
-      </View>
-      <View style={{ marginBottom: 40, marginHorizontal: 10 }}>
-        <View style={{ marginVertical: 30 }}>
-          <Text
-            style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}
-          >
-            Review this product
-          </Text>
-        </View>
 
-        <View>
-          <Text>Total: ({productReviews.length})</Text>
-          <Text>Average: {averageRating(productReviews)}</Text>
-        </View>
-      </View>
-
-      <Reviews itemID={productID} item="product" />
-    </ScrollView>
+        <Reviews itemID={productID} item="product" />
+      </ScrollView>
+    </View>
   );
 };
 

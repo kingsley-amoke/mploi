@@ -1,47 +1,12 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import React from "react";
 import { Text } from "react-native-paper";
-import { socialLinks } from "@/src/utils/data";
-import { LinearGradient } from "expo-linear-gradient";
-import { Colors } from "@/src/constants/Colors";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import FancyHeader from "@/src/components/FancyHeader";
 
 const Terms = () => {
-  const router = useRouter();
   return (
     <View>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: 120,
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          color="white"
-          size={30}
-          onPress={() => router.back()}
-        />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-          }}
-        >
-          Terms & Conditions
-        </Text>
-      </LinearGradient>
+      <FancyHeader title="Terms & Conditions" backButton />
 
       <ScrollView
         style={{ paddingVertical: 10, marginHorizontal: 30 }}

@@ -5,21 +5,41 @@ import { Button, Card, Text } from "react-native-paper";
 import { Colors } from "../constants/Colors";
 import { useRouter } from "expo-router";
 import { auth } from "../utils/firebaseConfig";
+import { Octicons } from "@expo/vector-icons";
+import { createChat, CustomToast } from "../utils/data";
 
 const UserCard = ({ user }: { user: DocumentData }) => {
   const router = useRouter();
 
+  const handleCreateChat = () => {
+    if (auth.currentUser) {
+      createChat(auth.currentUser.uid, user._id);
+      router.push(`/service/${user._id}`);
+    } else {
+      CustomToast("Please login to order services.");
+    }
+  };
+
   return (
-    <Card style={{ paddingVertical: 10, margin: 10 }}>
+    <Card style={{ margin: 5, position: "relative" }}>
       <Card.Cover source={{ uri: user.image }} resizeMode="contain" />
+      {/* <Octicons
+        name="dot-fill"
+        color={user?.isOnline ? Colors.success : Colors.offline}
+        size={30}
+        style={{
+          position: "absolute",
+          bottom: -6,
+          right: 8,
+        }}
+      /> */}
       <Card.Content
         style={{
-          marginVertical: 10,
+          marginVertical: 5,
           justifyContent: "space-between",
-          marginHorizontal: 10,
         }}
       >
-        <View style={{ marginBottom: 10 }}>
+        <View style={{ marginBottom: 5 }}>
           <Text
             variant="titleLarge"
             style={{
@@ -47,7 +67,7 @@ const UserCard = ({ user }: { user: DocumentData }) => {
             {user?.location?.regionName?.city}
           </Text>
         </View>
-        <View style={{ flexDirection: "row", gap: 10 }}>
+        <View style={{ gap: 10 }}>
           <Button
             mode="contained"
             icon="eye"
@@ -61,7 +81,7 @@ const UserCard = ({ user }: { user: DocumentData }) => {
             icon="book"
             onPress={
               auth.currentUser?.uid
-                ? () => router.push(`/service/${user._id}`)
+                ? () => handleCreateChat()
                 : () => router.push(`/login`)
             }
           >

@@ -5,17 +5,12 @@ import { useRequestStore, useUserStore } from "@/src/state/store";
 import { DocumentData } from "firebase/firestore";
 import { ref, remove } from "firebase/database";
 import { realtimeDB } from "@/src/utils/firebaseConfig";
-import { createChat, CustomToast, deduct } from "@/src/utils/data";
+import { createChat } from "@/src/utils/data";
 import { useRouter } from "expo-router";
-import { CustomModal } from "@/src/components/CustomModal";
-import { MaterialIcons } from "@expo/vector-icons";
 
 const requests = () => {
   const router = useRouter();
   const { requests, deleteRequest } = useRequestStore();
-  const { user, decreaseUserBalance } = useUserStore();
-
-  const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const RequestRenderItem = ({ item }: { item: DocumentData }) => {
@@ -28,50 +23,41 @@ const requests = () => {
     };
 
     const handleAcceptRequest = () => {
-      const charge = 500;
-
-      if (user.walletBalance < charge) {
-        setVisible(false);
-        CustomToast("Insuficient funds");
-        return;
-      }
       setLoading(true);
       const requestRef = ref(realtimeDB, "requests/");
       createChat(item).then(() => {
         router.push(`/rooms/${item._id}`);
-        setVisible(false);
+
         remove(requestRef).then(() => {
           deleteRequest(item);
-          deduct(user, charge);
-          decreaseUserBalance(charge);
         });
       });
       setLoading(false);
     };
 
-    const modalContent = (
-      <View style={{ marginBottom: 10 }}>
-        <MaterialIcons name="info" size={30} style={{ textAlign: "center" }} />
-        <Text style={{ fontWeight: "bold", marginVertical: 10 }}>
-          This action will cost you NGN 500.
-        </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 20,
-          }}
-        >
-          <Button mode="outlined" onPress={() => setVisible(false)}>
-            Cancel
-          </Button>
-          <Button mode="contained" onPress={() => handleAcceptRequest()}>
-            {loading ? "PLease wait " : "Continue"}
-          </Button>
-        </View>
-      </View>
-    );
+    // const modalContent = (
+    //   <View style={{ marginBottom: 10 }}>
+    //     <MaterialIcons name="info" size={30} style={{ textAlign: "center" }} />
+    //     <Text style={{ fontWeight: "bold", marginVertical: 10 }}>
+    //       This action will cost you NGN 500.
+    //     </Text>
+    //     <View
+    //       style={{
+    //         flexDirection: "row",
+    //         justifyContent: "space-between",
+    //         alignItems: "center",
+    //         gap: 20,
+    //       }}
+    //     >
+    //       <Button mode="outlined" onPress={() => setVisible(false)}>
+    //         Cancel
+    //       </Button>
+    //       <Button mode="contained" onPress={() => handleAcceptRequest()}>
+    //         {loading ? "PLease wait " : "Continue"}
+    //       </Button>
+    //     </View>
+    //   </View>
+    // );
 
     return (
       <View
@@ -101,13 +87,9 @@ const requests = () => {
           <Button mode="outlined" onPress={handleDecline}>
             Decline
           </Button>
-
-          <CustomModal
-            triggerText="Accept"
-            content={modalContent}
-            visible={visible}
-            setVisible={setVisible}
-          />
+          <Button mode="contained" onPress={() => handleAcceptRequest()}>
+            {loading ? "PLease wait " : "Continue"}
+          </Button>
         </View>
       </View>
     );

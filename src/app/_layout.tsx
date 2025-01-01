@@ -1,5 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import { useColorScheme } from "react-native";
+import { useColorScheme, View } from "react-native";
 import {
   MD3DarkTheme,
   MD3LightTheme,
@@ -18,33 +18,24 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useLayoutEffect } from "react";
 import {
   useCategoryStore,
-  useChatStore,
-  useCVStore,
   useJobsStore,
   useLocationStore,
   useProductsStore,
-  useRequestStore,
-  useReviewsStore,
   useShopsStore,
-  useTransactionsStore,
   useUsersStore,
 } from "../state/store";
-import { realtimeDB } from "../utils/firebaseConfig";
+import { firestoreDB, realtimeDB } from "../utils/firebaseConfig";
 import {
   CustomToast,
   exitApp,
-  getCV,
   getJobs,
-  getProducts,
-  getReviews,
   getServices,
   getShops,
-  getTransactions,
-  getUsers,
 } from "../utils/data";
-import { onValue, ref } from "firebase/database";
 import { RootSiblingParent } from "react-native-root-siblings";
 import * as Location from "expo-location";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import React from "react";
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark };
 const customLightTheme = { ...MD3LightTheme, colors: Colors.light };
@@ -66,24 +57,12 @@ export default function RootLayout() {
 
   const { storeJobs } = useJobsStore();
   const { storeCategory } = useCategoryStore();
-  const { storeChats } = useChatStore();
-  const { storeRequests } = useRequestStore();
+
   const { storeShops } = useShopsStore();
   const { storeProducts } = useProductsStore();
-  const { storeReviews } = useReviewsStore();
-  const { storeTransactions } = useTransactionsStore();
-  const { storeCV } = useCVStore();
+
   const { storeLocation } = useLocationStore();
   const { storeUsers } = useUsersStore();
-
-  const fetchAllUsers = async () => {
-    getUsers().then((users) => {
-      storeUsers(users);
-    });
-    getTransactions().then((transactions) => {
-      storeTransactions(transactions);
-    });
-  };
 
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -124,38 +103,16 @@ export default function RootLayout() {
     storeShops(shops);
   };
 
-  const fetchProducts = async () => {
-    const products = await getProducts();
+  const fetchProducts = () => {
+    const unsubscribe = onSnapshot(
+      collection(firestoreDB, "products"),
+      (snapshot) => {
+        const products = snapshot.docs.map((doc) => doc.data());
+        storeProducts(products);
+      }
+    );
 
-    storeProducts(products);
-  };
-
-  const fetchAllChats = () => {
-    const chatRef = ref(realtimeDB, "chats/");
-    onValue(chatRef, (snapshot) => {
-      const data = snapshot.val();
-
-      if (!data) return;
-      const myData = Object.keys(data).map((key) => {
-        return data[key];
-      });
-
-      storeChats(myData);
-    });
-  };
-
-  const fetchAllRequests = async () => {
-    const requestRef = ref(realtimeDB, "requests/");
-    onValue(requestRef, (snapshot) => {
-      const data = snapshot.val();
-
-      if (!data) return;
-      const myData = Object.keys(data).map((key) => {
-        return data[key];
-      });
-
-      storeRequests(myData);
-    });
+    return () => unsubscribe();
   };
 
   const fetchAllJobs = async () => {
@@ -163,27 +120,22 @@ export default function RootLayout() {
     storeJobs(jobs);
   };
 
-  const fetchReviews = async () => {
-    const reviews = await getReviews();
-    storeReviews(reviews);
-  };
-
-  const fetchCVs = async () => {
-    const cvs = await getCV();
-    storeCV(cvs);
-  };
-
   useEffect(() => {
     getLocation();
     fetchServices();
-    fetchAllChats();
-    fetchAllRequests();
-    fetchAllUsers();
     fetchAllJobs();
     fetchShops();
     fetchProducts();
-    fetchReviews();
-    fetchCVs();
+
+    const unsubscribe = onSnapshot(
+      collection(firestoreDB, "users"),
+      (snapshot) => {
+        const cvs = snapshot.docs.map((doc) => doc.data());
+        storeUsers(cvs);
+      }
+    );
+
+    return () => unsubscribe();
   }, []);
 
   return (

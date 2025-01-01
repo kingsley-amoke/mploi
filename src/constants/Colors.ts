@@ -12,6 +12,9 @@ export const Colors = {
   grey: "rgb(130, 122, 122)",
   lightgrey: "rgba(255, 255, 255, 0.82)",
   success: "rgb(17, 137, 37)",
+  golden: "rgb(224, 175, 28)",
+  online: "rgba(17, 137, 37, .7)",
+  offline: "rgba(120, 115, 115, .8)",
   light: {
     primary: "rgb(190,30,45)",
     onPrimary: "rgb(255, 255, 255)",

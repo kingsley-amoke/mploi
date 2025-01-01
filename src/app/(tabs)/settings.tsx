@@ -7,14 +7,12 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { Text } from "react-native-paper";
-import { signOut } from "firebase/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { auth } from "@/src/utils/firebaseConfig";
+import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
 import { ExternalLink } from "@/src/components/ExternalLink";
-import { useUsersStore, useUserStore } from "@/src/state/store";
-import { socialLinks } from "@/src/utils/data";
-import { LinearGradient } from "expo-linear-gradient";
-import { Colors } from "@/src/constants/Colors";
+import { useUsersStore } from "@/src/state/store";
+import { CustomToast, socialLinks } from "@/src/utils/data";
+import FancyHeader from "@/src/components/FancyHeader";
+import { doc, updateDoc } from "firebase/firestore";
 
 const settings = () => {
   const router = useRouter();
@@ -30,15 +28,12 @@ const settings = () => {
   };
 
   const navigateToNotifications = () => {
-    router.push("/notifications");
+    CustomToast("Coming soon...");
+    // router.push("/notifications");
   };
 
   const navigateToPrivacy = () => {
     router.push("/privacy");
-  };
-
-  const navigateToWallet = () => {
-    router.navigate("/wallet");
   };
 
   const navigateToDisclaimer = () => {
@@ -54,9 +49,11 @@ const settings = () => {
   };
 
   const logout = () => {
-    signOut(auth);
-    AsyncStorage.removeItem("@user");
-    router.replace("/");
+    const userRef = doc(firestoreDB, "users", auth.currentUser?.uid!);
+    auth.signOut().then(() => {
+      updateDoc(userRef, { isOnline: false });
+      router.replace("/");
+    });
   };
 
   const login = () => {
@@ -199,31 +196,7 @@ const settings = () => {
         flex: 1,
       }}
     >
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: "12%",
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-          }}
-        >
-          Settings
-        </Text>
-      </LinearGradient>
+      <FancyHeader title="Settings" />
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Account Settings */}
         {auth.currentUser && (

@@ -48,7 +48,7 @@ const TabLayout = () => {
       <Tabs.Screen
         name="messages"
         options={{
-          tabBarLabel: "Messages",
+          tabBarLabel: "Chats",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <View>

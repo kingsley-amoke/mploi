@@ -1,9 +1,7 @@
 import { View, Pressable, ScrollView } from "react-native";
 import { Button, Text } from "react-native-paper";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Checkbox from "expo-checkbox";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "expo-router";
@@ -17,8 +15,8 @@ import { firestoreDB } from "../utils/firebaseConfig";
 import { useForm } from "react-hook-form";
 import ValidatedInput from "./ValidatedInput";
 import { CustomToast, noAvatar } from "../utils/data";
-import { LinearGradient } from "expo-linear-gradient";
-import { Colors } from "../constants/Colors";
+import moment from "moment";
+import FancyHeader from "./FancyHeader";
 
 const Signup = () => {
   const auth = getAuth();
@@ -27,7 +25,7 @@ const Signup = () => {
   const { storeUser } = useUserStore();
   const { location } = useLocationStore();
 
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -94,6 +92,8 @@ const Signup = () => {
           phoneVerified: false,
           createdAt: Date.now(),
           bio: "",
+          isOnline: true,
+          VIPExpiresOn: moment().toISOString(),
           location: location[0],
           walletBalance: "0",
           referralBalance: "0",
@@ -123,41 +123,7 @@ const Signup = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: "12%",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-
-          flexDirection: "row",
-          paddingBottom: 10,
-        }}
-      >
-        <Button
-          mode="outlined"
-          style={{ borderRadius: 2, marginLeft: 10 }}
-          labelStyle={{ color: "white", fontWeight: "bold" }}
-          onPress={() => router.back()}
-        >
-          BACK
-        </Button>
-        <Text
-          style={{
-            fontSize: 30,
-            fontWeight: "bold",
-            textAlign: "center",
-            color: "white",
-            position: "absolute",
-            left: "40%",
-            bottom: "10%",
-          }}
-        >
-          MyPlug
-        </Text>
-      </LinearGradient>
+      <FancyHeader title="MyPlug" backButton />
       <ScrollView
         style={{ marginHorizontal: 10 }}
         showsVerticalScrollIndicator={false}

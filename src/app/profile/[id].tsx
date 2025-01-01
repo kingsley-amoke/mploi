@@ -4,13 +4,9 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useMemo } from "react";
 
 const UserProfile = () => {
-  const { users } = useUsersStore();
-
   const { id } = useLocalSearchParams();
 
-  const user = useMemo(() => users.find((user) => user._id === id)!, [id]);
-
-  return <Profile user={user} />;
+  return <Profile userId={id.toString()} />;
 };
 
 export default UserProfile;

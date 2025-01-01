@@ -1,32 +1,24 @@
 import {
   View,
-  Image,
   Pressable,
-  TouchableOpacity,
   GestureResponderEvent,
-  useColorScheme,
   ScrollView,
 } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "expo-router";
-import { useUserStore } from "@/src/state/store";
-import { Colors } from "../constants/Colors";
-import { doc, getDoc } from "firebase/firestore";
-import { firestoreDB } from "../utils/firebaseConfig";
 import { CustomToast } from "../utils/data";
-import { LinearGradient } from "expo-linear-gradient";
+import FancyHeader from "./FancyHeader";
 
 const Login = () => {
   const auth = getAuth();
   const router = useRouter();
 
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [show, setShow] = useState(true);
@@ -52,41 +44,7 @@ const Login = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: "12%",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-
-          flexDirection: "row",
-          paddingBottom: 10,
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          size={30}
-          onPress={() => router.replace("/")}
-          color="white"
-          style={{ marginLeft: 20 }}
-        />
-
-        <Text
-          style={{
-            fontSize: 30,
-            fontWeight: "bold",
-            textAlign: "center",
-            color: "white",
-            position: "absolute",
-            left: "40%",
-            bottom: "10%",
-          }}
-        >
-          MyPlug
-        </Text>
-      </LinearGradient>
+      <FancyHeader title="MyPlug" backButton />
       <ScrollView
         style={{ marginHorizontal: 10 }}
         showsVerticalScrollIndicator={false}

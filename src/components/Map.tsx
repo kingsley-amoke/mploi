@@ -29,11 +29,11 @@ const Map = ({
     longitudeDelta: longitudeDelta,
   };
 
-  const handleCancelService = () => {
-    router.replace("/");
-    CustomToast("Service cancelled Successfully");
-    handleDeleteRequest();
-  };
+  // const handleCancelService = () => {
+  //   router.replace("/");
+  //   // CustomToast("Service cancelled Successfully");
+  //   // handleDeleteRequest();
+  // };
 
   const handleDeleteRequest = () => {
     const requestRef = ref(realtimeDB, `requests/${requestID}`);
@@ -101,8 +101,8 @@ const Map = ({
             >
               Profile
             </Button>
-            <Button mode="contained" onPress={handleCancelService}>
-              Cancel Service
+            <Button mode="contained" onPress={() => router.replace("/")}>
+              Home
             </Button>
           </View>
         </View>

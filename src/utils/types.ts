@@ -1,4 +1,5 @@
 import { DocumentData } from "firebase/firestore";
+import moment from "moment";
 import { ImageSourcePropType } from "react-native";
 
 export interface chatTypes {
@@ -211,9 +212,10 @@ export interface ProductTypes {
   negotiable: boolean;
   sellerID: string;
   images: string[];
-  videos: string[];
+  video: string;
   category: string;
   promo: string;
+  promoExpiresOn: string;
 }
 
 export interface ReviewTypes {

@@ -19,8 +19,9 @@ import * as DocumentPicker from "expo-document-picker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { useUserStore } from "@/src/state/store";
-import ProgressBar from "@/src/components/ProgressBar";
 import { CustomToast, deduct } from "@/src/utils/data";
+import { Colors } from "@/src/constants/Colors";
+import { UIActivityIndicator } from "react-native-indicators";
 
 const Plans = ({
   title,
@@ -40,7 +41,7 @@ const Plans = ({
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [currentCV, setCurrentCV] = useState("");
 
   async function pickCV() {
@@ -53,6 +54,7 @@ const Plans = ({
   }
 
   async function uploadCV(file: string) {
+    setLoading(true);
     const docID = `${Date.now()}`;
 
     const response = await fetch(file);
@@ -62,37 +64,55 @@ const Plans = ({
 
     const uploadTask = uploadBytesResumable(storageRef, blob);
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    getDownloadURL(uploadTask.snapshot.ref)
+      .then(async (downloadURL) => {
+        // save record
 
-        setProgress(Math.floor(progress));
-      },
-      (error) => {
-        // handle error
-        CustomToast("Something went wrong!!");
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          // save record
-
-          await setDoc(cvRef, {
-            _id: docID,
-            userID: loggedUser?._id,
-            userEmail: loggedUser?.email,
-            userPhone: loggedUser?.phone,
-            resume: downloadURL,
-            plan: title,
-            price: price,
-            status: "pending",
-          });
-          setCurrentCV(docID);
-          setProgress(0);
+        await setDoc(cvRef, {
+          _id: docID,
+          userID: loggedUser?._id,
+          userEmail: loggedUser?.email,
+          userPhone: loggedUser?.phone,
+          resume: downloadURL,
+          plan: title,
+          price: price,
+          status: "pending",
         });
-      }
-    );
+        setCurrentCV(docID);
+      })
+      .finally(() => setLoading(false));
+
+    // uploadTask.on(
+    //   "state_changed",
+    //   (snapshot) => {
+    //     const progress =
+    //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+    //     setLoading(true)
+    //   },
+    //   (error) => {
+    //     // handle error
+    //     CustomToast("Something went wrong!!");
+    //   },
+    //   () => {
+    //     getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+    //       // save record
+
+    //       await setDoc(cvRef, {
+    //         _id: docID,
+    //         userID: loggedUser?._id,
+    //         userEmail: loggedUser?.email,
+    //         userPhone: loggedUser?.phone,
+    //         resume: downloadURL,
+    //         plan: title,
+    //         price: price,
+    //         status: "pending",
+    //       });
+    //       setCurrentCV(docID);
+    //       setLoading(false)
+    //     });
+    //   }
+    // );
   }
 
   const onCancel = () => {
@@ -172,20 +192,16 @@ const Plans = ({
                   height: 200,
                   justifyContent: "center",
                   alignItems: "center",
-                  backgroundColor: "silver",
-                  borderRadius: 10,
+
                   margin: 20,
                 }}
                 onPress={pickCV}
               >
-                {progress > 0 ? (
+                {loading ? (
                   <View
                     style={{ justifyContent: "center", alignItems: "center" }}
                   >
-                    <Text style={{ marginBottom: 10 }}>
-                      {progress === 100 ? "Done" : "Uploading..."}
-                    </Text>
-                    <ProgressBar progress={progress} barWidth={300} />
+                    <UIActivityIndicator color={Colors.primary} />
                   </View>
                 ) : (
                   <View

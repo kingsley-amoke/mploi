@@ -7,6 +7,7 @@ import {
   useProductsStore,
   useShopsStore,
   useUsersStore,
+  useUserStore,
 } from "@/src/state/store";
 import {
   createQueryString,
@@ -14,13 +15,22 @@ import {
   noAvatar,
   shopAvatar,
 } from "@/src/utils/data";
-import { auth } from "@/src/utils/firebaseConfig";
+import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import moment from "moment";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -36,7 +46,7 @@ import { Avatar, Divider, Text, TextInput } from "react-native-paper";
 import { SectionGrid } from "react-native-super-grid";
 
 const Home = () => {
-  const { users } = useUsersStore();
+  const { user, storeUser } = useUserStore();
   const { categories } = useCategoryStore();
   const { shops } = useShopsStore();
   const { products } = useProductsStore();
@@ -44,11 +54,6 @@ const Home = () => {
   const { location } = useLocationStore();
 
   const [search, setSearch] = useState("");
-
-  const user = useMemo(
-    () => users.find((usr) => usr._id === auth.currentUser?.uid),
-    [users.length, auth.currentUser?.uid]
-  );
 
   if (user?.suspended) {
     router.replace("/suspended");
@@ -93,7 +98,8 @@ const Home = () => {
   const topCategories = filteredCategories.slice(0, 15);
   const topShops = filteredShops.slice(0, 15);
   const promoted = useMemo(
-    () => products.filter((item) => item.promo != "free"),
+    () =>
+      products.filter((item) => moment(item.promoExpiresOn).diff(moment()) > 0),
     [products.length]
   );
 
@@ -110,6 +116,22 @@ const Home = () => {
     if (key === "Enter" && search !== "") {
       router.push(`/search?${createQueryString("search", search)}`);
     }
+  };
+
+  const fetchUser = () => {
+    const unsubscribe = onSnapshot(
+      query(
+        collection(firestoreDB, "users"),
+        where("_id", "==", auth.currentUser?.uid)
+      ),
+      (snapshot) => {
+        const usersArray = snapshot.docs.map((document) => {
+          return document.data();
+        });
+        storeUser(usersArray[0]);
+      }
+    );
+    return () => unsubscribe();
   };
 
   const AdsArea = () => (
@@ -135,11 +157,12 @@ const Home = () => {
               alignItems: "center",
               flexDirection: "row",
               marginVertical: 10,
-              borderWidth: 1,
-              borderColor: "grey",
+
               borderRadius: 6,
               marginRight: 10,
-              height: 100,
+              elevation: 1,
+              shadowColor: Colors.grey,
+              height: 120,
               width: 250,
             }}
             onPress={() => router.push(`/products/${item._id}`)}
@@ -147,7 +170,7 @@ const Home = () => {
             <View style={{ width: "40%", height: "100%" }}>
               <Image
                 source={{ uri: item.images[0] || shopAvatar }}
-                height={98}
+                height={120}
                 style={{ borderTopLeftRadius: 6, borderBottomLeftRadius: 6 }}
               />
             </View>
@@ -179,6 +202,20 @@ const Home = () => {
       />
     </View>
   );
+
+  useEffect(() => {
+    const updateOnlineStatus = () => {
+      if (!auth.currentUser) {
+        return;
+      } else {
+        const userRef = doc(firestoreDB, "users", auth.currentUser?.uid!);
+        updateDoc(userRef, { isOnline: true });
+      }
+    };
+    updateOnlineStatus();
+
+    auth.currentUser && fetchUser();
+  }, [auth.currentUser]);
 
   return (
     <SafeAreaView style={{ height: "100%" }}>
@@ -220,7 +257,11 @@ const Home = () => {
           </TouchableOpacity>
           <Pressable
             onPress={() =>
-              router.push(auth.currentUser ? "/profile" : "/login")
+              router.push(
+                auth.currentUser
+                  ? `/profile/${auth.currentUser?.uid}`
+                  : "/login"
+              )
             }
           >
             <Avatar.Image

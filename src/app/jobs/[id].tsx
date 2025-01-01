@@ -5,22 +5,9 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import {
-  Button,
-  Divider,
-  Modal,
-  Portal,
-  Text,
-  TextInput,
-} from "react-native-paper";
-import React, { useEffect, useState } from "react";
-import {
-  Link,
-  useLocalSearchParams,
-  useNavigation,
-  useRouter,
-} from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, Divider, Text } from "react-native-paper";
+import React, { useMemo, useState } from "react";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import {
   FontAwesome6,
   Ionicons,
@@ -29,44 +16,36 @@ import {
 import * as DocumentPicker from "expo-document-picker";
 import * as MailComposer from "expo-mail-composer";
 
-import { useJobsStore, useUserStore } from "@/src/state/store";
+import { useJobsStore, useUsersStore, useUserStore } from "@/src/state/store";
 import { ExternalLink } from "@/src/components/ExternalLink";
-import {
-  CustomToast,
-  deduct,
-  getBlobFroUri,
-  getJobs,
-  socialLinks,
-} from "@/src/utils/data";
+import { CustomToast, deduct, getJobs, socialLinks } from "@/src/utils/data";
 import { Colors } from "@/src/constants/Colors";
 import { doc, DocumentData, updateDoc } from "firebase/firestore";
 import { CustomModal } from "@/src/components/CustomModal";
 import { firestoreDB } from "@/src/utils/firebaseConfig";
-import { LinearGradient } from "expo-linear-gradient";
+import FancyHeader from "@/src/components/FancyHeader";
+import moment from "moment";
 
 const JobPage = () => {
   const { id } = useLocalSearchParams();
 
-  const router = useRouter();
-
   const navigation = useNavigation();
 
-  const colorScheme = useColorScheme();
+  const { jobs } = useJobsStore();
+  const { user } = useUserStore();
 
-  const textColor = colorScheme === "dark" ? "white" : "black";
+  const job = useMemo(
+    () => jobs.find((job) => job._id === id)!,
+    [jobs.length, id]
+  );
 
-  const { jobs, storeJobs } = useJobsStore();
-  const { user, decreaseUserBalance } = useUserStore();
+  const date = moment(job._id, "x").fromNow();
 
-  const job = jobs.find((job) => job._id === id)!;
+  // const jobDate = new Date(date).getTime();
 
-  const date = parseInt(job._id);
+  // const today = new Date(Date.now()).getTime();
 
-  const jobDate = new Date(date).getTime();
-
-  const today = new Date(Date.now()).getTime();
-
-  const daysAgo = Math.floor((today - jobDate) / (1000 * 60 * 60 * 24));
+  // const daysAgo = Math.floor((today - jobDate) / (1000 * 60 * 60 * 24));
 
   const salary = new Intl.NumberFormat("en-UK", {
     style: "currency",
@@ -87,8 +66,6 @@ const JobPage = () => {
     setLoading(true);
 
     updateDoc(JobRef, { taken: !job.taken }).then(async () => {
-      const jobs = await getJobs();
-      storeJobs(jobs);
       CustomToast("Successful");
       navigation.goBack();
       setLoading(false);
@@ -122,7 +99,6 @@ const JobPage = () => {
         setApplying(false);
       } else {
         const amount = parseFloat(user?.walletBalance) - charge;
-        decreaseUserBalance(amount);
         setApplying(true);
         deduct(user, amount).then(() => {
           handleMail(data);
@@ -135,7 +111,7 @@ const JobPage = () => {
     MailComposer.isAvailableAsync().then((value) => {
       if (value) {
         const options: MailComposer.MailComposerOptions = {
-          recipients: ["klordbravo@gmail.com"],
+          recipients: [socialLinks.email],
           body: "Enter your personal details here..",
           subject: `Application for the position of ${job.title} at ${job.company}`,
           attachments: [attachments.resume, attachments.coverLetter],
@@ -173,14 +149,14 @@ const JobPage = () => {
               flexDirection: "row",
               alignItems: "center",
               borderWidth: 1,
-              borderColor: textColor,
+
               padding: 5,
               marginVertical: 10,
               borderRadius: 10,
             }}
           >
             <Text>Resume</Text>
-            <MaterialCommunityIcons name="plus" size={20} color={textColor} />
+            <MaterialCommunityIcons name="plus" size={20} />
           </Pressable>
           <Text>{resume.split("/").pop()}</Text>
         </View>
@@ -199,14 +175,14 @@ const JobPage = () => {
               flexDirection: "row",
               alignItems: "center",
               borderWidth: 1,
-              borderColor: textColor,
+
               padding: 5,
               marginVertical: 10,
               borderRadius: 10,
             }}
           >
             <Text>Cover letter</Text>
-            <MaterialCommunityIcons name="plus" size={20} color={textColor} />
+            <MaterialCommunityIcons name="plus" size={20} />
           </Pressable>
           <Text style={{ overflow: "hidden", flexWrap: "nowrap" }}>
             {coverLetter.split("/").pop()}
@@ -224,9 +200,10 @@ const JobPage = () => {
             justifyContent: "space-between",
             alignItems: "center",
             borderWidth: 1,
-            borderColor: Colors.dark.primary,
+            borderColor:
+              active === 1 ? Colors.light.primary : Colors.dark.primary,
             borderRadius: 10,
-            backgroundColor: active === 1 ? Colors.light.primary : "white",
+            backgroundColor: "white",
           }}
           onPress={() => setActive(1)}
         >
@@ -238,7 +215,7 @@ const JobPage = () => {
           >
             No Feedback
           </Text>
-          <Text style={{ color: active === 1 ? "white" : "black" }}>Free</Text>
+          <Text>Free</Text>
         </Pressable>
         <Pressable
           style={{
@@ -247,9 +224,10 @@ const JobPage = () => {
             justifyContent: "space-between",
             alignItems: "center",
             borderWidth: 1,
-            borderColor: Colors.dark.primary,
+            borderColor:
+              active === 2 ? Colors.light.primary : Colors.dark.primary,
             borderRadius: 10,
-            backgroundColor: active === 2 ? Colors.light.primary : "white",
+            backgroundColor: "white",
           }}
           onPress={() => setActive(2)}
         >
@@ -261,7 +239,7 @@ const JobPage = () => {
           >
             Feedback/Update
           </Text>
-          <Text style={{ color: active === 2 ? "white" : "black" }}>#1000</Text>
+          <Text>NGN 1000</Text>
         </Pressable>
         <Pressable
           style={{
@@ -270,9 +248,10 @@ const JobPage = () => {
             justifyContent: "space-between",
             alignItems: "flex-end",
             borderWidth: 1,
-            borderColor: Colors.dark.primary,
+            borderColor:
+              active === 3 ? Colors.light.primary : Colors.dark.primary,
             borderRadius: 10,
-            backgroundColor: active === 3 ? Colors.light.primary : "white",
+            backgroundColor: "white",
           }}
           onPress={() => setActive(3)}
         >
@@ -287,7 +266,7 @@ const JobPage = () => {
             Update, follow up, recieve calls from our agents for information and
             interview date, time and venue
           </Text>
-          <Text style={{ color: active === 3 ? "white" : "black" }}>#2000</Text>
+          <Text>NGN 2000</Text>
         </Pressable>
       </View>
       <View
@@ -302,7 +281,7 @@ const JobPage = () => {
         <Button mode="outlined" onPress={() => setVisible(false)}>
           Cancel
         </Button>
-        <Button mode="contained" onPress={payment}>
+        <Button mode="contained" onPress={() => payment()}>
           Proceed
         </Button>
       </View>
@@ -310,145 +289,115 @@ const JobPage = () => {
   );
 
   return (
-    <ScrollView>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: 120,
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          color="white"
-          size={30}
-          onPress={() => router.back()}
-        />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-            textTransform: "capitalize",
-          }}
-        >
-          {job.title.slice(0, 20)}
-        </Text>
-      </LinearGradient>
-      <View style={{ paddingHorizontal: 24, marginTop: 10 }}>
-        <Text style={styles.jobTime}>
-          Posted: {daysAgo < 1 ? "Today" : daysAgo + " days ago"}
-        </Text>
-        <ScrollView
-          style={{ marginHorizontal: 20, marginVertical: 10 }}
-          showsVerticalScrollIndicator={false}
-        >
-          <Divider bold horizontalInset style={{ marginBottom: 10 }} />
-          <View>
-            <Text>Experience Level: {job.experience}</Text>
-            <Text>Location: {job.location}</Text>
-            <Text>{job.workTime}</Text>
-            <Text>Pay: {salary}</Text>
-          </View>
-          <View style={{ marginVertical: 10 }}>
-            <Text
-              style={{ fontSize: 16, fontWeight: "bold", marginVertical: 10 }}
-            >
-              Job Description
-            </Text>
-            <Text>{job.description}</Text>
-          </View>
-          <View style={{ marginVertical: 10 }}>
-            <Text
-              style={{ fontSize: 16, fontWeight: "bold", marginVertical: 10 }}
-            >
-              Requirements
-            </Text>
-            <Text>Minimum Qualification: {job.requirements}</Text>
-            <Text>Note: {job.others}</Text>
-          </View>
-          <View style={{ marginVertical: 10 }}>
-            {!user.isAdmin ? (
-              <CustomModal
-                content={modalContent}
-                triggerText="Apply"
-                visible={visible}
-                setVisible={setVisible}
-              />
-            ) : (
-              <Button
-                mode="contained"
-                contentStyle={{ marginVertical: 10 }}
-                labelStyle={{ fontSize: 18 }}
-                onPress={handleJobStatus}
-              >
-                {loading
-                  ? "Please wait..."
-                  : job.taken
-                  ? "Mark as open"
-                  : "Mark as taken"}
-              </Button>
-            )}
-          </View>
-          <View style={{ marginVertical: 10 }}>
-            <Text
-              style={{ fontSize: 16, fontWeight: "bold", marginVertical: 10 }}
-            >
-              Stay Updated
-            </Text>
-            <Text>
-              Messages related to your carer applications will appear on the
-              notifications page. Check your notifications regularly to stay
-              updated.
-            </Text>
-            <Text style={{ marginVertical: 10 }}>Like and follow us on:</Text>
-            <View style={{ flexDirection: "row", marginBottom: 10, gap: 20 }}>
-              <ExternalLink href={socialLinks.whatsapp.link}>
-                <Ionicons
-                  name="logo-whatsapp"
-                  size={30}
-                  color={socialLinks.whatsapp.color}
-                />
-              </ExternalLink>
-              <ExternalLink href={socialLinks.facebook.link}>
-                <Ionicons
-                  name="logo-facebook"
-                  size={30}
-                  color={socialLinks.facebook.color}
-                />
-              </ExternalLink>
-              <ExternalLink href={socialLinks.twitter.link}>
-                <FontAwesome6 name="x-twitter" size={30} color={textColor} />
-              </ExternalLink>
-              <ExternalLink href={socialLinks.instagram.link}>
-                <Ionicons
-                  name="logo-instagram"
-                  size={30}
-                  color={socialLinks.instagram.color}
-                />
-              </ExternalLink>
-              <ExternalLink href={socialLinks.youtube.link}>
-                <Ionicons
-                  name="logo-youtube"
-                  size={30}
-                  color={socialLinks.youtube.color}
-                />
-              </ExternalLink>
+    <View>
+      <FancyHeader title={job.title?.slice(0, 20)} backButton />
+
+      <ScrollView>
+        <View style={{ paddingHorizontal: 24, marginTop: 10 }}>
+          <Text style={styles.jobTime}>Posted: {date}</Text>
+          <ScrollView
+            style={{ marginHorizontal: 20, marginVertical: 10 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <Divider bold horizontalInset style={{ marginBottom: 10 }} />
+            <View>
+              <Text>Experience Level: {job.experience}</Text>
+              <Text>Location: {job.location}</Text>
+              <Text>{job.workTime}</Text>
+              <Text>Pay: {salary}</Text>
             </View>
-            <Text>Your data privacy is our priority.</Text>
-            <Text>Read our Privacy Policy.</Text>
-          </View>
-        </ScrollView>
-      </View>
-    </ScrollView>
+            <View style={{ marginVertical: 10 }}>
+              <Text
+                style={{ fontSize: 16, fontWeight: "bold", marginVertical: 10 }}
+              >
+                Job Description
+              </Text>
+              <Text>{job.description}</Text>
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <Text
+                style={{ fontSize: 16, fontWeight: "bold", marginVertical: 10 }}
+              >
+                Requirements
+              </Text>
+              <Text>Minimum Qualification: {job.requirements}</Text>
+              <Text>Note: {job.others}</Text>
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              {user.isAdmin ? (
+                <CustomModal
+                  content={modalContent}
+                  triggerText="Apply"
+                  visible={visible}
+                  setVisible={setVisible}
+                />
+              ) : (
+                <Button
+                  mode="contained"
+                  contentStyle={{ marginVertical: 10 }}
+                  labelStyle={{ fontSize: 18 }}
+                  onPress={handleJobStatus}
+                >
+                  {loading
+                    ? "Please wait..."
+                    : job.taken
+                    ? "Mark as open"
+                    : "Mark as taken"}
+                </Button>
+              )}
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <Text
+                style={{ fontSize: 16, fontWeight: "bold", marginVertical: 10 }}
+              >
+                Stay Updated
+              </Text>
+              <Text>
+                Messages related to your carer applications will appear on the
+                notifications page. Check your notifications regularly to stay
+                updated.
+              </Text>
+              <Text style={{ marginVertical: 10 }}>Like and follow us on:</Text>
+              <View style={{ flexDirection: "row", marginBottom: 10, gap: 20 }}>
+                <ExternalLink href={socialLinks.whatsapp.link}>
+                  <Ionicons
+                    name="logo-whatsapp"
+                    size={30}
+                    color={socialLinks.whatsapp.color}
+                  />
+                </ExternalLink>
+                <ExternalLink href={socialLinks.facebook.link}>
+                  <Ionicons
+                    name="logo-facebook"
+                    size={30}
+                    color={socialLinks.facebook.color}
+                  />
+                </ExternalLink>
+                <ExternalLink href={socialLinks.twitter.link}>
+                  <FontAwesome6 name="x-twitter" size={30} />
+                </ExternalLink>
+                <ExternalLink href={socialLinks.instagram.link}>
+                  <Ionicons
+                    name="logo-instagram"
+                    size={30}
+                    color={socialLinks.instagram.color}
+                  />
+                </ExternalLink>
+                <ExternalLink href={socialLinks.youtube.link}>
+                  <Ionicons
+                    name="logo-youtube"
+                    size={30}
+                    color={socialLinks.youtube.color}
+                  />
+                </ExternalLink>
+              </View>
+              <Text>Your data privacy is our priority.</Text>
+              <Text>Read our Privacy Policy.</Text>
+            </View>
+          </ScrollView>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 

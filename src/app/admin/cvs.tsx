@@ -9,7 +9,13 @@ import {
 import React, { useEffect } from "react";
 import { useNavigation } from "expo-router";
 import { useCVStore } from "@/src/state/store";
-import { deleteDoc, doc, DocumentData } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  DocumentData,
+  onSnapshot,
+} from "firebase/firestore";
 import { ExternalLink } from "@/src/components/ExternalLink";
 import { Divider } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -20,7 +26,7 @@ import { firestoreDB, storage } from "@/src/utils/firebaseConfig";
 const cv = () => {
   const navigation = useNavigation();
 
-  const { cvs } = useCVStore();
+  const { cvs, storeCV } = useCVStore();
 
   const cvRenderItem = ({ item }: { item: DocumentData }) => {
     const onCheck = () => {
@@ -63,9 +69,15 @@ const cv = () => {
   };
 
   useEffect(() => {
-    navigation.setOptions({
-      title: "CV Reviews",
-    });
+    const unsubscribe = onSnapshot(
+      collection(firestoreDB, "resume"),
+      (snapshot) => {
+        const cvs = snapshot.docs.map((doc) => doc.data());
+        storeCV(cvs);
+      }
+    );
+
+    return () => unsubscribe();
   });
 
   return (

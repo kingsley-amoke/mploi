@@ -1,15 +1,16 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { useState } from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+
 import { Colors } from "../../constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useUsersStore } from "@/src/state/store";
+
+import { useUserStore } from "@/src/state/store";
 import { auth, firestoreDB, storage } from "@/src/utils/firebaseConfig";
 import {
   Button,
   Card,
   Dialog,
+  Divider,
   Portal,
   Text,
   TextInput,
@@ -23,27 +24,24 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import ProgressBar from "@/src/components/ProgressBar";
-import { Image } from "expo-image";
+
 import { extractImagePath } from "@/src/utils/data";
+import FancyHeader from "@/src/components/FancyHeader";
+
+import { UIActivityIndicator } from "react-native-indicators";
 
 const index = () => {
-  const router = useRouter();
-
-  const { users } = useUsersStore();
+  const { user } = useUserStore();
 
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [visible, setVisible] = useState(false);
-
-  const [progress, setProgress] = useState(0);
 
   const showDialog = () => setVisible(true);
 
   const hideDialog = () => setVisible(false);
-
-  const user = users.find((usr) => usr._id === auth.currentUser?.uid)!;
 
   const userRef = doc(firestoreDB, "users", auth.currentUser?.uid!);
 
@@ -57,7 +55,6 @@ const index = () => {
 
     updateDoc(userRef, { portfolio: [...user?.portfolio, newPortfolio] }).then(
       () => {
-        // router.back();
         setLoading(false);
         hideDialog();
       }
@@ -65,6 +62,7 @@ const index = () => {
   };
 
   const uploadImage = async (url: string) => {
+    setUploading(true);
     const filename = new Date().getTime() + ".jpg";
 
     const response = await fetch(url);
@@ -73,26 +71,12 @@ const index = () => {
     const storageRef = ref(storage, `images/${filename}`);
 
     const uploadTask = uploadBytesResumable(storageRef, blob);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        setProgress(Math.floor(progress));
-      },
-      (error) => {
-        // handle error
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log("File available at", downloadURL);
-          // save record
 
-          setImage(downloadURL);
-        });
-      }
-    );
+    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+      setImage(downloadURL);
+    });
+
+    setUploading(false);
   };
 
   const selectImage = async (useLibrary: boolean) => {
@@ -114,7 +98,6 @@ const index = () => {
 
     if (!result.canceled) {
       uploadImage(result.assets[0].uri);
-      // setImages([...images, result.assets[0].uri]);
     }
   };
 
@@ -137,39 +120,8 @@ const index = () => {
   };
 
   return (
-    <ScrollView>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: 120,
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          color="white"
-          size={30}
-          onPress={() => router.back()}
-        />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-            textTransform: "capitalize",
-          }}
-        >
-          Update Portfolio
-        </Text>
-      </LinearGradient>
+    <View style={{ flex: 1 }}>
+      <FancyHeader title="Update Portfolio" backButton />
       <View
         style={{ flexDirection: "row", justifyContent: "flex-end", margin: 10 }}
       >
@@ -177,48 +129,65 @@ const index = () => {
           Add Portfolio
         </Button>
       </View>
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: "bold",
+          marginHorizontal: 10,
+          marginVertical: 10,
+
+          color: Colors.grey,
+        }}
+      >
+        Current Portfolio
+      </Text>
       {user?.portfolio?.length > 0 && (
-        <View style={{ width: "100%" }}>
-          {user?.portfolio.map((portfolio, index) => (
-            <View
-              key={index}
-              style={{
-                flexDirection: "row",
-                gap: 15,
-                marginHorizontal: 10,
-                marginBottom: 15,
-              }}
-            >
-              <Card style={{ width: 150, height: 150 }}>
-                <Card.Cover
-                  source={{ uri: portfolio.image }}
-                  style={{ height: "100%" }}
-                />
-              </Card>
+        <FlatList
+          data={user?.portfolio}
+          renderItem={({ item, index }) => (
+            <View key={index} style={{ marginVertical: 15, gap: 15 }}>
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-between",
-                  flex: 1,
+                  gap: 15,
+                  marginHorizontal: 10,
                 }}
               >
-                <View style={{ flexDirection: "row", flexShrink: 1 }}>
-                  <Text style={{ flexShrink: 1 }}>{portfolio.description}</Text>
-                </View>
-                <View
-                  style={{ justifyContent: "flex-end", alignItems: "flex-end" }}
-                >
-                  <MaterialCommunityIcons
-                    name="trash-can"
-                    size={30}
-                    color="red"
-                    onPress={() => handleDeletePortfolio(index, portfolio)}
+                <Card style={{ width: 100, height: 100 }}>
+                  <Card.Cover
+                    source={{ uri: item.image }}
+                    style={{ height: "100%" }}
                   />
+                </Card>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    flex: 1,
+                  }}
+                >
+                  <View style={{ flexDirection: "row", flexShrink: 1 }}>
+                    <Text style={{ flexShrink: 1 }}>{item.description}</Text>
+                  </View>
+                  <View
+                    style={{
+                      justifyContent: "flex-end",
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="trash-can"
+                      size={30}
+                      color="red"
+                      onPress={() => handleDeletePortfolio(index, item)}
+                    />
+                  </View>
                 </View>
               </View>
+              <Divider bold />
             </View>
-          ))}
-        </View>
+          )}
+        />
       )}
 
       <Portal>
@@ -230,14 +199,8 @@ const index = () => {
               gap: 30,
             }}
           >
-            {progress > 0 && (
-              <View
-                style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
-              >
-                <ProgressBar progress={progress} barWidth={100} />
-                <Text>{progress + "%"}</Text>
-              </View>
-            )}
+            <Text style={{ fontSize: 16 }}>Show off your previous jobs</Text>
+
             <TouchableOpacity
               style={{
                 width: 100,
@@ -256,6 +219,8 @@ const index = () => {
                     style={{ height: "100%" }}
                   />
                 </Card>
+              ) : uploading ? (
+                <UIActivityIndicator color={Colors.primary} />
               ) : (
                 <MaterialCommunityIcons name="upload" size={40} color="grey" />
               )}
@@ -279,7 +244,7 @@ const index = () => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-    </ScrollView>
+    </View>
   );
 };
 

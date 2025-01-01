@@ -1,16 +1,16 @@
 import { useJobsStore } from "@/src/state/store";
 import React, { useMemo, useState } from "react";
-import { FlatList, ScrollView, TextInput, View } from "react-native";
-import { Button, Card, Divider, Text } from "react-native-paper";
+import { FlatList, TextInput, View } from "react-native";
+import { Avatar, Button, Divider, Text } from "react-native-paper";
 import { Colors } from "@/src/constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import CustomDropdown from "@/src/components/CustomDropdown";
 import { useRouter } from "expo-router";
-import { DocumentData } from "firebase/firestore";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { UIActivityIndicator } from "react-native-indicators";
 import { Pressable } from "react-native";
+import FancyHeader from "@/src/components/FancyHeader";
+import { noAvatar } from "@/src/utils/data";
 
 const career = () => {
   const { jobs } = useJobsStore();
@@ -101,100 +101,15 @@ const career = () => {
     [jobs.length]
   );
 
-  // const dateData = [...jobYears].map((e) => {
-  //   return { label: e, value: e };
-  // });
-
-  const JobRenderItem = (item: DocumentData) => {
-    return (
-      <View style={{ width: "100%", alignItems: "center" }} key={item._id}>
-        <Card
-          style={{
-            width: "90%",
-            marginVertical: 10,
-            padding: 10,
-            borderRadius: 5,
-          }}
-        >
-          <View style={{ gap: 30 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "bold",
-                textTransform: "capitalize",
-              }}
-            >
-              {item.title}
-            </Text>
-
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <View>
-                <Text style={{ fontSize: 16, textTransform: "capitalize" }}>
-                  {item.company}
-                </Text>
-                <Text style={{ textTransform: "capitalize" }}>
-                  {item.location}
-                </Text>
-              </View>
-              <View
-                style={{ justifyContent: "flex-end", alignItems: "flex-end" }}
-              >
-                <Button
-                  mode="contained"
-                  onPress={() => router.push(`/jobs/${item._id}`)}
-                >
-                  Apply
-                </Button>
-              </View>
-            </View>
-          </View>
-        </Card>
-      </View>
-    );
-  };
-
   return (
     <View style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: "12%",
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-          }}
-        >
-          Jobs
-        </Text>
-      </LinearGradient>
-      <ScrollView
-        style={{ marginVertical: 10 }}
-        showsVerticalScrollIndicator={false}
-      >
+      <FancyHeader title="Jobs" />
+      <View style={{ marginVertical: 10, flex: 1 }}>
         <View
           style={{
             marginHorizontal: 20,
-            borderWidth: 1,
-            borderRadius: 10,
+            // borderWidth: 1,
+            // borderRadius: 10,
             borderColor: "grey",
           }}
         >
@@ -291,13 +206,82 @@ const career = () => {
             />
           </Pressable>
         </View>
+        <Divider bold />
 
         {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => JobRenderItem(job))
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={filteredJobs}
+            renderItem={({ item }) => (
+              <View style={{ alignItems: "center" }} key={item._id}>
+                <View
+                  style={{
+                    width: "90%",
+                    marginVertical: 10,
+                    padding: 10,
+                    borderRadius: 5,
+                  }}
+                >
+                  <View style={{ gap: 10 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {item.title}
+                    </Text>
+                    {item?.companyLogo && (
+                      <Avatar.Image
+                        source={{ uri: item.companyLogo }}
+                        size={30}
+                      />
+                    )}
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <View>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          {item.company}
+                        </Text>
+                        <Text style={{ textTransform: "capitalize" }}>
+                          {item.location}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          justifyContent: "flex-end",
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Button
+                          mode="contained"
+                          disabled={item.taken}
+                          onPress={() => router.push(`/jobs/${item._id}`)}
+                        >
+                          {item.taken ? "Taken" : "Apply"}
+                        </Button>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )}
+          />
         ) : (
           <UIActivityIndicator color={Colors.primary} />
         )}
-      </ScrollView>
+      </View>
     </View>
   );
 };

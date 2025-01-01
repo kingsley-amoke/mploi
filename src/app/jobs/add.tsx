@@ -10,6 +10,7 @@ import { Colors } from "@/src/constants/Colors";
 import { useJobsStore } from "@/src/state/store";
 import { CustomToast } from "@/src/utils/data";
 import { LinearGradient } from "expo-linear-gradient";
+import FancyHeader from "@/src/components/FancyHeader";
 
 const add = () => {
   const router = useRouter();
@@ -66,6 +67,7 @@ const add = () => {
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [company, setCompany] = useState("");
+  const [companyLogo, setCompanyLogo] = useState("");
   const [experience, setExperience] = useState("Experience Level");
   const [workType, setWorkType] = useState("Job Type");
   const [salary, setSalary] = useState("");
@@ -88,6 +90,7 @@ const add = () => {
       others,
       salary,
       company,
+      companyLogo,
       taken: false,
     };
 
@@ -103,122 +106,101 @@ const add = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, marginVertical: 10 }}>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: 120,
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          color="white"
-          size={30}
-          onPress={() => router.back()}
-        />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-          }}
-        >
-          Add Job
-        </Text>
-      </LinearGradient>
-      <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
-        <TextInput
-          label="Position"
-          mode="outlined"
-          onChangeText={(value) => setTitle(value)}
-        />
-        <TextInput
-          label="Description"
-          mode="outlined"
-          onChangeText={(value) => setDescription(value)}
-        />
-        <TextInput
-          label="Location"
-          mode="outlined"
-          onChangeText={(value) => setLocation(value)}
-        />
-        <TextInput
-          label="Company"
-          mode="outlined"
-          onChangeText={(value) => setCompany(value)}
-        />
-        <View
-          style={{
-            borderWidth: 1,
-            borderRadius: 8,
-            borderColor: borderColor,
-          }}
-        >
-          <SectionedMultiSelect
-            items={jobExperience}
-            IconRenderer={MaterialIcons}
-            uniqueKey="name"
-            single
-            selectText={experience}
-            colors={{ selectToggleTextColor: iconColor }}
-            onSelectedItemsChange={(item) => setExperience(item[0])}
+    <View style={{ flex: 1 }}>
+      <FancyHeader title="Add Job " backButton />
+      <ScrollView style={{ marginBottom: 10 }}>
+        <View style={{ margin: 10, gap: 30, paddingTop: 20 }}>
+          <TextInput
+            label="Position"
+            mode="outlined"
+            onChangeText={(value) => setTitle(value)}
+          />
+          <TextInput
+            label="Description"
+            mode="outlined"
+            onChangeText={(value) => setDescription(value)}
+          />
+          <TextInput
+            label="Location"
+            mode="outlined"
+            onChangeText={(value) => setLocation(value)}
+          />
+          <TextInput
+            label="Company Name"
+            mode="outlined"
+            onChangeText={(value) => setCompany(value)}
+          />
+          <TextInput
+            label="Company Logo (URL only)"
+            placeholder="Paste the company logo URL here"
+            mode="outlined"
+            onChangeText={(value) => setCompanyLogo(value)}
+          />
+          <View
+            style={{
+              borderWidth: 1,
+              borderRadius: 8,
+              borderColor: borderColor,
+            }}
+          >
+            <SectionedMultiSelect
+              items={jobExperience}
+              IconRenderer={MaterialIcons}
+              uniqueKey="name"
+              single
+              selectText={experience}
+              colors={{ selectToggleTextColor: iconColor }}
+              onSelectedItemsChange={(item) => setExperience(item[0])}
+            />
+          </View>
+          <View
+            style={{
+              borderWidth: 1,
+              borderRadius: 8,
+              borderColor: borderColor,
+            }}
+          >
+            <SectionedMultiSelect
+              items={workTime}
+              IconRenderer={MaterialIcons}
+              uniqueKey="name"
+              single
+              selectText={workType}
+              colors={{ selectToggleTextColor: iconColor }}
+              onSelectedItemsChange={(item) => setWorkType(item[0])}
+            />
+          </View>
+          <TextInput
+            label="Salary"
+            mode="outlined"
+            onChangeText={(value) => setSalary(value)}
+          />
+          <TextInput
+            label="Requirements"
+            mode="outlined"
+            multiline
+            numberOfLines={7}
+            onChangeText={(value) => setRequirements(value)}
+          />
+          <TextInput
+            label="Others"
+            mode="outlined"
+            multiline
+            numberOfLines={7}
+            onChangeText={(value) => setOthers(value)}
           />
         </View>
-        <View
-          style={{
-            borderWidth: 1,
-            borderRadius: 8,
-            borderColor: borderColor,
-          }}
+        <Button
+          icon="post"
+          mode="contained"
+          onPress={handlePostJob}
+          style={{ marginHorizontal: 20 }}
+          labelStyle={{ paddingVertical: 10, fontSize: 20 }}
         >
-          <SectionedMultiSelect
-            items={workTime}
-            IconRenderer={MaterialIcons}
-            uniqueKey="name"
-            single
-            selectText={workType}
-            colors={{ selectToggleTextColor: iconColor }}
-            onSelectedItemsChange={(item) => setWorkType(item[0])}
-          />
-        </View>
-        <TextInput
-          label="Salary"
-          mode="outlined"
-          onChangeText={(value) => setSalary(value)}
-        />
-        <TextInput
-          label="Requirements"
-          mode="outlined"
-          multiline
-          numberOfLines={7}
-          onChangeText={(value) => setRequirements(value)}
-        />
-        <TextInput
-          label="Others"
-          mode="outlined"
-          multiline
-          numberOfLines={7}
-          onChangeText={(value) => setOthers(value)}
-        />
-      </View>
-      <Button
-        icon="post"
-        mode="contained"
-        onPress={handlePostJob}
-        style={{ marginHorizontal: 20 }}
-      >
-        {posting ? "Posting..." : "Post"}
-      </Button>
-    </ScrollView>
+          {posting ? "Posting..." : "Post"}
+        </Button>
+      </ScrollView>
+    </View>
   );
 };
 

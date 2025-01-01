@@ -26,6 +26,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import ProgressBar from "./ProgressBar";
+import FancyHeader from "./FancyHeader";
 
 const EditProfile = () => {
   const router = useRouter();
@@ -144,38 +145,7 @@ const EditProfile = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: "12%",
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          color="white"
-          size={30}
-          onPress={() => router.back()}
-        />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-            textTransform: "capitalize",
-          }}
-        >
-          Edit Profile
-        </Text>
-      </LinearGradient>
+      <FancyHeader title="Edit Profile" backButton />
       <ScrollView
         style={{
           paddingHorizontal: 22,

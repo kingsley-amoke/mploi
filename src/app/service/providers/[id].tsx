@@ -1,16 +1,14 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import React, { useMemo } from "react";
 import {
   useCategoryStore,
   useUsersStore,
   useUserStore,
 } from "@/src/state/store";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { Colors } from "@/src/constants/Colors";
-import { Divider } from "react-native-paper";
+import { useLocalSearchParams } from "expo-router";
 import UserCard from "@/src/components/UserCard";
+import FancyHeader from "@/src/components/FancyHeader";
+import { FlatGrid } from "react-native-super-grid";
 
 const ServiceProviders = () => {
   const { id: categoryID } = useLocalSearchParams();
@@ -18,61 +16,36 @@ const ServiceProviders = () => {
   const { users } = useUsersStore();
   const { user: loggedUser } = useUserStore();
 
-  const router = useRouter();
-
-  const currentCategory = categories.find(
-    (category) => category._id === categoryID
+  const currentCategory = useMemo(
+    () => categories.find((category) => category._id === categoryID),
+    [categories.length, categoryID]
   );
 
-  const serviceProviders = users.filter((user) => {
-    return (
-      user._id !== loggedUser?._id &&
-      user.skills &&
-      user.skills.includes(currentCategory?.name)
-    );
-  });
+  const serviceProviders = useMemo(
+    () =>
+      users.filter((user) => {
+        return (
+          user._id !== loggedUser?._id &&
+          user.skills &&
+          user.skills.includes(currentCategory?.name)
+        );
+      }),
+    [users.length]
+  );
 
   return (
     <View style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: "12%",
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          color="white"
-          size={30}
-          onPress={() => router.back()}
-        />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-          }}
-        >
-          {currentCategory?.name}
-        </Text>
-      </LinearGradient>
+      <FancyHeader title={currentCategory?.name} backButton />
       {serviceProviders.length > 0 ? (
-        <SafeAreaView>
-          {serviceProviders.map((provider, index) => (
+        <FlatGrid
+          data={serviceProviders}
+          itemDimension={130}
+          renderItem={({ item, index }) => (
             <View key={index}>
-              <UserCard user={provider} />
+              <UserCard user={item} />
             </View>
-          ))}
-        </SafeAreaView>
+          )}
+        />
       ) : (
         <View
           style={{

@@ -1,5 +1,5 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
+import React, { useMemo } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -7,83 +7,89 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useProductsStore, useUsersStore } from "@/src/state/store";
 import ProductsPage from "@/src/components/ProductsPage";
 import UserCard from "@/src/components/UserCard";
-import { DocumentData } from "firebase/firestore";
+import FancyHeader from "@/src/components/FancyHeader";
+import moment from "moment";
+import ProductCard from "@/src/components/ProductCard";
+import { SectionGrid } from "react-native-super-grid";
 
 const index = () => {
   const { search } = useLocalSearchParams();
   const { products } = useProductsStore();
   const { users } = useUsersStore();
 
-  const router = useRouter();
-
-  const searchedProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(search.toString().toLowerCase()) ||
-      product.category
-        .toLowerCase()
-        .includes(search.toString().toLowerCase()) ||
-      product.location
-        .toLowerCase()
-        .includes(search.toString().toLowerCase()) ||
-      product.description
-        .toLowerCase()
-        .includes(search.toString().toLowerCase())
+  const searchedProducts = useMemo(
+    () =>
+      products.filter(
+        (product) =>
+          product.name
+            .toLowerCase()
+            .includes(search.toString().toLowerCase()) ||
+          product.category
+            .toLowerCase()
+            .includes(search.toString().toLowerCase()) ||
+          product.location
+            .toLowerCase()
+            .includes(search.toString().toLowerCase()) ||
+          product.description
+            .toLowerCase()
+            .includes(search.toString().toLowerCase())
+      ),
+    [products.length, search]
   );
 
-  const searchedUsers = users.filter(
-    (user) =>
-      user.firstName.toLowerCase().includes(search.toString().toLowerCase()) ||
-      user.lastName.toLowerCase().includes(search.toString().toLowerCase()) ||
-      user.bio.toLowerCase().includes(search.toString().toLowerCase()) ||
-      user.location.regionName?.city
-        .toLowerCase()
-        .includes(search.toString().toLowerCase()) ||
-      user.location.regionName?.country
-        .toLowerCase()
-        .includes(search.toString().toLowerCase()) ||
-      user.location.regionName?.region
-        .toLowerCase()
-        .includes(search.toString().toLowerCase()) ||
-      user.skills
-        ?.map((i: string) => i.toLowerCase())
-        .includes(search.toString())
+  const searchedUsers = useMemo(
+    () =>
+      users.filter(
+        (user) =>
+          user.firstName
+            .toLowerCase()
+            .includes(search.toString().toLowerCase()) ||
+          user.lastName
+            .toLowerCase()
+            .includes(search.toString().toLowerCase()) ||
+          user.bio.toLowerCase().includes(search.toString().toLowerCase()) ||
+          user.location.regionName?.city
+            .toLowerCase()
+            .includes(search.toString().toLowerCase()) ||
+          user.location.regionName?.country
+            .toLowerCase()
+            .includes(search.toString().toLowerCase()) ||
+          user.location.regionName?.region
+            .toLowerCase()
+            .includes(search.toString().toLowerCase()) ||
+          user.skills
+            ?.map((i: string) => i.toLowerCase())
+            .includes(search.toString())
+      ),
+    [users.length, search]
   );
+
+  const sortedProducts = useMemo(
+    () =>
+      searchedProducts.sort(
+        (a, b) =>
+          moment(b.promoExpiresOn).diff(moment()) -
+          moment(a.promoExpiresOn).diff(moment())
+      ),
+    [searchedProducts.length]
+  );
+
+  const searchResults = [
+    {
+      title: "Products",
+      data: sortedProducts,
+    },
+    {
+      title: "Users",
+      data: searchedUsers,
+    },
+  ];
 
   return (
     <View style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: 120,
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          color="white"
-          size={30}
-          onPress={() => router.back()}
-        />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-          }}
-        >
-          Search Results
-        </Text>
-      </LinearGradient>
+      <FancyHeader title="Search Results" backButton />
 
-      {searchedProducts.length > 0 && (
+      {/* {sortedProducts.length > 0 && (
         <View>
           <Text
             style={{
@@ -116,8 +122,8 @@ const index = () => {
             </View>
           ))}
         </ScrollView>
-      )}
-      {searchedUsers.length < 1 && searchedProducts.length < 1 && (
+      )} */}
+      {searchedUsers.length < 1 && searchedProducts.length < 1 ? (
         <View
           style={{
             flex: 1,
@@ -128,6 +134,44 @@ const index = () => {
         >
           <Text>Search not found</Text>
         </View>
+      ) : (
+        <SectionGrid
+          sections={searchResults}
+          itemDimension={130}
+          renderItem={({ item, index }) => {
+            console.log(item);
+            if (item.phone) {
+              return (
+                <View key={index}>
+                  <UserCard user={item} />
+                </View>
+              );
+            } else {
+              return (
+                <View key={index}>
+                  <ProductCard product={item} />
+                </View>
+              );
+            }
+          }}
+          renderSectionHeader={({ section }) => {
+            return section.data.length > 0 ? (
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  marginLeft: 10,
+                  marginVertical: 10,
+                  color: Colors.grey,
+                }}
+              >
+                {section.title}
+              </Text>
+            ) : (
+              <></>
+            );
+          }}
+        />
       )}
     </View>
   );

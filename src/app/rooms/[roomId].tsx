@@ -9,19 +9,22 @@ import {
 } from "react-native";
 import { TextInput, Text, Avatar } from "react-native-paper";
 import React, { useEffect, useMemo, useState } from "react";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import {
-  FontAwesome,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
-import { DocumentData } from "firebase/firestore";
-import { auth, realtimeDB } from "@/src/utils/firebaseConfig";
+  collection,
+  DocumentData,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
+import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { useChatStore, useUsersStore } from "@/src/state/store";
-import { onValue, ref, set, serverTimestamp } from "firebase/database";
 import { Colors } from "@/src/constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
+import FancyHeader from "@/src/components/FancyHeader";
+import { sendMessage } from "@/src/utils/data";
 
 const Room = () => {
   const { roomId } = useLocalSearchParams();
@@ -41,40 +44,34 @@ const Room = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<DocumentData[]>([]);
 
-  const sendMessage = async () => {
-    if (message === "") return;
-    const id = `${Date.now()}`;
-    const timeStamp = serverTimestamp();
-
-    const data = {
-      _id: id,
-      roomId: roomId,
-      text: message,
-      senderId: auth.currentUser?.uid,
-      timeStamp: timeStamp,
-    };
-    setMessage("");
-    set(ref(realtimeDB, "chats/" + roomId + "/messages/" + id), data);
-  };
-
-  const fetchRoomMessages = () => {
-    const chatRef = ref(realtimeDB, "chats/" + roomId + "/messages");
-    onValue(chatRef, (snapshot) => {
-      const data = snapshot.val();
-
-      if (!data) return;
-      const myData = Object.keys(data).map((key) => {
-        return data[key];
-      });
-
-      setMessages(myData);
+  const handleSendMessage = () => {
+    sendMessage(roomId.toString(), message).then(() => {
+      setMessage("");
     });
   };
 
+  const fetchRoomMessages = () => {
+    const unsubscribe = onSnapshot(
+      query(
+        collection(firestoreDB, "messages"),
+        where("roomId", "==", roomId),
+        orderBy("timeStamp", "asc")
+      ),
+      (snapshot) => {
+        const messages = snapshot.docs.map((doc) => {
+          return doc.data();
+        });
+        setMessages(messages);
+      }
+    );
+
+    return () => unsubscribe();
+  };
+
   const chatProfileId =
-    auth.currentUser?.uid === room.client._id
-      ? room.serviceProvider._id
-      : room.client._id;
+    auth.currentUser?.uid === room.clientId
+      ? room.serviceProviderId
+      : room.clientId;
 
   const chatProfile = useMemo(
     () => users.find((user) => user._id == chatProfileId)!,
@@ -84,54 +81,22 @@ const Room = () => {
   const chatName = chatProfile.firstName + " " + chatProfile.lastName;
   const chatImage = chatProfile.image;
 
-  const ChatHeader = () => {
-    return (
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: 120,
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <MaterialCommunityIcons
-          name="chevron-left"
-          color="white"
-          size={30}
-          onPress={() => router.back()}
-        />
-
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-            textTransform: "capitalize",
-          }}
-        >
-          {chatName}
-        </Text>
-        <Pressable onPress={() => router.push(`profile/${chatProfileId}`)}>
-          <Avatar.Image source={{ uri: chatImage }} size={30} />
-        </Pressable>
-      </LinearGradient>
-    );
-  };
-
   useEffect(() => {
     fetchRoomMessages();
   }, [roomId]);
 
   return (
     <View style={{ flex: 1 }}>
-      <ChatHeader />
+      <FancyHeader
+        title={chatName}
+        subtitle={messages.length > 0 ? "" : "Connecting..."}
+        backButton
+        rightComponent={
+          <Pressable onPress={() => router.push(`profile/${chatProfileId}`)}>
+            <Avatar.Image source={{ uri: chatImage }} size={30} />
+          </Pressable>
+        }
+      />
       <View
         style={{
           paddingHorizontal: 5,
@@ -252,7 +217,7 @@ const Room = () => {
                           alignItems: "center",
                           gap: 10,
                           marginBottom: 10,
-                          backgroundColor: Colors.secondary,
+                          backgroundColor: Colors.grey,
                           borderRadius: 10,
                           borderBottomLeftRadius: 1,
                         }}
@@ -304,38 +269,37 @@ const Room = () => {
                   )
                 )}
             </ScrollView>
-            {!!room?.client?.isAdmin && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingHorizontal: 10,
-                  marginHorizontal: 5,
-                  marginBottom: 10,
-                  marginTop: 20,
-                }}
-              >
-                <TextInput
-                  mode="outlined"
-                  style={{
-                    flex: 1,
-                    fontWeight: "bold",
-                  }}
-                  placeholder="Type here..."
-                  placeholderTextColor="grey"
-                  value={message}
-                  onChangeText={(text) => setMessage(text)}
-                />
 
-                <TouchableOpacity
-                  style={{ paddingHorizontal: 10 }}
-                  onPress={sendMessage}
-                >
-                  <FontAwesome name="send" size={24} color={Colors.primary} />
-                </TouchableOpacity>
-              </View>
-            )}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingHorizontal: 10,
+                marginHorizontal: 5,
+                marginBottom: 10,
+                marginTop: 20,
+              }}
+            >
+              <TextInput
+                mode="outlined"
+                style={{
+                  flex: 1,
+                  fontWeight: "bold",
+                }}
+                placeholder="Type here..."
+                placeholderTextColor="grey"
+                value={message}
+                onChangeText={(text) => setMessage(text)}
+              />
+
+              <TouchableOpacity
+                style={{ paddingHorizontal: 10 }}
+                onPress={() => handleSendMessage()}
+              >
+                <FontAwesome name="send" size={24} color={Colors.primary} />
+              </TouchableOpacity>
+            </View>
           </>
         </KeyboardAvoidingView>
       </View>

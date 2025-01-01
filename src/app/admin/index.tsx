@@ -1,34 +1,25 @@
-import {
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { FlatList, TouchableOpacity, useColorScheme, View } from "react-native";
 import { Avatar, Divider, Text, TextInput } from "react-native-paper";
-import React, { useLayoutEffect, useState } from "react";
-import { useUsersStore, useUserStore } from "@/src/state/store";
-import { doc, DocumentData, updateDoc } from "firebase/firestore";
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
-import { firestoreDB } from "@/src/utils/firebaseConfig";
+import React, { useEffect, useState } from "react";
+import { useUsersStore } from "@/src/state/store";
 import {
-  createChat,
-  CustomToast,
-  getProducts,
-  getUsers,
-} from "@/src/utils/data";
+  collection,
+  doc,
+  DocumentData,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
+import { createChat, CustomToast } from "@/src/utils/data";
 import { useRouter } from "expo-router";
 const UsersPage = () => {
-  const colorScheme = useColorScheme();
-  const { users, storeUsers } = useUsersStore();
-  const { user } = useUserStore();
+  const { users } = useUsersStore();
   const router = useRouter();
 
   const [search, setSearch] = useState("");
 
-  const iconColor = colorScheme === "light" ? "#000" : "#fff";
-
-  const allUsers = users.filter((item) => item._id !== user?._id);
+  const allUsers = users.filter((item) => item._id !== auth.currentUser?.uid!);
 
   const filteredUsers = allUsers.filter(
     (p) =>
@@ -41,25 +32,14 @@ const UsersPage = () => {
     const handleSuspendUSer = () => {
       const userRef = doc(firestoreDB, "users", item._id);
 
-      updateDoc(userRef, { suspended: !item.suspended }).then(async () => {
-        const users = await getUsers();
-        storeUsers(users);
+      updateDoc(userRef, { suspended: !item.suspended }).then(() => {
         CustomToast("User suspended Successfully");
       });
     };
 
     const handleMessageUser = () => {
-      const id = `${Date.now()}`;
-      //create chat
-      const data = {
-        _id: id,
-        client: user,
-        serviceProvider: item,
-      };
-
-      createChat(data).then(() => {
-        router.push(`/rooms/${data._id}`);
-      });
+      createChat(auth.currentUser?.uid!, item._id);
+      router.push("/");
     };
 
     return (
@@ -85,7 +65,7 @@ const UsersPage = () => {
                 {item.firstName} {item.lastName.slice(0, 5) + "..."}
               </Text>
               <Text style={{ fontSize: 18 }}>
-                {user?.skills ? user?.skills[0] : "Client"}
+                {item.skills ? item.skills[0] : "Client"}
               </Text>
             </View>
           </View>
@@ -95,7 +75,7 @@ const UsersPage = () => {
               style={{ justifyContent: "center" }}
               onPress={handleMessageUser}
             >
-              <MaterialIcons name="message" size={30} color={iconColor} />
+              <MaterialIcons name="message" size={30} />
             </TouchableOpacity>
             {item.suspended ? (
               <TouchableOpacity

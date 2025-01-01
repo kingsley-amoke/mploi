@@ -1,4 +1,5 @@
 import {
+  addDoc,
   collection,
   doc,
   DocumentData,
@@ -7,11 +8,12 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { firestoreDB, realtimeDB, storage } from "./firebaseConfig";
+import { auth, firestoreDB, realtimeDB, storage } from "./firebaseConfig";
 import { ref, serverTimestamp, set } from "firebase/database";
 import { getDistance } from "geolib";
 import { ToastAndroid } from "react-native";
 import { deleteObject, ref as mediaRef } from "firebase/storage";
+import moment from "moment";
 
 //get image blog
 export const getBlobFroUri = async (uri: string) => {
@@ -65,45 +67,47 @@ export const socialLinks = {
   },
   chat: "https://wa.me/2347017663503",
   email: " connect@myplugmobile.com",
+  phone: "07017663503",
+  address: "81 Agwangede Extension, Kuje, Abuja ",
 };
 
 //fetch user
 
-export const getUser = async (id: string) => {
-  const docRef = doc(firestoreDB, "users", id);
-  const docSnap = await getDoc(docRef);
+// export const getUser = async (id: string) => {
+//   const docRef = doc(firestoreDB, "users", id);
+//   const docSnap = await getDoc(docRef);
 
-  if (docSnap.exists()) {
-    const user = docSnap.data();
+//   if (docSnap.exists()) {
+//     const user = docSnap.data();
 
-    return user;
-  } else {
-    console.log("No such document!");
-    return [];
-  }
-};
+//     return user;
+//   } else {
+//     console.log("No such document!");
+//     return [];
+//   }
+// };
 
 //fetch all users
 
-export const getUsers = async () => {
-  const usersRef = collection(firestoreDB, "users");
+// export const getUsers = async () => {
+//   const usersRef = collection(firestoreDB, "users");
 
-  const users: DocumentData[] = [];
+//   const users: DocumentData[] = [];
 
-  const querySnapshot = await getDocs(usersRef);
-  querySnapshot.forEach((doc) => {
-    users.push(doc.data());
-  });
-  return users;
-};
+//   const querySnapshot = await getDocs(usersRef);
+//   querySnapshot.forEach((doc) => {
+//     users.push(doc.data());
+//   });
+//   return users;
+// };
 
 //sort user by id
 
-export const fetchUserById = (users: DocumentData[], id: string) => {
-  const user = users.find((user) => user._id === id);
+// export const fetchUserById = (users: DocumentData[], id: string) => {
+//   const user = users.find((user) => user._id === id);
 
-  return user;
-};
+//   return user;
+// };
 
 export const getServices = async () => {
   const serviceRef = collection(firestoreDB, "services");
@@ -129,61 +133,38 @@ export const getJobs = async () => {
   return jobs;
 };
 
-//create service requests
-export const handleRequestService = async (data: {
-  client: DocumentData | null;
-  serviceProvider: DocumentData;
-  _id: string;
-}) => {
-  const loggedUser = data.client;
-
-  const user = data.serviceProvider;
-
-  const id = data._id;
-  createRequest(loggedUser, user, id);
-};
-
-const sendMessage = async (roomId: string, user: DocumentData | null) => {
+export const sendMessage = async (roomId: string, message: string) => {
   const id = `${Date.now()}`;
-  const timeStamp = serverTimestamp();
 
   const data = {
     _id: id,
     roomId: roomId,
-    text: "Hi there, I need your services",
-    senderId: user?._id,
-    timeStamp: timeStamp,
+    text: message,
+    senderId: auth.currentUser?.uid,
+    timeStamp: moment().toISOString(),
   };
-  set(ref(realtimeDB, "requests/" + roomId + "/messages/" + id), data).then(
-    (doc) =>
-      // setMessage("")
-      console.log(doc)
-  );
+
+  addDoc(collection(firestoreDB, "messages"), data).then(() => {
+    updateDoc(doc(firestoreDB, "chats", roomId), {
+      lastMessage: message,
+      timeStamp: moment().toISOString(),
+    });
+  });
 };
 
-const createRequest = async (
-  loggedUser: DocumentData | null,
-  user: DocumentData,
-  id: string
-) => {
-  const requestRef = ref(realtimeDB, "requests/" + id);
+export const createChat = (clientId: string, providerId: string) => {
+  const id = `${Date.now()}`;
+  const chatRef = doc(firestoreDB, "chats", id);
 
   const data = {
     _id: id,
-    client: loggedUser,
-    serviceProvider: user,
+    clientId: clientId,
+    serviceProviderId: providerId,
+    lastMessage: "Hi there, I need your services",
+    timeStamp: moment().toISOString(),
   };
-  set(requestRef, data);
-};
 
-//accept service request
-
-export const createChat = async (data: DocumentData) => {
-  const chatRef = ref(realtimeDB, "chats/" + data._id);
-
-  set(chatRef, data).then(() => {
-    sendMessage(data._id, data.client);
-  });
+  setDoc(chatRef, data);
 };
 
 //fetch all shops
@@ -198,34 +179,6 @@ export const getShops = async () => {
     shops.push(doc.data());
   });
   return shops;
-};
-
-//fetch all products
-
-export const getProducts = async () => {
-  const productsRef = collection(firestoreDB, "products");
-
-  const querySnapshot = await getDocs(productsRef);
-  const products: DocumentData[] = [];
-  querySnapshot.forEach((doc) => {
-    products.push(doc.data());
-  });
-
-  return products;
-};
-
-//fetch all reviews
-
-export const getReviews = async () => {
-  const reviewsRef = collection(firestoreDB, "reviews");
-
-  const reviews: DocumentData[] = [];
-
-  const querySnapshot = await getDocs(reviewsRef);
-  querySnapshot.forEach((doc) => {
-    reviews.push(doc.data());
-  });
-  return reviews;
 };
 
 //format price
@@ -285,36 +238,36 @@ export const deduct = async (user: DocumentData, charge: number) => {
 export const setTransaction = (transaction: DocumentData) => {
   const transRef = doc(firestoreDB, "transactions", transaction._id);
 
-  setDoc(transRef, transaction).then(() => {});
+  setDoc(transRef, transaction);
 };
 
 //fetch all transactions
 
-export const getTransactions = async () => {
-  const transactionsRef = collection(firestoreDB, "transactions");
+// export const getTransactions = async () => {
+//   const transactionsRef = collection(firestoreDB, "transactions");
 
-  const transactions: DocumentData[] = [];
+//   const transactions: DocumentData[] = [];
 
-  const querySnapshot = await getDocs(transactionsRef);
-  querySnapshot.forEach((doc) => {
-    transactions.push(doc.data());
-  });
-  return transactions;
-};
+//   const querySnapshot = await getDocs(transactionsRef);
+//   querySnapshot.forEach((doc) => {
+//     transactions.push(doc.data());
+//   });
+//   return transactions;
+// };
 
 //fetch all cvs
 
-export const getCV = async () => {
-  const cvRef = collection(firestoreDB, "resume");
+// export const getCV = async () => {
+//   const cvRef = collection(firestoreDB, "resume");
 
-  const cvs: DocumentData[] = [];
+//   const cvs: DocumentData[] = [];
 
-  const querySnapshot = await getDocs(cvRef);
-  querySnapshot.forEach((doc) => {
-    cvs.push(doc.data());
-  });
-  return cvs;
-};
+//   const querySnapshot = await getDocs(cvRef);
+//   querySnapshot.forEach((doc) => {
+//     cvs.push(doc.data());
+//   });
+//   return cvs;
+// };
 
 //delete file from storage
 
@@ -366,4 +319,34 @@ export const findArrayItem = (array: DocumentData[], search: string) => {
   const item = array.find((i) => i.toLowerCase().includes(search));
 
   return item;
+};
+
+export const formatCompleteDateWithMoment = (date) => {
+  const formattedDate = `${date.format("dddd")} ${date.format(
+    "d"
+  )}th ${date.format("MMM")} ${date.format("YYYY")}`;
+  return formattedDate;
+};
+
+export const groupDataByDate = (data) => {
+  const grouped = data.reduce((acc, item) => {
+    const existing = acc?.find(
+      (obj) => obj.day == moment(item._id, "x").format("d")
+    );
+    if (existing) {
+      existing.data.push(item);
+    } else {
+      const itemDate = moment(item._id, "x");
+
+      const newItem = {
+        title: formatCompleteDateWithMoment(itemDate),
+        day: itemDate.format("d"),
+        data: [item],
+      };
+      acc?.push(newItem);
+    }
+    return acc;
+  }, []);
+
+  return grouped;
 };

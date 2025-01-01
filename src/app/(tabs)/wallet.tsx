@@ -1,27 +1,22 @@
-import {
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  SectionList,
-  StyleSheet,
-  View,
-} from "react-native";
-import React, { useMemo, useState } from "react";
+import { Pressable, SectionList, View } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Surface, Text } from "react-native-paper";
 import { useTransactionsStore, useUsersStore } from "@/src/state/store";
 import { useRouter } from "expo-router";
-import { formatPrice } from "@/src/utils/data";
+import { formatPrice, groupDataByDate } from "@/src/utils/data";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/src/constants/Colors";
-import { auth } from "@/src/utils/firebaseConfig";
+import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { DocumentData } from "firebase/firestore";
+import { collection, DocumentData, onSnapshot } from "firebase/firestore";
+import moment from "moment";
+import FancyHeader from "@/src/components/FancyHeader";
 
 export default function Wallet() {
   const router = useRouter();
 
-  const { transactions } = useTransactionsStore();
+  const { transactions, storeTransactions } = useTransactionsStore();
   const { users } = useUsersStore();
 
   const [date, setDate] = useState(new Date(Date.now()));
@@ -48,55 +43,31 @@ export default function Wallet() {
     [users.length]
   );
 
-  const userTransactions = useMemo(
-    () => transactions.filter((trans) => trans.userId == auth.currentUser?.uid),
+  const balance = formatPrice(parseFloat(user?.walletBalance || 0));
+
+  const myFunc = useCallback(
+    (data) => groupDataByDate(data),
     [transactions.length]
   );
+  const groupedTransactions = myFunc(transactions);
 
-  const data = [
-    {
-      title: "Main dishes",
-      data: userTransactions,
-    },
-    {
-      title: "Sides",
-      data: userTransactions,
-    },
-    {
-      title: "Drinks",
-      data: userTransactions,
-    },
-  ];
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(firestoreDB, "transactions"),
+      (snapshot) => {
+        const transArray = snapshot.docs.map((document) => {
+          return document.data();
+        });
+        storeTransactions(transArray);
+      }
+    );
 
-  const balance = formatPrice(parseFloat(user?.walletBalance || 0));
+    return () => unsubscribe();
+  }, [auth.currentUser?.uid]);
 
   return (
     <View style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
-        start={{ x: 0, y: 0.75 }}
-        end={{ x: 1, y: 0.25 }}
-        style={{
-          height: "12%",
-          paddingHorizontal: 20,
-          paddingBottom: 30,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "800",
-            textAlign: "center",
-            flex: 1,
-          }}
-        >
-          Wallet
-        </Text>
-      </LinearGradient>
+      <FancyHeader title="Wallet" />
       {auth.currentUser ? (
         <View
           style={{
@@ -255,7 +226,7 @@ export default function Wallet() {
 
           <SectionList
             showsVerticalScrollIndicator={false}
-            sections={data}
+            sections={groupedTransactions}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => RenderItem(item)}
             renderSectionHeader={({ section: { title } }) => (

@@ -1,17 +1,14 @@
 import { DocumentData } from "firebase/firestore";
 import React from "react";
-import { View } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
-import { useUsersStore } from "../state/store";
 import { useRouter } from "expo-router";
-import { noAvatar, shopAvatar } from "../utils/data";
+import { shopAvatar } from "../utils/data";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import moment from "moment";
+import { Colors } from "../constants/Colors";
 
 const ProductCard = ({ product }: { product: DocumentData }) => {
-  const { users } = useUsersStore();
-
   const router = useRouter();
-
-  const seller = users.find((user) => user._id === product.sellerID)!;
 
   const price = new Intl.NumberFormat("en-UK", {
     style: "currency",
@@ -19,16 +16,20 @@ const ProductCard = ({ product }: { product: DocumentData }) => {
     currencySign: "accounting",
   }).format(product.price);
 
-  const contactSeller = () => {
-    router.push(`products/${product._id}`);
-  };
-
   return (
-    <Card style={{ height: 280, width: "100%" }}>
+    <Card style={{ height: 280, position: "relative" }}>
       <Card.Cover
         source={{ uri: product.images[0] || shopAvatar }}
         style={{ height: 140 }}
       />
+      {moment(product.promoExpiresOn).diff(moment()) > 0 && (
+        <MaterialCommunityIcons
+          name="crown-circle-outline"
+          size={30}
+          style={{ position: "absolute", top: 2, left: 2 }}
+          color={Colors.golden}
+        />
+      )}
       <Card.Content style={{ marginVertical: 10 }}>
         <Text
           variant="bodySmall"
@@ -48,7 +49,7 @@ const ProductCard = ({ product }: { product: DocumentData }) => {
         <Button
           mode="outlined"
           style={{ marginTop: 10 }}
-          onPress={contactSeller}
+          onPress={() => router.push(`products/${product._id}`)}
         >
           Buy Now
         </Button>
