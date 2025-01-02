@@ -2,20 +2,29 @@ import { StyleSheet, Platform, View } from "react-native";
 import { Tabs } from "expo-router";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Badge } from "react-native-paper";
-import { useRequestStore } from "@/src/state/store";
-import { auth } from "@/src/utils/firebaseConfig";
-import { useMemo } from "react";
+import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
+import { useEffect, useState } from "react";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 
 const TabLayout = () => {
-  const { requests } = useRequestStore();
+  const [unReadChats, setUnreadChats] = useState(0);
 
-  const myRequests = useMemo(
-    () =>
-      requests.filter(
-        (req) => req.serviceProvider?._id === auth.currentUser?.uid
+  useEffect(() => {
+    if (!auth.currentUser) return;
+
+    const unsubscribe = onSnapshot(
+      query(
+        collection(firestoreDB, "chats"),
+        where("isRead", "==", false),
+        where("serviceProviderId", "==", auth.currentUser.uid)
       ),
-    [requests.length]
-  );
+      (snapshot) => {
+        setUnreadChats(snapshot.docs.length);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
   return (
     <Tabs
       screenOptions={{
@@ -57,9 +66,9 @@ const TabLayout = () => {
                 size={30}
                 color={color}
               />
-              {auth.currentUser && myRequests.length > 0 && (
+              {unReadChats > 0 && (
                 <Badge style={{ position: "absolute", right: -2, top: -5 }}>
-                  {myRequests.length}
+                  {unReadChats}
                 </Badge>
               )}
             </View>

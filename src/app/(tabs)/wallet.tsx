@@ -109,7 +109,7 @@ export default function Wallet() {
               <Text
                 style={{
                   color: Colors.lightgrey,
-                  fontSize: 22,
+                  fontSize: 18,
                   fontWeight: "bold",
                 }}
               >
@@ -144,7 +144,7 @@ export default function Wallet() {
                 <MaterialCommunityIcons
                   name="arrow-bottom-left"
                   color="#fff"
-                  size={30}
+                  size={20}
                 />
                 <Text style={{ color: "#fff", fontSize: 18 }}>Deposit</Text>
               </LinearGradient>
@@ -168,7 +168,7 @@ export default function Wallet() {
                 <MaterialCommunityIcons
                   name="arrow-top-right"
                   color="#fff"
-                  size={30}
+                  size={20}
                 />
                 <Text style={{ color: "#fff", fontSize: 18 }}>Withdraw</Text>
               </LinearGradient>
@@ -195,7 +195,7 @@ export default function Wallet() {
               <Text
                 style={{
                   color: Colors.grey,
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: "bold",
                 }}
               >
@@ -212,7 +212,7 @@ export default function Wallet() {
               >
                 <MaterialCommunityIcons
                   name="calendar"
-                  size={40}
+                  size={30}
                   color={Colors.grey}
                 />
                 <MaterialCommunityIcons
@@ -233,7 +233,7 @@ export default function Wallet() {
               <Text
                 style={{
                   marginVertical: 10,
-                  fontSize: 20,
+                  fontSize: 18,
                   color: Colors.grey,
                 }}
               >
@@ -298,20 +298,20 @@ const RenderItem = (item: DocumentData) => (
           name={
             item.type == "deposit" ? "arrow-bottom-left" : "arrow-top-right"
           }
-          size={25}
+          size={20}
           color={item.type == "deposit" ? Colors.success : Colors.primary}
         />
       </View>
       <View>
-        <Text style={{ fontSize: 22, textTransform: "capitalize" }}>
+        <Text style={{ fontSize: 18, textTransform: "capitalize" }}>
           {item.type}
         </Text>
-        <Text style={{ fontSize: 22, textTransform: "capitalize" }}>17:30</Text>
+        <Text style={{ fontSize: 14, textTransform: "capitalize" }}>17:30</Text>
       </View>
     </View>
     <Text
       style={{
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "bold",
         color: Colors.grey,
         flexShrink: 1,

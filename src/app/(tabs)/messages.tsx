@@ -6,10 +6,12 @@ import { useChatStore, useUsersStore } from "@/src/state/store";
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import {
   collection,
+  doc,
   DocumentData,
   onSnapshot,
   or,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 
@@ -41,7 +43,7 @@ const index = () => {
       }
     );
     return () => unsubscribe();
-  }, [auth.currentUser?.uid]);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -86,15 +88,103 @@ const index = () => {
                   <FlatList
                     showsVerticalScrollIndicator={false}
                     data={chats}
-                    renderItem={({ item, index }) => (
-                      <View key={index}>
-                        <MessageCard
-                          room={item}
-                          search={search}
-                          users={users}
-                        />
-                      </View>
-                    )}
+                    renderItem={({ item, index }) => {
+                      const chatProfileId =
+                        auth.currentUser?.uid === item.clientId
+                          ? item.serviceProviderId
+                          : item.clientId;
+
+                      const chatProfile = users.find(
+                        (user) => user._id == chatProfileId
+                      );
+
+                      const chatName =
+                        chatProfile?.firstName + " " + chatProfile?.lastName ||
+                        "";
+                      const chatImage = chatProfile?.image || noAvatar;
+
+                      return (
+                        <View key={index}>
+                          {chatName
+                            .toLowerCase()
+                            .includes(search.toLowerCase()) && (
+                            <TouchableOpacity
+                              style={{
+                                flexDirection: "row",
+                                alignItems: "flex-end",
+                                justifyContent: "space-between",
+                                marginBottom: 20,
+                              }}
+                              onPress={() => {
+                                if (
+                                  auth.currentUser?.uid ==
+                                    item.serviceProviderId &&
+                                  !item.isRead
+                                ) {
+                                  updateDoc(
+                                    doc(firestoreDB, "chats", item._id),
+                                    {
+                                      isRead: true,
+                                    }
+                                  ).then(() => {
+                                    router.push(`/rooms/${item._id}`);
+                                  });
+                                }
+                              }}
+                            >
+                              <View style={{ flexDirection: "row", gap: 20 }}>
+                                <View style={{ position: "relative" }}>
+                                  <Avatar.Image
+                                    source={{ uri: chatImage }}
+                                    size={50}
+                                  />
+                                </View>
+
+                                <View
+                                  style={{
+                                    alignItems: "flex-start",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <Text
+                                    style={{
+                                      fontWeight: "bold",
+                                      textTransform: "capitalize",
+                                      fontSize: 22,
+                                    }}
+                                  >
+                                    {chatName}
+                                  </Text>
+                                  <Text style={{ fontSize: 16 }}>
+                                    {item.lastMessage.slice(0, 20) + "..."}
+                                  </Text>
+                                </View>
+                              </View>
+                              <View style={{ gap: 10, alignItems: "flex-end" }}>
+                                {auth.currentUser?.uid ==
+                                  item.serviceProviderId &&
+                                  !item.isRead && (
+                                    <Octicons
+                                      name="dot-fill"
+                                      color={Colors.primary}
+                                      size={25}
+                                    />
+                                  )}
+
+                                <Text
+                                  style={{ fontSize: 12, fontStyle: "italic" }}
+                                >
+                                  {moment
+                                    .utc(item.timeStamp)
+                                    .local()
+                                    .format("HH:mm")}
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      );
+                    }}
                   />
                 </View>
               )}
@@ -122,81 +212,6 @@ const index = () => {
         </View>
       )}
     </View>
-  );
-};
-
-const MessageCard = ({
-  room,
-  search,
-  users,
-}: {
-  room: DocumentData;
-  users: DocumentData[];
-  search: string;
-}) => {
-  const chatProfileId =
-    auth.currentUser?.uid === room.clientId
-      ? room.serviceProviderId
-      : room.clientId;
-
-  const chatProfile = useMemo(
-    () => users.find((user) => user._id == chatProfileId),
-    [users.length]
-  );
-
-  const chatName = chatProfile?.firstName + " " + chatProfile?.lastName || "";
-  const chatImage = chatProfile?.image || noAvatar;
-
-  return (
-    chatName.toLowerCase().includes(search.toLowerCase()) && (
-      <Link href={{ pathname: `/rooms/${room._id}` }} asChild>
-        <TouchableOpacity
-          style={{
-            flexDirection: "row",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-            marginBottom: 20,
-          }}
-        >
-          <View style={{ flexDirection: "row", gap: 20 }}>
-            <View style={{ position: "relative" }}>
-              <Avatar.Image source={{ uri: chatImage }} size={50} />
-              {/* <Octicons
-                name="dot-fill"
-                color={chatProfile?.isOnline ? Colors.success : Colors.offline}
-                size={25}
-                style={{
-                  position: "absolute",
-                  bottom: -1,
-                  right: -1,
-                }}
-              /> */}
-            </View>
-
-            <View
-              style={{ alignItems: "flex-start", justifyContent: "center" }}
-            >
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  textTransform: "capitalize",
-                  fontSize: 22,
-                }}
-              >
-                {chatName}
-              </Text>
-              <Text style={{ fontSize: 16 }}>
-                {room.lastMessage.slice(0, 20) + "..."}
-              </Text>
-            </View>
-          </View>
-
-          <Text style={{ fontSize: 12, fontStyle: "italic" }}>
-            {moment(room.timeStamp).format("HH:mm").toString()}
-          </Text>
-        </TouchableOpacity>
-      </Link>
-    )
   );
 };
 

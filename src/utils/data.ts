@@ -71,44 +71,6 @@ export const socialLinks = {
   address: "81 Agwangede Extension, Kuje, Abuja ",
 };
 
-//fetch user
-
-// export const getUser = async (id: string) => {
-//   const docRef = doc(firestoreDB, "users", id);
-//   const docSnap = await getDoc(docRef);
-
-//   if (docSnap.exists()) {
-//     const user = docSnap.data();
-
-//     return user;
-//   } else {
-//     console.log("No such document!");
-//     return [];
-//   }
-// };
-
-//fetch all users
-
-// export const getUsers = async () => {
-//   const usersRef = collection(firestoreDB, "users");
-
-//   const users: DocumentData[] = [];
-
-//   const querySnapshot = await getDocs(usersRef);
-//   querySnapshot.forEach((doc) => {
-//     users.push(doc.data());
-//   });
-//   return users;
-// };
-
-//sort user by id
-
-// export const fetchUserById = (users: DocumentData[], id: string) => {
-//   const user = users.find((user) => user._id === id);
-
-//   return user;
-// };
-
 export const getServices = async () => {
   const serviceRef = collection(firestoreDB, "services");
 
@@ -134,6 +96,7 @@ export const getJobs = async () => {
 };
 
 export const sendMessage = async (roomId: string, message: string) => {
+  if (message == "") return;
   const id = `${Date.now()}`;
 
   const data = {
@@ -141,7 +104,7 @@ export const sendMessage = async (roomId: string, message: string) => {
     roomId: roomId,
     text: message,
     senderId: auth.currentUser?.uid,
-    timeStamp: moment().toISOString(),
+    timeStamp: moment().utc().toISOString(),
   };
 
   addDoc(collection(firestoreDB, "messages"), data).then(() => {
@@ -161,7 +124,8 @@ export const createChat = (clientId: string, providerId: string) => {
     clientId: clientId,
     serviceProviderId: providerId,
     lastMessage: "Hi there, I need your services",
-    timeStamp: moment().toISOString(),
+    timeStamp: moment().utc().toISOString(),
+    isRead: false,
   };
 
   setDoc(chatRef, data);

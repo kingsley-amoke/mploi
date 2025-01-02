@@ -113,8 +113,12 @@ const ProductDetails = () => {
   };
 
   const contactSeller = () => {
-    createChat(auth.currentUser?.uid!, seller._id);
-    router.push(`/`);
+    if (auth.currentUser && product) {
+      createChat(auth.currentUser.uid, product.sellerID);
+      router.push(`/`);
+    } else {
+      CustomToast("Please login to continue");
+    }
   };
 
   const removeProduct = () => {
@@ -258,8 +262,8 @@ const ProductDetails = () => {
               <Text>Location: {product?.location}</Text>
               <Text>Price: {formatPrice(product?.price)}</Text>
               <Text>Negotiable: {product?.negotiable ? "Yes" : "No"}</Text>
-              <Text>Seller: {seller.lastName}</Text>
-              <Text>Phone: {seller.phone}</Text>
+              <Text>Seller: {seller?.lastName}</Text>
+              <Text>Phone: {seller?.phone}</Text>
             </View>
           </View>
         </View>

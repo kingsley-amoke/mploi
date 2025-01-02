@@ -1,11 +1,11 @@
-import { ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useMemo } from "react";
-import { LinearGradient } from "expo-linear-gradient";
+
 import { Colors } from "@/src/constants/Colors";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
+
+import { useLocalSearchParams } from "expo-router";
 import { useProductsStore, useUsersStore } from "@/src/state/store";
-import ProductsPage from "@/src/components/ProductsPage";
+
 import UserCard from "@/src/components/UserCard";
 import FancyHeader from "@/src/components/FancyHeader";
 import moment from "moment";
@@ -89,40 +89,6 @@ const index = () => {
     <View style={{ flex: 1 }}>
       <FancyHeader title="Search Results" backButton />
 
-      {/* {sortedProducts.length > 0 && (
-        <View>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              marginLeft: 10,
-              marginVertical: 10,
-            }}
-          >
-            Products
-          </Text>
-          <ProductsPage products={searchedProducts} />
-        </View>
-      )}
-      {searchedUsers.length > 0 && (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              marginLeft: 10,
-              marginVertical: 10,
-            }}
-          >
-            Service Providers
-          </Text>
-          {searchedUsers.map((user, index) => (
-            <View key={index}>
-              <UserCard user={user} />
-            </View>
-          ))}
-        </ScrollView>
-      )} */}
       {searchedUsers.length < 1 && searchedProducts.length < 1 ? (
         <View
           style={{
@@ -139,7 +105,6 @@ const index = () => {
           sections={searchResults}
           itemDimension={130}
           renderItem={({ item, index }) => {
-            console.log(item);
             if (item.phone) {
               return (
                 <View key={index}>

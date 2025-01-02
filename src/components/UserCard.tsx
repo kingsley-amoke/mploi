@@ -5,7 +5,7 @@ import { Button, Card, Text } from "react-native-paper";
 import { Colors } from "../constants/Colors";
 import { useRouter } from "expo-router";
 import { auth } from "../utils/firebaseConfig";
-import { Octicons } from "@expo/vector-icons";
+
 import { createChat, CustomToast } from "../utils/data";
 
 const UserCard = ({ user }: { user: DocumentData }) => {

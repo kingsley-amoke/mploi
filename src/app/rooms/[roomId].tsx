@@ -25,6 +25,7 @@ import { useChatStore, useUsersStore } from "@/src/state/store";
 import { Colors } from "@/src/constants/Colors";
 import FancyHeader from "@/src/components/FancyHeader";
 import { sendMessage } from "@/src/utils/data";
+import moment from "moment";
 
 const Room = () => {
   const { roomId } = useLocalSearchParams();
@@ -155,7 +156,7 @@ const Room = () => {
                             <Text
                               style={{
                                 fontWeight: "bold",
-                                fontSize: 20,
+
                                 color: "white",
                               }}
                             >
@@ -179,14 +180,10 @@ const Room = () => {
                                   fontStyle: "italic",
                                 }}
                               >
-                                {new Date(msg?.timeStamp).toLocaleTimeString(
-                                  "en-US",
-                                  {
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                    hour12: true,
-                                  }
-                                )}
+                                {moment
+                                  .utc(room.timeStamp)
+                                  .local()
+                                  .format("HH:mm")}
                               </Text>
                             )}
                             <Text>
@@ -235,7 +232,7 @@ const Room = () => {
                             <Text
                               style={{
                                 fontWeight: "bold",
-                                fontSize: 20,
+
                                 color: "white",
                               }}
                             >
@@ -252,14 +249,10 @@ const Room = () => {
                                   fontStyle: "italic",
                                 }}
                               >
-                                {new Date(msg?.timeStamp).toLocaleTimeString(
-                                  "en-US",
-                                  {
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                    hour12: true,
-                                  }
-                                )}
+                                {moment
+                                  .utc(room.timeStamp)
+                                  .local()
+                                  .format("HH:mm")}
                               </Text>
                             )}
                           </View>

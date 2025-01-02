@@ -12,6 +12,7 @@ import {
   useLocationStore,
   useShopsStore,
   useUsersStore,
+  useUserStore,
 } from "@/src/state/store";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -31,7 +32,6 @@ import {
 
 import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import ProgressBar from "@/src/components/ProgressBar";
 import PhotosCard from "@/src/components/PhotosCard";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import moment from "moment";
@@ -42,7 +42,7 @@ const add = () => {
   const router = useRouter();
 
   const { shops } = useShopsStore();
-  const { users } = useUsersStore();
+  const { user } = useUserStore();
   const { location: userLocation } = useLocationStore();
 
   const [name, setName] = useState("");
@@ -63,14 +63,9 @@ const add = () => {
   );
   const [image, setImage] = useState<string | null>(null);
 
-  const user = useMemo(
-    () => users.find((usr) => usr._id == auth.currentUser?.uid)!,
-    [users.length]
-  );
-
-  const generateThumbnail = async () => {
+  const generateThumbnail = async (videoURl: string) => {
     try {
-      const { uri } = await VideoThumbnails.getThumbnailAsync(video, {
+      const { uri } = await VideoThumbnails.getThumbnailAsync(videoURl, {
         time: 15000,
       });
       setImage(uri);
@@ -164,10 +159,7 @@ const add = () => {
     let result;
 
     const options: ImagePicker.ImagePickerOptions = {
-      mediaTypes:
-        mediaType == "photos"
-          ? ImagePicker.MediaTypeOptions.Images
-          : ImagePicker.MediaTypeOptions.Videos,
+      mediaTypes: mediaType == "photos" ? ["images"] : ["videos"],
       allowsEditing: true,
       quality: 1,
     };
@@ -188,46 +180,21 @@ const add = () => {
 
     const storageRef = ref(storage, `products/${filename}`);
 
-    const uploadTask = uploadBytesResumable(storageRef, blob);
-    getDownloadURL(uploadTask.snapshot.ref)
+    await uploadBytesResumable(storageRef, blob);
+    getDownloadURL(storageRef)
       .then(async (downloadURL) => {
         if (type == "photos") {
           setImages([...images, downloadURL]);
         } else {
-          setVideo(downloadURL);
-          await generateThumbnail();
+          generateThumbnail(downloadURL).then(() => {
+            setVideo(downloadURL);
+          });
         }
       })
       .catch((e) => console.log(e))
       .finally(() => {
         setLoading(false);
       });
-    // uploadTask.on(
-    //   "state_changed",
-    //   (snapshot) => {
-    //     const progress =
-    //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    //     setProgress(Math.floor(progress));
-    //   },
-    //   (error) => {
-    //     // handle error
-    //   },
-    //   () => {
-    //     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-    //       if (type == "photos") {
-    //         setImages([...images, downloadURL]);
-    //         setProgress(0);
-    //       } else {
-    //         setVideo(downloadURL);
-    //         generateThumbnail()
-    //           .then(() => {
-    //             setProgress(0);
-    //           })
-    //           .catch((e) => console.log(e));
-    //       }
-    //     });
-    //   }
-    // );
   };
 
   const modalContent = (
@@ -261,10 +228,8 @@ const add = () => {
         </Pressable>
         <Pressable
           style={{
-            flexDirection: "row",
+            gap: 10,
             padding: 10,
-            justifyContent: "space-between",
-            alignItems: "center",
             borderWidth: 1.5,
             borderColor:
               active === 2 ? Colors.light.primary : Colors.dark.primary,
@@ -273,17 +238,27 @@ const add = () => {
           }}
           onPress={() => setActive(2)}
         >
-          <View>
-            <Text
-              style={{
-                fontWeight: "bold",
-              }}
-            >
-              Promo Lite
-            </Text>
+          <Text
+            style={{
+              fontWeight: "bold",
+            }}
+          >
+            Promo Lite
+          </Text>
+          <Text style={{ color: Colors.grey }}>
+            Get a 7 days boost, your ads will appear at the top of search
+            results.
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Text>7 days</Text>
+            <Text>NGN 600</Text>
           </View>
-          <Text>NGN 600</Text>
         </Pressable>
         <Pressable
           style={{
@@ -321,10 +296,8 @@ const add = () => {
         </Pressable>
         <Pressable
           style={{
-            flexDirection: "row",
+            gap: 10,
             padding: 10,
-            justifyContent: "space-between",
-            alignItems: "flex-end",
             borderWidth: 1.5,
             borderColor:
               active === 4 ? Colors.light.primary : Colors.dark.primary,
@@ -333,17 +306,27 @@ const add = () => {
           }}
           onPress={() => setActive(4)}
         >
-          <View>
-            <Text
-              style={{
-                fontWeight: "bold",
-              }}
-            >
-              Boost Premium Promo
-            </Text>
+          <Text
+            style={{
+              fontWeight: "bold",
+            }}
+          >
+            Boost Premium Promo
+          </Text>
+          <Text style={{ color: Colors.grey }}>
+            Best choice for our top plugs. All Top Promo features inclusive plus
+            3 dats ads on all our social media platforms.
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Text>3 months</Text>
+            <Text>NGN 10000</Text>
           </View>
-          <Text>NGN 10000</Text>
         </Pressable>
       </View>
       <View
@@ -458,17 +441,19 @@ const add = () => {
                   showsHorizontalScrollIndicator={false}
                   horizontal
                   data={images}
-                  renderItem={({ item }) => (
-                    <View
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginRight: 10,
-                      }}
-                    >
-                      <PhotosCard item={item} />
-                    </View>
-                  )}
+                  renderItem={({ item }) => {
+                    return (
+                      <View
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginRight: 10,
+                        }}
+                      >
+                        <PhotosCard item={item} />
+                      </View>
+                    );
+                  }}
                 />
               </View>
               {image && (

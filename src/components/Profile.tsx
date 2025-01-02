@@ -137,8 +137,6 @@ const Profile = memo(({ userId }: { userId: string }) => {
     return () => unsubscribe();
   });
 
-  console.log(userId);
-
   return (
     <View style={{ flex: 1 }}>
       <FancyHeader

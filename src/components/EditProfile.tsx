@@ -1,55 +1,35 @@
-import {
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Platform,
-  KeyboardAvoidingView,
-  useColorScheme,
-} from "react-native";
+import { View, ScrollView, Platform, KeyboardAvoidingView } from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
-import React, { useMemo, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import {
-  useCategoryStore,
-  useLocationStore,
-  useUsersStore,
-  useUserStore,
-} from "@/src/state/store";
+import { useLocationStore, useUserStore } from "@/src/state/store";
 import { Colors } from "../constants/Colors";
-import { CustomToast, getBlobFroUri, getUsers } from "../utils/data";
-import { auth, firestoreDB, storage } from "../utils/firebaseConfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { CustomToast, getBlobFroUri } from "../utils/data";
+import { firestoreDB, storage } from "../utils/firebaseConfig";
+import { doc, updateDoc } from "firebase/firestore";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import ProgressBar from "./ProgressBar";
 import FancyHeader from "./FancyHeader";
+import { UIActivityIndicator } from "react-native-indicators";
 
 const EditProfile = () => {
   const router = useRouter();
   const { location } = useLocationStore();
-  const { users, storeUsers } = useUsersStore();
+  const { user } = useUserStore();
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [loadingImage, setLoadingImage] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
 
-  const [progress, setProgress] = useState(0);
-
-  const user = useMemo(
-    () => users.find((usr) => usr._id === auth.currentUser?.uid)!,
-    []
-  );
-
   const handleProfileImageSelection = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 4],
       quality: 1,
@@ -62,33 +42,19 @@ const EditProfile = () => {
 
       const storageRef = ref(storage, `images/${filename}`);
       const userRef = doc(firestoreDB, "users", user?._id.toString()!);
-      setLoading(true);
 
-      const uploadTask = uploadBytesResumable(storageRef, blob);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-          setProgress(Math.floor(progress));
-        },
-        (error) => {
-          // handle error
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            updateDoc(userRef, { image: downloadURL }).then(async () => {
-              setProgress(0);
-              setLoading(false);
-              getUsers().then((res) => {
-                storeUsers(res);
-              });
-            });
-          });
-        }
-      );
+      setLoadingImage(true);
+
+      await uploadBytesResumable(storageRef, blob);
+
+      getDownloadURL(storageRef)
+        .then((downloadURL) => {
+          updateDoc(userRef, { image: downloadURL });
+        })
+        .catch((e) => console.log(e))
+        .finally(() => setLoadingImage(false));
     }
+    setLoadingImage(false);
   };
 
   const updateProfile = () => {
@@ -104,14 +70,11 @@ const EditProfile = () => {
 
     updateDoc(userRef, data)
       .then(() => {
-        getUsers().then((res) => {
-          storeUsers(res);
-        });
-
         router.push("/");
         CustomToast("Profile updated Successfully");
         setSaving(false);
       })
+
       .catch((error) => {
         console.log(error);
         setSaving(false);
@@ -130,9 +93,6 @@ const EditProfile = () => {
 
     updateDoc(userRef, data)
       .then(() => {
-        getUsers().then((res) => {
-          storeUsers(res);
-        });
         router.push("/");
         CustomToast("Profile updated Successfully");
         setLoading(false);
@@ -160,7 +120,7 @@ const EditProfile = () => {
             Profile Photo
           </Text>
           <View>
-            {progress > 0 ? (
+            {loadingImage ? (
               <View
                 style={{
                   flexDirection: "row",
@@ -168,8 +128,7 @@ const EditProfile = () => {
                   alignItems: "center",
                 }}
               >
-                <ProgressBar progress={progress} barWidth={100} />
-                <Text>{progress + "%"}</Text>
+                <UIActivityIndicator color={Colors.primary} />
               </View>
             ) : (
               <Card.Cover source={{ uri: user?.image }}></Card.Cover>
