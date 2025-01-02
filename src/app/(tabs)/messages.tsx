@@ -1,11 +1,12 @@
 import { View, TouchableOpacity, FlatList } from "react-native";
-import { Avatar, Button, Text, TextInput } from "react-native-paper";
+import { Avatar, Button, Divider, Text, TextInput } from "react-native-paper";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useRouter } from "expo-router";
 import { useChatStore, useUsersStore } from "@/src/state/store";
-import { Ionicons, Octicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import {
   collection,
+  deleteDoc,
   doc,
   DocumentData,
   onSnapshot,
@@ -20,6 +21,7 @@ import { auth, firestoreDB } from "@/src/utils/firebaseConfig";
 import { noAvatar } from "@/src/utils/data";
 import FancyHeader from "@/src/components/FancyHeader";
 import moment from "moment";
+import { SwipeListView } from "react-native-swipe-list-view";
 
 const index = () => {
   const router = useRouter();
@@ -27,6 +29,10 @@ const index = () => {
   const { users } = useUsersStore();
 
   const [search, setSearch] = useState("");
+
+  const handleDeleteChat = (chatId: string) => {
+    deleteDoc(doc(firestoreDB, "chats", chatId));
+  };
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -50,13 +56,14 @@ const index = () => {
       <FancyHeader title={chats.length > 0 ? "Chats" : "Waiting for network"} />
       {auth.currentUser ? (
         <View>
-          <View style={{ paddingHorizontal: 20, paddingVertical: 20 }}>
+          <View style={{ paddingVertical: 20 }}>
             <View>
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
+                  paddingHorizontal: 20,
                 }}
               >
                 <Text style={{ fontWeight: "bold" }}>Recent Messages</Text>
@@ -65,7 +72,7 @@ const index = () => {
                   <Ionicons name="chatbox" size={20} color={Colors.grey} />
                 </TouchableOpacity>
               </View>
-              <View style={{ marginVertical: 20 }}>
+              <View style={{ marginVertical: 20, paddingHorizontal: 20 }}>
                 <TextInput
                   mode="outlined"
                   placeholder="Search messages"
@@ -85,9 +92,43 @@ const index = () => {
                 </View>
               ) : (
                 <View style={{ marginBottom: 40 }}>
-                  <FlatList
+                  <SwipeListView
                     showsVerticalScrollIndicator={false}
                     data={chats}
+                    keyExtractor={(item) => item._id}
+                    renderHiddenItem={({ item, index, separators }) => {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "flex-start",
+                            flex: 1,
+                          }}
+                        >
+                          <TouchableOpacity
+                            style={{
+                              backgroundColor: Colors.light.error,
+                              justifyContent: "center",
+                              alignItems: "center",
+                              height: "100%",
+                              width: 100,
+                            }}
+                            onPress={() => handleDeleteChat(item._id)}
+                          >
+                            <MaterialCommunityIcons
+                              name="delete"
+                              size={30}
+                              color="#fff"
+                            />
+                            <Text style={{ color: "#fff" }}>Delete</Text>
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    }}
+                    leftOpenValue={100}
+                    disableLeftSwipe
+                    ItemSeparatorComponent={() => <Divider bold />}
                     renderItem={({ item, index }) => {
                       const chatProfileId =
                         auth.currentUser?.uid === item.clientId
@@ -104,7 +145,14 @@ const index = () => {
                       const chatImage = chatProfile?.image || noAvatar;
 
                       return (
-                        <View key={index}>
+                        <TouchableOpacity
+                          key={index}
+                          style={{
+                            opacity: 1,
+                            backgroundColor: "#fff",
+                            paddingHorizontal: 20,
+                          }}
+                        >
                           {chatName
                             .toLowerCase()
                             .includes(search.toLowerCase()) && (
@@ -113,9 +161,10 @@ const index = () => {
                                 flexDirection: "row",
                                 alignItems: "flex-end",
                                 justifyContent: "space-between",
-                                marginBottom: 20,
+                                paddingVertical: 15,
                               }}
                               onPress={() => {
+                                router.push(`/rooms/${item._id}`);
                                 if (
                                   auth.currentUser?.uid ==
                                     item.serviceProviderId &&
@@ -126,9 +175,7 @@ const index = () => {
                                     {
                                       isRead: true,
                                     }
-                                  ).then(() => {
-                                    router.push(`/rooms/${item._id}`);
-                                  });
+                                  );
                                 }
                               }}
                             >
@@ -182,7 +229,7 @@ const index = () => {
                               </View>
                             </TouchableOpacity>
                           )}
-                        </View>
+                        </TouchableOpacity>
                       );
                     }}
                   />

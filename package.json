@@ -72,6 +72,7 @@
     "react-native-sectioned-multi-select": "^0.10.0",
     "react-native-super-grid": "^6.0.1",
     "react-native-svg": "15.8.0",
+    "react-native-swipe-list-view": "^3.2.9",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
     "zod": "^3.23.8",

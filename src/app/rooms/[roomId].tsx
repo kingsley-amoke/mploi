@@ -276,6 +276,7 @@ const Room = () => {
             >
               <TextInput
                 mode="outlined"
+                keyboardType="default"
                 style={{
                   flex: 1,
                   fontWeight: "bold",
